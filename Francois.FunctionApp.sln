@@ -3,6 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Francois.FunctionApp", "Francois.FunctionApp\Francois.FunctionApp.csproj", "{425EFF64-5E2C-4A71-A8F7-BEC243EFB127}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Francois.Tests", "Francois.Tests\Francois.Tests.csproj", "{AD9B94F3-9764-49C3-812D-72F647DB793B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{425EFF64-5E2C-4A71-A8F7-BEC243EFB127} = {425EFF64-5E2C-4A71-A8F7-BEC243EFB127}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

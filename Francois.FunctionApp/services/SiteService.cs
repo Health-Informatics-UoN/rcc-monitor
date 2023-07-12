@@ -1,103 +1,73 @@
-using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+using System.Linq;
 using Francois.FunctionApp.models;
-using Newtonsoft.Json;
 
 namespace Francois.FunctionApp.services;
 
 public class SiteService
 {
-    private readonly HttpClient _client;
-    private const string SitesUrl = "/rest/v2/sites";
-
-    public SiteService(
-        IHttpClientFactory httpClientFactory)
-    {
-        _client = httpClientFactory.CreateClient();
-    }
-    
     /// <summary>
-    /// List sites at a tenant level.
+    /// Get Sites with missing Ids from two lists
     /// </summary>
-    /// <param name="url">URL of the redCAP instance.</param>
-    /// <param name="token">Tenant token to use.</param>
-    /// <returns>A list of site view models.</returns>
-    private async Task<List<SiteView>> List(string url, string token)
-    {
-        _client.DefaultRequestHeaders.Clear();
-        _client.DefaultRequestHeaders.Accept.Clear();
-        _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        _client.DefaultRequestHeaders.Add("token", token);
-    
-        var response = await _client.GetAsync(url + SitesUrl);
-        if (response.IsSuccessStatusCode)
-        {
-            var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<SiteView>>(responseString);
-        }
-        else
-        {
-            Console.WriteLine("Failed to retrieve sites. Status code: " + response.StatusCode);
-            return new List<SiteView>();
-        }
-    }    
-    
-    /// <summary>
-    /// Get a site detail at a tenant level.
-    /// </summary>
-    /// <param name="url">URL of the redCAP instance</param>
-    /// <param name="id">Id of the site to retrieve.</param>
-    /// <param name="token">Tenant token to use.</param>
-    /// <returns>The relevant site model.</returns>
-    private async Task<Site> Get(string url, string id, string token)
-    {
-        _client.DefaultRequestHeaders.Clear();
-        _client.DefaultRequestHeaders.Accept.Clear();
-        _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        _client.DefaultRequestHeaders.Add("token", token);
+    /// <param name="sites1"></param>
+    /// <param name="sites2"></param>
+    /// <returns></returns>
+    public List<Site> GetMissingIds(List<Site> sites1, List<string> sites2)
+        => sites1.Where(s => !sites2.Contains(s.SiteId)).ToList();
 
-        var response = await _client.GetAsync(url + SitesUrl + "/" + id);
-        if (response.IsSuccessStatusCode)
-        {
-            var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Site>(responseString);
-        }
-        else
-        {
-            Console.WriteLine("Failed to retrieve site. Status code: " + response.StatusCode);
-            return new Site() { };
-        }
+    /// <summary>
+    /// Get sites with different names but the same Id, given two lists
+    /// </summary>
+    /// <param name="sites1"></param>
+    /// <param name="sites2"></param>
+    /// <returns>A list of Tuples of sites</returns>
+    public List<(Site, Site)> GetDiffNames(List<Site> sites1, List<Site> sites2)
+    {
+        var sitesWithDifferentNames = sites1
+            .Join(sites2,
+                site1 => site1.SiteId,
+                site2 => site2.SiteId,
+                (site1, site2) => (site1: site1, site2: site2))
+            .Where(sites => sites.site1.Name != sites.site2.Name)
+            .ToList();
+        
+        return sitesWithDifferentNames;
     }
 
     /// <summary>
-    /// Get detailed lists of a Sites at a tenant level.
-    /// This method fetches the initial list of all sites, with
-    /// <see cref="List"/>.
-    /// This only returns a list of <see cref="SiteView"/> model which is partial information.
-    /// To fetch detailed site info, we <see cref="Get"/> it for each site.
-    /// The redCAP API does not make it possible for this not to be 0n. 
+    /// Get sites with different parent site Ids from two lists
     /// </summary>
-    /// <param name="url">URL of the redCAP instance</param>
-    /// <param name="token">Tenant token to use.</param>
-    /// <returns>List of site models.</returns>
-    public async Task<List<Site>> ListDetail(string url, string token)
+    /// <param name="sites1"></param>
+    /// <param name="sites2"></param>
+    /// <returns>A list of Tuples of sites</returns>
+    public List<(Site, Site)> GetDiffParentSiteId(List<Site> sites1, List<Site> sites2)
     {
-        var sites = await List(url, token);
+        // compare the parent of each site
+        var sitesWithDifferentParentSiteId = sites1
+            .Where(site1 => site1.ParentSiteId != 0) // Filter out sites without a parent
+            .Join(sites2,
+                buildSite => buildSite.SiteId,
+                site2 => site2.SiteId,
+                (site1, site2) => (buildSite: site1, prodSite: site2))
+            .Where(sites =>
+            {
+                // Get the parent site for the current site
+                var site1Parent = sites1.FirstOrDefault(site => site.Id == sites.buildSite.ParentSiteId);
 
-        var siteDetails = new List<Site>();
+                // Get its prod alternate
+                var site2 = sites2.FirstOrDefault(site => site.SiteId == sites.buildSite.SiteId);
 
-        var i = sites.GetRange(0, 100);
+                // Get prods parent and check if they match
+                var site2Parent =
+                    sites2.FirstOrDefault(site => site2 != null && site.Id == site2.ParentSiteId);
 
-        foreach (var site in sites)
-        {
-            var detail = await Get(url, site.Id.ToString(), token);
-            siteDetails?.Add(detail);
-        }
+                // TODO: this filters out if build or prod dont have parent sites.
+                return site2Parent != null && site1Parent != null &&
+                       site2Parent.SiteId != site1Parent.SiteId;
+            })
+            .ToList();
 
-        return siteDetails;
+        return sitesWithDifferentParentSiteId;
     }
 
 }
