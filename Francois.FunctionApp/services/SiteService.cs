@@ -46,20 +46,20 @@ public class SiteService
         var sitesWithDifferentParentSiteId = sites1
             .Where(site1 => site1.ParentSiteId != 0) // Filter out sites without a parent
             .Join(sites2,
-                buildSite => buildSite.SiteId,
+                site1 => site1.SiteId,
                 site2 => site2.SiteId,
-                (site1, site2) => (buildSite: site1, prodSite: site2))
+                (site1, site2) => (site1, site2))
             .Where(sites =>
             {
                 // Get the parent site for the current site
-                var site1Parent = sites1.FirstOrDefault(site => site.Id == sites.buildSite.ParentSiteId);
+                var site1Parent = sites1.FirstOrDefault(site => site.SiteId == sites.site1.ParentSiteId.ToString());
 
                 // Get its prod alternate
-                var site2 = sites2.FirstOrDefault(site => site.SiteId == sites.buildSite.SiteId);
+                var site2 = sites2.FirstOrDefault(site => site.SiteId == sites.site2.SiteId);
 
                 // Get prods parent and check if they match
                 var site2Parent =
-                    sites2.FirstOrDefault(site => site2 != null && site.Id == site2.ParentSiteId);
+                    sites2.FirstOrDefault(site => site.SiteId == sites.site2.ParentSiteId.ToString());
 
                 // TODO: this filters out if build or prod dont have parent sites.
                 return site2Parent != null && site1Parent != null &&
