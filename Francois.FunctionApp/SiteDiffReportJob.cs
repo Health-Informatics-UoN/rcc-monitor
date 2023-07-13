@@ -13,11 +13,18 @@ public class SiteDiffReportJob
 {
     private readonly SiteService _siteService;
     private readonly IDataService _redCapSitesService;
+    private readonly IReportingService _reportingService;
     private readonly SiteOptions _siteOptions;
-    public SiteDiffReportJob(SiteService siteService, IOptions<SiteOptions> siteOptions, IDataService redCapSitesService)
+
+    public SiteDiffReportJob(SiteService siteService,
+        IDataService redCapSitesService,
+        IReportingService reportingService,
+        IOptions<SiteOptions> siteOptions
+        )
     {
         _siteService = siteService;
         _redCapSitesService = redCapSitesService;
+        _reportingService = reportingService;
         _siteOptions = siteOptions.Value;
     }
     

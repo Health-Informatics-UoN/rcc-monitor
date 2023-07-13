@@ -12,7 +12,7 @@ namespace Francois.FunctionApp;
 public class Startup : FunctionsStartup
 {
     private IConfiguration _configuration;
-    
+
     public override void Configure(IFunctionsHostBuilder builder)
     {
         builder.Services.AddOptions<SiteOptions>()
@@ -33,10 +33,14 @@ public class Startup : FunctionsStartup
         _configuration = services.BuildServiceProvider().GetService<IConfiguration>();
         
         var useRedCapData = _configuration.GetValue<bool>("UseRedCapData");
-        
+        var useEmailReports = _configuration.GetValue<bool>("UseEmailReports");
+
         if (useRedCapData) services.AddTransient<IDataService, RedCapSitesService>();
         else services.AddTransient<IDataService, DummyDataService>();
-
+        
+        if (useEmailReports) services.AddTransient<IReportingService, EmailService>();
+        else services.AddTransient<IReportingService, PlannerService>();
+        
         return services;
     }
 }
