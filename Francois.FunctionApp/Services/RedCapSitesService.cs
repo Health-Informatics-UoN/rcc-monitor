@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Francois.FunctionApp.models;
-using Francois.FunctionApp.services.Contracts;
+using Francois.FunctionApp.Models;
+using Francois.FunctionApp.Services.Contracts;
 using Newtonsoft.Json;
 
-namespace Francois.FunctionApp.services;
+namespace Francois.FunctionApp.Services;
 
 public class RedCapSitesService : IDataService
 {

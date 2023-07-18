@@ -1,6 +1,7 @@
 using Francois.FunctionApp.Config;
-using Francois.FunctionApp.services;
-using Francois.FunctionApp.services.Contracts;
+using Francois.FunctionApp.Services;
+using Francois.FunctionApp.Services.Contracts;
+using Francois.FunctionApp.StartupHelpers.ConfigureServicesExtensions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ public class Startup : FunctionsStartup
     private IServiceCollection ConfigureServices(IServiceCollection services)
     {
         services
+            .AddEmailSender(_configuration)
             .AddTransient<SiteService>()
             .AddHttpClient();
         

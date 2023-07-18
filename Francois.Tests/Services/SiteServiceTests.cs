@@ -1,5 +1,5 @@
-using Francois.FunctionApp.models;
-using Francois.FunctionApp.services;
+using Francois.FunctionApp.Models;
+using Francois.FunctionApp.Services;
 
 namespace Francois.Tests.Services;
 

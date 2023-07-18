@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Francois.FunctionApp.models;
+using Francois.FunctionApp.Models;
 
-namespace Francois.FunctionApp.services.Contracts;
+namespace Francois.FunctionApp.Services.Contracts;
 
 public interface IDataService
 {

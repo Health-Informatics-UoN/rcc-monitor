@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Francois.FunctionApp.models;
-using Francois.FunctionApp.services.Contracts;
+using Francois.FunctionApp.Models;
+using Francois.FunctionApp.Services.Contracts;
 
-namespace Francois.FunctionApp.services;
+namespace Francois.FunctionApp.Services;
 
 public class DummyDataService : IDataService
 {

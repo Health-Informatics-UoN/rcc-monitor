@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Francois.FunctionApp.Config;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using Francois.FunctionApp.services;
-using Francois.FunctionApp.services.Contracts;
+using Francois.FunctionApp.Services;
+using Francois.FunctionApp.Services.Contracts;
 using Microsoft.Extensions.Options;
 
 namespace Francois.FunctionApp;

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Francois.FunctionApp.models;
+using Francois.FunctionApp.Models;
 
-namespace Francois.FunctionApp.services.Contracts;
+namespace Francois.FunctionApp.Services.Contracts;
 
 public interface IReportingService
 {

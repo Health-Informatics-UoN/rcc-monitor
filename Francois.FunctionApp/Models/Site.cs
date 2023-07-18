@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Francois.FunctionApp.models;
+namespace Francois.FunctionApp.Models;
 
 /// <summary>
 /// A complete model of a site, mirrored from redCAP.
