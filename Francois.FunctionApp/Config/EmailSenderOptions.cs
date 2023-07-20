@@ -11,6 +11,7 @@ public record BaseEmailSenderOptions
     public string FromName { get; init; } = "No Reply";
     public string FromAddress { get; init; } = "noreply@example.com";
     public string ReplyToAddress { get; init; } = string.Empty;
+    public string ToAddress { get; set; } = "noreply@example.com";
 };
 
 public record LocalDiskEmailOptions : BaseEmailSenderOptions

@@ -27,13 +27,13 @@ public class Startup : FunctionsStartup
 
     private IServiceCollection ConfigureServices(IServiceCollection services)
     {
+        _configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+        
         services
             .AddEmailSender(_configuration)
             .AddTransient<SiteService>()
             .AddHttpClient();
-        
-        _configuration = services.BuildServiceProvider().GetService<IConfiguration>();
-        
+
         var useRedCapData = _configuration.GetValue<bool>("UseRedCapData");
         var useEmailReports = _configuration.GetValue<bool>("UseEmailReports");
 

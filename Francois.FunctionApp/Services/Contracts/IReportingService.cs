@@ -9,7 +9,7 @@ public interface IReportingService
     /// Send alert for a list of sites with mismatching site ids.
     /// </summary>
     /// <param name="sites"></param>
-    public void AlertOnMismatchingSites(List<(Site, Site)> sites);
+    public void AlertOnMismatchingSites(List<Site> sites);
     
     /// <summary>
     /// Send alert for a list of sites with mismatching parent ids.

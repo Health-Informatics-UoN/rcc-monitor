@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Francois.FunctionApp.Config;
 using Microsoft.Azure.WebJobs;
@@ -36,7 +37,17 @@ public class SiteDiffReportJob
         var prodSites = await _redCapSitesService.ListDetail(_siteOptions.ProductionUrl, _siteOptions.ProductionKey);
 
         // Sites with different names
-        var result = _siteService.GetDiffNames(UATSites, prodSites);
+        var mismatchedNames = _siteService.GetDiffNames(UATSites, prodSites);
+        _reportingService.AlertOnMismatchingSiteName(mismatchedNames);
+
+        // Sites missing from production
+        var prodSiteIds = prodSites.Select(x => x.SiteId).ToList();
+        var missingSites = _siteService.GetMissingIds(UATSites, prodSiteIds);
+        _reportingService.AlertOnMismatchingSites(missingSites);
+        
+        // Sites with mismatched parents
+        var mismatchedParents = _siteService.GetDiffParentSiteId(UATSites, prodSites);
+        _reportingService.AlertOnMismatchingSiteParent(result);
 
         Console.WriteLine("Complete.");
     }

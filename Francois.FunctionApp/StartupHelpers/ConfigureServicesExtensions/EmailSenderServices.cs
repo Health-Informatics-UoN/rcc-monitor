@@ -1,5 +1,6 @@
 using System;
 using Francois.FunctionApp.Config;
+using Francois.FunctionApp.Services.Contracts;
 using Francois.FunctionApp.Services.EmailSender;
 using Francois.FunctionApp.Services.EmailServices;
 using Francois.FunctionApp.Services.EmailServices.Contracts;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using EmailService = Francois.FunctionApp.Services.EmailService;
 
 namespace Francois.FunctionApp.StartupHelpers.ConfigureServicesExtensions
 {
@@ -73,7 +75,6 @@ namespace Francois.FunctionApp.StartupHelpers.ConfigureServicesExtensions
       return s.ConfigureEmail(emailProvider, c)
         .AddTransient<RazorViewService>()
         .AddTransient<AccountEmailService>()
-        .AddTransient<IEmailService, EmailService>()
         .AddTransient(
           typeof(IEmailSender),
           emailProvider switch
