@@ -30,7 +30,7 @@ public class SiteDiffReportJob
     }
     
     [FunctionName("SiteDiffReportJob")]
-    public async Task RunAsync([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
+    public async Task RunAsync([TimerTrigger("0 * 10 * * *")] TimerInfo myTimer, ILogger log)
     {
         // Fetch real data.
         var UATSites = await _redCapSitesService.ListDetail(_siteOptions.UATUrl, _siteOptions.UATKey); 
