@@ -90,6 +90,14 @@ public class DataSeeder
       (CustomClaimTypes.SitePermission, SitePermissionClaims.ManageUsers),
     });
     
+    // Site Admin
+    await SeedRole(Roles.SiteAdmin, new()
+    {
+      (CustomClaimTypes.SitePermission, SitePermissionClaims.ManageUsers),
+      (CustomClaimTypes.SitePermission, SitePermissionClaims.AccessReports),
+      (CustomClaimTypes.SitePermission, SitePermissionClaims.InviteUsers),
+    });
+    
   }
   
   /// <summary>

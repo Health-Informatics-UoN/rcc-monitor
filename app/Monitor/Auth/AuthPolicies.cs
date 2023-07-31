@@ -22,6 +22,18 @@ public static class AuthPolicies
       .Combine(IsAuthenticatedUser)
       .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.ManageUsers)
       .Build();
+  
+  public static AuthorizationPolicy CanAccessReports
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.AccessReports)
+      .Build();
+  
+  public static AuthorizationPolicy CanInviteUsers
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.InviteUsers)
+      .Build();
 
   private static readonly Func<AuthorizationHandlerContext, bool> IsSameHost =
     context =>
