@@ -53,6 +53,36 @@ public class DataSeeder
 
     }
   }
+  public async Task SeedInstanceTypes()
+  {
+    if (!await _db.Instances
+          .AsNoTracking()
+          .AnyAsync())
+    {
+      var seedInstances = new List<Instance>
+      {
+        new Instance()
+        {
+          Name =  Instances.Build,
+        },
+        new Instance()
+        {
+          Name =  Instances.Uat,
+        },
+        new Instance()
+        {
+          Name =  Instances.Production,
+        }
+      };
+      foreach (var s in seedInstances)
+      {
+        _db.Add(s);
+
+      }
+      await _db.SaveChangesAsync();
+
+    }
+  }
 
   /// <summary>
   /// Ensure an individual role exists and has the specified claims

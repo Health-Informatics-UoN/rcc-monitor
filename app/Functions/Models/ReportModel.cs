@@ -1,12 +1,12 @@
-namespace Monitor.Data.Entities;
+namespace Functions.Models;
 
-public class Report
+public class ReportModel
 {
-    public int Id { get; set; }
     public DateTimeOffset DateTime { get; set; }
     public string SiteName { get; set; } = string.Empty;
     public string SiteId { get; set; } = string.Empty;
+    public int ParentSiteId { get; set; }
     public string Description { get; set; } = string.Empty;
-    public ReportType ReportType { get; set; } = new();
-    public Instance Instance { get; set; } = new();
+    public string ReportTypeModel { get; set; } = string.Empty;
+    public string Instance { get; set; } = string.Empty;
 }

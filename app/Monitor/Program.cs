@@ -85,6 +85,7 @@ using (var scope = app.Services.CreateScope())
   await seeder.SeedRoles();
   await seeder.SeedRegistrationRules(config);
   await seeder.SeedReportTypes();
+  await seeder.SeedInstanceTypes();
 }
 
 #region Configure Pipeline

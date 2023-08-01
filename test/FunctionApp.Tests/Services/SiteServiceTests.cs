@@ -15,14 +15,18 @@ public class SiteServiceTests
             new Site { SiteId = "1" },
             new Site { SiteId = "2" },
             new Site { SiteId = "3" },
+        };        
+        var sites2 = new List<Site>
+        {
+            new Site { SiteId = "1" },
+            new Site { SiteId = "3" },
         };
-        var sites2 = new List<string> { "1", "3" };
-        
+
         // Act
         var result = siteService.GetMissingIds(sites1, sites2);
         
         // Assert
-        Assert.Collection(result, site => Assert.Equal("2", site.SiteId));
+        Assert.Collection(result, report => Assert.Equal("2", report.SiteId));
     }
     
     [Fact]
@@ -51,9 +55,9 @@ public class SiteServiceTests
             tuple =>
             {
                 Assert.Equal("2", tuple.Item1.SiteId);
-                Assert.Equal("Site B", tuple.Item1.Name);
+                Assert.Equal("Site B", tuple.Item1.SiteName);
                 Assert.Equal("2", tuple.Item2.SiteId);
-                Assert.Equal("Site X", tuple.Item2.Name);
+                Assert.Equal("Site X", tuple.Item2.SiteName);
             }
         );
     }

@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
+using Data.Constants;
 using Functions.Models;
 
 namespace Functions.Services;
@@ -7,30 +6,64 @@ namespace Functions.Services;
 public class SiteService
 {
     /// <summary>
-    /// Get Sites with missing Ids from two lists
+    /// Get a report for missing site Ids from two lists
     /// </summary>
     /// <param name="sites1"></param>
     /// <param name="sites2"></param>
     /// <returns></returns>
-    public List<Site> GetMissingIds(List<Site> sites1, List<string> sites2)
-        => sites1.Where(s => !sites2.Contains(s.SiteId)).ToList();
+    public List<ReportModel> GetMissingIds(List<Site> sites1, List<Site> sites2)
+    {
+        var missingSites = sites1
+            .Where(s => sites2.All(site => site.SiteId != s.SiteId))
+            .Select(site => new ReportModel
+            {
+                DateTime = DateTimeOffset.UtcNow,
+                Description = "",
+                ReportTypeModel = Reports.MismatchingSites,
+                SiteId = site.SiteId,
+                Instance = Instances.Uat,
+                ParentSiteId = site.ParentSiteId,
+                SiteName = site.Name
+            })
+            .ToList();
+        return missingSites;
+    }
 
     /// <summary>
     /// Get sites with different names but the same Id, given two lists
     /// </summary>
     /// <param name="sites1"></param>
     /// <param name="sites2"></param>
-    /// <returns>A list of Tuples of sites</returns>
-    public List<(Site, Site)> GetDiffNames(List<Site> sites1, List<Site> sites2)
+    /// <returns>A list of Tuples of Reports</returns>
+    public List<(ReportModel, ReportModel)> GetDiffNames(List<Site> sites1, List<Site> sites2)
     {
         var sitesWithDifferentNames = sites1
             .Join(sites2,
                 site1 => site1.SiteId,
                 site2 => site2.SiteId,
-                (site1, site2) => (site1: site1, site2: site2))
-            .Where(sites => sites.site1.Name != sites.site2.Name)
+                (site1, site2) => (site1: new ReportModel
+                    {
+                        DateTime = DateTimeOffset.UtcNow,
+                        Description = "",
+                        ReportTypeModel = Reports.MismatchingSiteName,
+                        SiteId = site1.SiteId,
+                        SiteName = site1.Name,
+                        ParentSiteId = site1.ParentSiteId,
+                        Instance = Instances.Uat
+                    },
+                    site2: new ReportModel
+                    {
+                        DateTime = DateTimeOffset.UtcNow,
+                        Description = "",
+                        ReportTypeModel = Reports.MismatchingSiteName,
+                        SiteId = site2.SiteId,
+                        SiteName = site2.Name,
+                        ParentSiteId = site1.ParentSiteId,
+                        Instance = Instances.Production
+                    }))
+            .Where(sites => sites.site1.SiteName != sites.site2.SiteName)
             .ToList();
-        
+
         return sitesWithDifferentNames;
     }
 
@@ -39,29 +72,41 @@ public class SiteService
     /// </summary>
     /// <param name="sites1"></param>
     /// <param name="sites2"></param>
-    /// <returns>A list of Tuples of sites</returns>
-    public List<(Site, Site)> GetDiffParentSiteId(List<Site> sites1, List<Site> sites2)
+    /// <returns>A list of Tuples of Reports</returns>
+    public List<(ReportModel, ReportModel)> GetDiffParentSiteId(List<Site> sites1, List<Site> sites2)
     {
         // compare the parent of each site
         var sitesWithDifferentParentSiteId = sites1
-            .Where(site1 => site1.ParentSiteId != 0) // Filter out sites without a parent
             .Join(sites2,
                 site1 => site1.SiteId,
                 site2 => site2.SiteId,
-                (site1, site2) => (site1, site2))
+                (site1, site2) => (report1: new ReportModel
+                    {
+                        DateTime = DateTimeOffset.UtcNow,
+                        ReportTypeModel = Reports.MismatchingSiteParent,
+                        SiteId = site1.SiteId,
+                        SiteName = site1.Name,
+                        ParentSiteId = site1.ParentSiteId,
+                        Instance = Instances.Uat
+                    },
+                    report2: new ReportModel
+                    {
+                        DateTime = DateTimeOffset.UtcNow,
+                        ReportTypeModel = Reports.MismatchingSiteParent,
+                        SiteId = site2.SiteId,
+                        SiteName = site2.Name,
+                        ParentSiteId = site2.ParentSiteId,
+                        Instance = Instances.Production
+                    }))
             .Where(sites =>
             {
                 // Get the parent site for the current site
-                var site1Parent = sites1.FirstOrDefault(site => site.SiteId == sites.site1.ParentSiteId.ToString());
-
-                // Get its prod alternate
-                var site2 = sites2.FirstOrDefault(site => site.SiteId == sites.site2.SiteId);
-
+                var site1Parent = sites1.FirstOrDefault(site => site.SiteId == sites.report1.ParentSiteId.ToString());
+                
                 // Get prods parent and check if they match
                 var site2Parent =
-                    sites2.FirstOrDefault(site => site.SiteId == sites.site2.ParentSiteId.ToString());
-
-                // TODO: this filters out if build or prod dont have parent sites.
+                    sites2.FirstOrDefault(site => site.SiteId == sites.report2.ParentSiteId.ToString());
+                
                 return site2Parent != null && site1Parent != null &&
                        site2Parent.SiteId != site1Parent.SiteId;
             })
@@ -69,5 +114,4 @@ public class SiteService
 
         return sitesWithDifferentParentSiteId;
     }
-
 }

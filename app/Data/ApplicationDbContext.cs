@@ -17,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Team> Teams => Set<Team>();
     public DbSet<Report> Reports => Set<Report>();
     public DbSet<ReportType> ReportTypes => Set<ReportType>();
+    public DbSet<Instance> Instances => Set<Instance>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
