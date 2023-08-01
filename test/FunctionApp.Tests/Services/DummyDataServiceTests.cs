@@ -1,6 +1,6 @@
-using Francois.FunctionApp.Models;
-using Francois.FunctionApp.Services.Contracts;
-using Francois.FunctionApp.Services;
+using Functions.Models;
+using Functions.Services.Contracts;
+using Functions.Services;
 
 namespace Francois.Tests.Services;
 

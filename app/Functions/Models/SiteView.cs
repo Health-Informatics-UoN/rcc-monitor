@@ -1,4 +1,4 @@
-namespace Francois.FunctionApp.Models;
+namespace Functions.Models;
 
 /// <summary>
 /// A partial model of a site, mirrored from redCAP.

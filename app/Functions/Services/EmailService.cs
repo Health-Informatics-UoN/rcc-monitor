@@ -1,10 +1,12 @@
-using System.Collections.Generic;
-using Francois.FunctionApp.Models;
-using Francois.FunctionApp.Services.Contracts;
+using Functions.Config;
+using Functions.Models;
+using Functions.Models.Emails;
+using Functions.Services.Contracts;
+using Microsoft.Extensions.Options;
 
-namespace Francois.FunctionApp.Services;
+namespace Functions.Services;
 
-public class PlannerService : IReportingService
+public class EmailService : IReportingService
 {
     public void AlertOnMismatchingSites(List<Site> sites)
     {
@@ -20,4 +22,5 @@ public class PlannerService : IReportingService
     {
         throw new System.NotImplementedException();
     }
+
 }

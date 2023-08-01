@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Francois.FunctionApp": {
+    "Functions": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7277",
+      "commandLineArgs": "--port 7269",
       "launchBrowser": false
     }
   }

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Francois.FunctionApp.Models;
+using Functions.Models;
 
-namespace Francois.FunctionApp.Services;
+namespace Functions.Services;
 
 public class SiteService
 {

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Francois.FunctionApp.Models;
-using Francois.FunctionApp.Services.Contracts;
+using Functions.Models;
+using Functions.Services.Contracts;
 using Newtonsoft.Json;
 
 namespace Francois.FunctionApp.Services;

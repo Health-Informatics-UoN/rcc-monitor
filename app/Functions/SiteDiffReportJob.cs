@@ -1,14 +1,12 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Francois.FunctionApp.Config;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using Francois.FunctionApp.Services;
-using Francois.FunctionApp.Services.Contracts;
 using Microsoft.Extensions.Options;
+using Functions.Config;
+using Functions.Services;
+using Functions.Services.Contracts;
 
-namespace Francois.FunctionApp;
+namespace Functions;
 
 public class SiteDiffReportJob
 {
@@ -16,12 +14,12 @@ public class SiteDiffReportJob
     private readonly IDataService _redCapSitesService;
     private readonly IReportingService _reportingService;
     private readonly SiteOptions _siteOptions;
-
+    
     public SiteDiffReportJob(SiteService siteService,
         IDataService redCapSitesService,
         IReportingService reportingService,
         IOptions<SiteOptions> siteOptions
-        )
+    )
     {
         _siteService = siteService;
         _redCapSitesService = redCapSitesService;
@@ -29,17 +27,21 @@ public class SiteDiffReportJob
         _siteOptions = siteOptions.Value;
     }
     
-    [FunctionName("SiteDiffReportJob")]
-    public async Task RunAsync([TimerTrigger("0 * 10 * * *")] TimerInfo myTimer, ILogger log)
+    [Function("SiteDiffReportJob")]
+    public async Task Run([TimerTrigger("0 * 10 * * *", RunOnStartup = true)] MyInfo myTimer, FunctionContext context)
     {
-        // Fetch real data.
+        var logger = context.GetLogger("SiteDiffReportJob");
+        logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+        logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
+        
+        // Fetch data
         var UATSites = await _redCapSitesService.ListDetail(_siteOptions.UATUrl, _siteOptions.UATKey); 
         var prodSites = await _redCapSitesService.ListDetail(_siteOptions.ProductionUrl, _siteOptions.ProductionKey);
-
+        
         // Sites with different names
         var mismatchedNames = _siteService.GetDiffNames(UATSites, prodSites);
         _reportingService.AlertOnMismatchingSiteName(mismatchedNames);
-
+        
         // Sites missing from production
         var prodSiteIds = prodSites.Select(x => x.SiteId).ToList();
         var missingSites = _siteService.GetMissingIds(UATSites, prodSiteIds);
@@ -48,7 +50,21 @@ public class SiteDiffReportJob
         // Sites with mismatched parents
         var mismatchedParents = _siteService.GetDiffParentSiteId(UATSites, prodSites);
         _reportingService.AlertOnMismatchingSiteParent(mismatchedParents);
-
-        Console.WriteLine("Complete.");
     }
+}
+
+public class MyInfo
+{
+    public MyScheduleStatus ScheduleStatus { get; set; }
+
+    public bool IsPastDue { get; set; }
+}
+
+public class MyScheduleStatus
+{
+    public DateTime Last { get; set; }
+
+    public DateTime Next { get; set; }
+
+    public DateTime LastUpdated { get; set; }
 }

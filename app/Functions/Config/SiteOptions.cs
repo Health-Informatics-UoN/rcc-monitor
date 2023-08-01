@@ -1,4 +1,4 @@
-namespace Francois.FunctionApp.Config;
+namespace Functions.Config;
 
 public class SiteOptions
 {

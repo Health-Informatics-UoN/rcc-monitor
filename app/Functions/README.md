@@ -34,7 +34,7 @@ In local development a `local.settings.json` file is required, with the followin
 {
   "IsEncrypted": false,
   "Values": {
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsEnv": "Development",
     "UseRedCapData": false, # Configure whether to fetch live data from RedCap, or use the local service.
