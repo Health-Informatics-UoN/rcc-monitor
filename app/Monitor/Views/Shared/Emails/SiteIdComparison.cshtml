@@ -1,0 +1,34 @@
+@model AlertOnConflictingSites
+
+@{
+    ViewBag.Subject = "Alert: Conflicting Site IDs in RedCap Instances";
+    ViewBag.Heading = "Site ID Conflicting Alert";
+}
+
+<p>Dear Admin,</p>
+
+<p>When comparing RedCap sites across both environments (env 1 and env 2), it was noted that some site IDs created in Env1 do not exist in Env2.</p>
+
+<p>They are as follows:</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>Site Id</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var report in Model.Reports)
+    {
+        <tr>
+            <td>@report.SiteId</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<p>Please log in to RedCap and add the missing sites to Env 2. Please note if these sites have been added, they may have been done so with an incorrect ID.</p>
+
+<p>Thanks,</p>
+
+<p>&lt;SystemName&gt;</p>

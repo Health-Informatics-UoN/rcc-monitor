@@ -57,7 +57,8 @@ b.Services
   .AddEmailSender(b.Configuration)
 
   .AddTransient<UserService>()
-  .AddTransient<RegistrationRuleService>();
+  .AddTransient<RegistrationRuleService>()
+  .AddTransient<ReportService>();
 
 b.Services.AddSwaggerGen();
 

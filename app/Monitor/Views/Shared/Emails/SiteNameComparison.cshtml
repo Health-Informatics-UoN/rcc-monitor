@@ -1,0 +1,39 @@
+@model AlertOnConflictingSiteName
+
+@{
+    ViewBag.Subject = "Alert: Conflicting Site Names in RedCap Instances";
+    ViewBag.Heading = "Site Name Conflicting Alert";
+}
+
+<p>Dear Admin,</p>
+
+<p>According to our reports, one or more sites do not have the same name across 2 RedCap instances.</p>
+
+<p>They are as follows:</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>Site Id</th>
+        <!-- Gets the instance name from the first report in the Reports list assuming they are all the same -->
+        <th>@Model.Reports[0].Item1.Instance.Name</th>
+        <th>@Model.Reports[0].Item2.Instance.Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var report in Model.Reports)
+    {
+        <tr>
+            <td>@report.Item1.SiteId</td>
+            <td>@report.Item1.SiteName</td>
+            <td>@report.Item2.SiteName</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<p>Please log in to the RedCap instances and ensure that the site names are consistent when referring to the same site across both environments.</p>
+
+<p>Thanks,</p>
+
+<p>&lt;System Admin/Name&gt;</p>
