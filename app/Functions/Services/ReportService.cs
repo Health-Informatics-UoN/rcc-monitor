@@ -31,6 +31,7 @@ public class ReportService : IReportingService
     {
         var reportType = _db.ReportTypes.First(x => x.Name == reportModel.ReportTypeModel);
         var instance = _db.Instances.First(x => x.Name == reportModel.Instance);
+        var status = _db.ReportStatus.First(x => x.Name == reportModel.Status);
         var entity = new Report
         {
             DateTime = reportModel.DateTime,
@@ -39,6 +40,7 @@ public class ReportService : IReportingService
             SiteId = reportModel.SiteId,
             ReportType = reportType,
             Instance = instance,
+            Status = status
         };
         _db.Reports.Add(entity);
         _db.SaveChanges();

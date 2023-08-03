@@ -83,6 +83,37 @@ public class DataSeeder
 
     }
   }
+  
+  public async Task SeedReportStatus()
+  {
+    if (!await _db.ReportStatus
+          .AsNoTracking()
+          .AnyAsync())
+    {
+      var seedStatus = new List<ReportStatus>
+      {
+        new ReportStatus()
+        {
+          Name =  Status.Active,
+        },
+        new ReportStatus()
+        {
+          Name =  Status.Resolved,
+        },
+        new ReportStatus()
+        {
+          Name =  Status.Viewed,
+        }
+      };
+      foreach (var s in seedStatus)
+      {
+        _db.Add(s);
+
+      }
+      await _db.SaveChangesAsync();
+
+    }
+  }
 
   /// <summary>
   /// Ensure an individual role exists and has the specified claims

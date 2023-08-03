@@ -9,4 +9,5 @@ public class ReportModel
     public string Description { get; set; } = string.Empty;
     public string ReportTypeModel { get; set; } = string.Empty;
     public string Instance { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
 }
