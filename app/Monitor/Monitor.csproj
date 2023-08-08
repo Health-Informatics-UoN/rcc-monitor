@@ -9,6 +9,8 @@
 
         <!-- Append GitHash to Version if provided -->
         <Version Condition="'$(GitHash)' != ''">$(Version)+$(GitHash)</Version>
+        <SpaProxyServerUrl>http://localhost:3000</SpaProxyServerUrl>
+        <SpaProxyLaunchCommand>npm run dev -w=client-app</SpaProxyLaunchCommand>
     </PropertyGroup>
 
     <ItemGroup>

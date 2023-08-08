@@ -1,0 +1,8 @@
+{
+  "name": "nuh-collaboration",
+  "private": true,
+  "description": "This repository is for the NUH Collaboration projects, currently focussed on monitoring the health of instances of RedCap Cloud.",
+  "workspaces": [
+    "app/client-app"
+  ]
+}
