@@ -19,7 +19,12 @@ public class ReportsController : ControllerBase
     }
 
     [Authorize(nameof(AuthPolicies.CanAccessReports))]
-    [HttpPost]
+    [HttpGet]
+    public async Task<ActionResult<List<ReportModel>>> ListAll()
+        => Ok(await _reportService.List());
+
+    [Authorize(nameof(AuthPolicies.CanAccessReports))]
+    [HttpPost("conflicting-site")]
     public async Task<IActionResult> ConflictingSite(List<ReportModel> reports)
     {
         await _reportService.ConflictingSiteTriggerReport(reports);
@@ -27,7 +32,7 @@ public class ReportsController : ControllerBase
     }
     
     [Authorize(nameof(AuthPolicies.CanAccessReports))]
-    [HttpPost]
+    [HttpPost("conflicting-site-name")]
     public async Task<IActionResult> ConflictingSiteName(List<(ReportModel, ReportModel)> reports)
     {
         await _reportService.ConflictingSiteNameTriggerReport(reports);
@@ -35,7 +40,7 @@ public class ReportsController : ControllerBase
     }
     
     [Authorize(nameof(AuthPolicies.CanAccessReports))]
-    [HttpPost]
+    [HttpPost("conflicting-site-parent")]
     public async Task<IActionResult> ConflictingSiteParent(List<(ReportModel, ReportModel)> reports)
     {
         await _reportService.ConflictingSiteParentTriggerReport(reports);

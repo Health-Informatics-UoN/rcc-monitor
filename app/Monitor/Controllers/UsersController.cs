@@ -74,6 +74,7 @@ public class UsersController : ControllerBase
   /// </summary>
   /// <param name="id">user id</param>
   /// <returns>user matching the id</returns>
+  [HttpGet("{id}")]
   public async Task<UserModel> Get(string id)
   {
     var userFound = await _users.FindByIdAsync(id);
