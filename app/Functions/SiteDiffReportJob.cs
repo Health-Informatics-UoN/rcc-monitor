@@ -1,3 +1,4 @@
+using Data.Constants;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -35,28 +36,32 @@ public class SiteDiffReportJob
         // Fetch data
         var UATSites = await _redCapSitesService.ListDetail(_siteOptions.UATUrl, _siteOptions.UATKey);
         var prodSites = await _redCapSitesService.ListDetail(_siteOptions.ProductionUrl, _siteOptions.ProductionKey);
+
+        // For testing!
+        UATSites[0].Name = "X";
         
         // Sites with different names
-        var mismatchedNames = _siteService.GetDiffNames(UATSites, prodSites);
-        _reportingService.AlertOnMismatchingSiteName(mismatchedNames);
-        foreach (var report in mismatchedNames)
+        var redCapConflictingNames = _siteService.GetConflictingNames(UATSites, prodSites);
+        var newNameConflicts = _reportingService.ResolveConflicts(redCapConflictingNames, Reports.ConflictingSiteName);
+        foreach (var report in newNameConflicts)
         {
             _reportingService.Create(report.Item1);
             _reportingService.Create(report.Item2);
         }
 
         // Sites missing from production
-        var missingSites = _siteService.GetMissingIds(UATSites, prodSites);
-        _reportingService.AlertOnMismatchingSites(missingSites);
-        foreach (var report in missingSites)
+        var conflictingSites = _siteService.GetConflictingSites(UATSites, prodSites);
+        var newSiteConflicts = _reportingService.ResolveConflicts(conflictingSites, Reports.ConflictingSites);
+        foreach (var report in newSiteConflicts)
         {
             _reportingService.Create(report);
         }
 
         // Sites with mismatched parents
-        var mismatchedParents = _siteService.GetDiffParentSiteId(UATSites, prodSites);
-        _reportingService.AlertOnMismatchingSiteParent(mismatchedParents);
-        foreach (var report in mismatchedParents)
+        var conflictingSiteParents = _siteService.GetConflictingParents(UATSites, prodSites);
+        var newSiteParentConflicts =
+            _reportingService.ResolveConflicts(conflictingSiteParents, Reports.ConflictingSiteParent);
+        foreach (var report in newSiteParentConflicts)
         {
             _reportingService.Create(report.Item1);
             _reportingService.Create(report.Item2);

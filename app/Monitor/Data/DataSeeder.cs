@@ -24,6 +24,11 @@ public class DataSeeder
     _roles = roles;
     _registrationRule = registrationRule;
   }
+
+  public DataSeeder(ApplicationDbContext db)
+  {
+    _db = db;
+  }
   
   public async Task SeedReportTypes()
   {
@@ -35,13 +40,13 @@ public class DataSeeder
       {
         new ReportType()
         {
-          Name =  Reports.MismatchingSites,
+          Name =  Reports.ConflictingSites,
         },                new ReportType()
         {
-          Name =  Reports.MismatchingSiteName,
+          Name =  Reports.ConflictingSiteName,
         },                new ReportType()
         {
-          Name =  Reports.MismatchingSiteParent,
+          Name =  Reports.ConflictingSiteParent,
         },
       };
       foreach (var s in seedReportTypes)

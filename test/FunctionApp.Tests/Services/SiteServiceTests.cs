@@ -23,7 +23,7 @@ public class SiteServiceTests
         };
 
         // Act
-        var result = siteService.GetMissingIds(sites1, sites2);
+        var result = siteService.GetConflictingSites(sites1, sites2);
         
         // Assert
         Assert.Collection(result, report => Assert.Equal("2", report.SiteId));
@@ -48,7 +48,7 @@ public class SiteServiceTests
         };
 
         // Act
-        var result = siteService.GetDiffNames(sites1, sites2);
+        var result = siteService.GetConflictingNames(sites1, sites2);
 
         // Assert
         Assert.Collection(result,
@@ -81,7 +81,7 @@ public class SiteServiceTests
         };
     
         // Act
-        var result = siteService.GetDiffParentSiteId(sites1, sites2);
+        var result = siteService.GetConflictingParents(sites1, sites2);
     
         // Assert
         Assert.Collection(result,

@@ -11,7 +11,7 @@ public class SiteService
     /// <param name="sites1"></param>
     /// <param name="sites2"></param>
     /// <returns></returns>
-    public List<ReportModel> GetMissingIds(List<Site> sites1, List<Site> sites2)
+    public List<ReportModel> GetConflictingSites(List<Site> sites1, List<Site> sites2)
     {
         var missingSites = sites1
             .Where(s => sites2.All(site => site.SiteId != s.SiteId))
@@ -19,7 +19,7 @@ public class SiteService
             {
                 DateTime = DateTimeOffset.UtcNow,
                 Description = "",
-                ReportTypeModel = Reports.MismatchingSites,
+                ReportTypeModel = Reports.ConflictingSites,
                 SiteId = site.SiteId,
                 Instance = Instances.Uat,
                 ParentSiteId = site.ParentSiteId,
@@ -35,7 +35,7 @@ public class SiteService
     /// <param name="sites1"></param>
     /// <param name="sites2"></param>
     /// <returns>A list of Tuples of Reports</returns>
-    public List<(ReportModel, ReportModel)> GetDiffNames(List<Site> sites1, List<Site> sites2)
+    public List<(ReportModel, ReportModel)> GetConflictingNames(List<Site> sites1, List<Site> sites2)
     {
         var sitesWithDifferentNames = sites1
             .Join(sites2,
@@ -45,7 +45,7 @@ public class SiteService
                     {
                         DateTime = DateTimeOffset.UtcNow,
                         Description = "",
-                        ReportTypeModel = Reports.MismatchingSiteName,
+                        ReportTypeModel = Reports.ConflictingSiteName,
                         SiteId = site1.SiteId,
                         SiteName = site1.Name,
                         ParentSiteId = site1.ParentSiteId,
@@ -55,7 +55,7 @@ public class SiteService
                     {
                         DateTime = DateTimeOffset.UtcNow,
                         Description = "",
-                        ReportTypeModel = Reports.MismatchingSiteName,
+                        ReportTypeModel = Reports.ConflictingSiteName,
                         SiteId = site2.SiteId,
                         SiteName = site2.Name,
                         ParentSiteId = site1.ParentSiteId,
@@ -73,7 +73,7 @@ public class SiteService
     /// <param name="sites1"></param>
     /// <param name="sites2"></param>
     /// <returns>A list of Tuples of Reports</returns>
-    public List<(ReportModel, ReportModel)> GetDiffParentSiteId(List<Site> sites1, List<Site> sites2)
+    public List<(ReportModel, ReportModel)> GetConflictingParents(List<Site> sites1, List<Site> sites2)
     {
         // compare the parent of each site
         var sitesWithDifferentParentSiteId = sites1
@@ -83,7 +83,7 @@ public class SiteService
                 (site1, site2) => (report1: new ReportModel
                     {
                         DateTime = DateTimeOffset.UtcNow,
-                        ReportTypeModel = Reports.MismatchingSiteParent,
+                        ReportTypeModel = Reports.ConflictingSiteParent,
                         SiteId = site1.SiteId,
                         SiteName = site1.Name,
                         ParentSiteId = site1.ParentSiteId,
@@ -92,7 +92,7 @@ public class SiteService
                     report2: new ReportModel
                     {
                         DateTime = DateTimeOffset.UtcNow,
-                        ReportTypeModel = Reports.MismatchingSiteParent,
+                        ReportTypeModel = Reports.ConflictingSiteParent,
                         SiteId = site2.SiteId,
                         SiteName = site2.Name,
                         ParentSiteId = site2.ParentSiteId,
