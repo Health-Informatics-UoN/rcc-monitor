@@ -1,0 +1,24 @@
+.reports-table {
+  width: 80%;
+  border-collapse: collapse;
+  border: 1px solid #aeadad;
+  margin-top: 20px;
+}
+
+.reports-table th,
+.reports-table td {
+  border: 1px solid #aeadad;
+  padding: 8px;
+  text-align: left;
+}
+
+.reports-table th {
+  background-color: #e2dfdf;
+}
+
+.heading {
+  text-align: center;
+  font-size: 35px;
+  font-weight: bold;
+  margin-top: 10px;
+}

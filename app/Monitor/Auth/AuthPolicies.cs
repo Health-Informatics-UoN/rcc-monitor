@@ -8,7 +8,9 @@ public static class AuthPolicies
 {
   public static AuthorizationPolicy IsClientApp
     => new AuthorizationPolicyBuilder()
-        .RequireAssertion(IsSameHost)
+      .RequireAssertion(Temp)
+        // TODO: Fix when auth is reimplemented
+        // .RequireAssertion(IsSameHost)
         .Build();
 
   public static AuthorizationPolicy IsAuthenticatedUser
@@ -60,5 +62,11 @@ public static class AuthPolicies
       var requestHost = $"{request!.Scheme}://{request!.Host.Host}";
 
       return requestHost == referringHost;
+    };
+
+  private static readonly Func<AuthorizationHandlerContext, bool> Temp =
+    context =>
+    {
+      return true;
     };
 }

@@ -62,6 +62,16 @@ b.Services
 
 b.Services.AddSwaggerGen();
 
+//TODO: Configure CORS for client app only
+b.Services.AddCors(options =>
+{
+  options.AddPolicy("AllowClientApp",
+    builder =>
+      builder.AllowAnyOrigin()
+        .AllowAnyMethod()
+  );
+});
+
 #endregion
 
 var app = b.Build();
@@ -105,6 +115,7 @@ app.UseStaticFiles();
 app.UseVersion();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors("AllowClientApp");
 #endregion
 
 #region Endpoint Routing

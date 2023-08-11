@@ -17,8 +17,9 @@ public class ReportsController : ControllerBase
     {
         _reportService = reportService;
     }
-
-    [Authorize(nameof(AuthPolicies.CanAccessReports))]
+    
+    // TODO: Fix when auth is reimplemented
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());
