@@ -13,22 +13,37 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
         _fixture = fixture;
     }
 
+    /// <summary>
+    /// Test that given pre-existing conflicts, no new duplicated conflicts are returned.
+    /// </summary>
     [Fact]
     public void TestUpdateExistingConflicts_WithResolvedConflictedNames()
     {
         // Arrange
         var reportService = new ReportService(_fixture.DbContext);
 
-        var redCapConflicts = new List<(ReportModel, ReportModel?)>
+        var redCapConflicts = new List<ReportModel>
         {
-            (new ReportModel { SiteName = "SiteA", SiteId = "123", Instance = Instances.Uat }, null),
-            (new ReportModel { SiteName = "SiteB", SiteId = "123", Instance = Instances.Production }, null),
+            new()
+            {
+                Sites = new List<SiteModel>
+                {
+                    new() { SiteName = "SiteA", SiteId = "123", Instance = Instances.Uat },
+                    new() { SiteName = "SiteB", SiteId = "123", Instance = Instances.Production },
+                }
+            }
         };
-        
+
         var mockActiveReports = new List<ReportModel>
         {
-            new() { SiteName = "SiteA", SiteId = "123", Instance = Instances.Uat },
-            new() { SiteName = "SiteB", SiteId = "123", Instance = Instances.Production }
+            new()
+            {
+                Sites = new List<SiteModel>
+                {
+                    new() { SiteName = "SiteA", SiteId = "123", Instance = Instances.Uat },
+                    new() { SiteName = "SiteB", SiteId = "123", Instance = Instances.Production },
+                }
+            }
         };
         
         // Act
@@ -38,6 +53,9 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
         Assert.Empty(newConflicts);
     }
     
+    /// <summary>
+    /// Test new conflicts are identified if they do not exist in the DB.
+    /// </summary>
     [Fact]
     public async Task TestUpdateExistingConflicts_WithUnresolvedConflictedNames()
     {
@@ -45,15 +63,31 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
         var reportService = new ReportService(_fixture.DbContext);
         await _fixture.SeedTestData();
     
-        var redCapConflicts = new List<(ReportModel, ReportModel?)>
+        var redCapConflicts = new List<ReportModel>
         {
-            (new ReportModel { SiteName = "Site D", SiteId = "456", Instance = Instances.Production }, null),
+            new()
+            {
+                Sites = new List<SiteModel>
+                {
+                    new() { SiteName = "SiteD", SiteId = "123", Instance = Instances.Uat },
+                    new() { SiteName = "SiteE", SiteId = "123", Instance = Instances.Production },
+                }
+            }
         };
         
         // Add report models in DB.
         var mockActiveReports = new List<ReportModel>
         {
-            new() { SiteName = "SiteA", SiteId = "123", Instance = Instances.Uat, ReportTypeModel = Reports.ConflictingSites, Status = Status.Active },
+            new()
+            {
+                ReportTypeModel = Reports.ConflictingSiteName,
+                Status = Status.Active,
+                Sites = new List<SiteModel>
+                {
+                    new() { SiteName = "SiteA", SiteId = "456", Instance = Instances.Uat },
+                    new() { SiteName = "SiteB", SiteId = "456", Instance = Instances.Production },
+                }
+            }
         };
         foreach (var report in mockActiveReports)
         {
@@ -67,13 +101,16 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
         
         // Assert
         Assert.Single(result);
-        Assert.Collection(result, tuple =>
+        Assert.Collection(result, report =>
         {
-            Assert.Equal("456", tuple.Item1.SiteId);
-            Assert.Equal("Site D", tuple.Item1.SiteName);
+            Assert.Equal("123", report.Sites[0].SiteId);
+            Assert.Equal("SiteD", report.Sites[0].SiteName);
         });
     }
-
+    
+    /// <summary>
+    /// Test that we retrieve only Reports that are "active".
+    /// </summary>
     [Fact]
     public async Task TestGetActiveReports()
     {
@@ -84,9 +121,9 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
         // Add report models in DB.
         var mockActiveReports = new List<ReportModel>
         {
-            new() { SiteName = "SiteA", SiteId = "123", Instance = Instances.Production, ReportTypeModel = Reports.ConflictingSites, Status = Status.Active },
-            new() { SiteName = "SiteB", SiteId = "456", Instance = Instances.Production, ReportTypeModel = Reports.ConflictingSiteName, Status = Status.Active },
-            new() { SiteName = "SiteC", SiteId = "789", Instance = Instances.Production, ReportTypeModel = Reports.ConflictingSiteParent, Status = Status.Resolved }
+            new() { ReportTypeModel = Reports.ConflictingSites, Status = Status.Active },
+            new() { ReportTypeModel = Reports.ConflictingSiteName, Status = Status.Active },
+            new() { ReportTypeModel = Reports.ConflictingSiteParent, Status = Status.Resolved }
         };
         foreach (var report in mockActiveReports)
         {
@@ -98,7 +135,6 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
         
         // Assert
         Assert.Single(result);
-        Assert.Collection(result, model => {Assert.Equal("SiteA",model.SiteName);});
     }
     
 

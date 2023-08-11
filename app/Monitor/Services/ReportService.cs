@@ -29,15 +29,14 @@ public class ReportService
         var entity = await _db.Reports
             .Include(x => x.ReportType)
             .Include(x => x.Status)
-            .Include(x => x.Instance)
+            .Include(x => x.Sites)
+            .ThenInclude(y => y.Instance)
             .ToListAsync();
 
         var result = entity.Select(x => new ReportModel
         {
             Id = x.Id,
             DateTime = x.DateTime,
-            SiteName = x.SiteName,
-            SiteId = x.SiteId,
             Description = x.Description,
             ReportType = new ReportTypeModel
             {
@@ -48,11 +47,6 @@ public class ReportService
             {
                 Id = x.Status.Id,
                 Name = x.Status.Name
-            },
-            Instance = new InstanceModel
-            {
-                Id = x.Instance.Id,
-                Name = x.Instance.Name
             }
         });
 

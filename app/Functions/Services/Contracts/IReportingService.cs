@@ -28,17 +28,6 @@ public interface IReportingService
     /// update conflicts that already exist in the database,
     /// return conflicts that do not exist.
     /// </summary>
-    /// <param name="redCapConflicts">A list tuples of of conflicts.</param>
-    /// <param name="reportType">The type of report to update.</param>
-    /// <returns>A list of tuples of reports that do not exist in the database, so are new conflicts.</returns>
-    public List<(ReportModel, ReportModel)> ResolveConflicts(
-        List<(ReportModel report, ReportModel?)> redCapConflicts, string reportType);
-
-    /// <summary>
-    /// Resolves conflicts by:
-    /// update conflicts that already exist in the database,
-    /// return conflicts that do not exist.
-    /// </summary>
     /// <param name="redCapConflicts">A list of conflicts.</param>
     /// <param name="reportType">The type of report to update.</param>
     /// <returns>A list of reports that do not exist in the database, so are new conflicts.</returns>
@@ -49,9 +38,8 @@ public interface IReportingService
     /// update conflicts that already exist in the database,
     /// return conflicts that do not exist.
     /// </summary>
-    /// <param name="redCapConflicts">List of tuple of reports to check.</param>
+    /// <param name="redCapConflicts">List of reports to check.</param>
     /// <param name="existingConflicts">List of existing reports in the database.</param>
     /// <returns>A list of reports that do not exist in the database, so are new conflicts.</returns>
-    public List<(ReportModel, ReportModel)> UpdateExistingConflicts(List<(ReportModel, ReportModel?)> redCapConflicts,
-        List<ReportModel> existingConflicts);
+    public List<ReportModel> UpdateExistingConflicts(List<ReportModel> redCapConflicts, List<ReportModel> existingConflicts);
 }

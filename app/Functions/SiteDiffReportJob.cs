@@ -36,17 +36,13 @@ public class SiteDiffReportJob
         // Fetch data
         var UATSites = await _redCapSitesService.ListDetail(_siteOptions.UATUrl, _siteOptions.UATKey);
         var prodSites = await _redCapSitesService.ListDetail(_siteOptions.ProductionUrl, _siteOptions.ProductionKey);
-
-        // For testing!
-        UATSites[0].Name = "X";
         
         // Sites with different names
         var redCapConflictingNames = _siteService.GetConflictingNames(UATSites, prodSites);
         var newNameConflicts = _reportingService.ResolveConflicts(redCapConflictingNames, Reports.ConflictingSiteName);
         foreach (var report in newNameConflicts)
         {
-            _reportingService.Create(report.Item1);
-            _reportingService.Create(report.Item2);
+            _reportingService.Create(report);
         }
 
         // Sites missing from production
@@ -63,8 +59,7 @@ public class SiteDiffReportJob
             _reportingService.ResolveConflicts(conflictingSiteParents, Reports.ConflictingSiteParent);
         foreach (var report in newSiteParentConflicts)
         {
-            _reportingService.Create(report.Item1);
-            _reportingService.Create(report.Item2);
+            _reportingService.Create(report);
         }
     }
 }

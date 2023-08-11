@@ -23,10 +23,10 @@ public class SiteServiceTests
         };
 
         // Act
-        var result = siteService.GetConflictingSites(sites1, sites2);
+        var result = SiteService.GetConflictingSites(sites1, sites2);
         
         // Assert
-        Assert.Collection(result, report => Assert.Equal("2", report.SiteId));
+        Assert.Collection(result, report => Assert.Equal("2", report.Sites[0].SiteId));
     }
     
     [Fact]
@@ -48,16 +48,16 @@ public class SiteServiceTests
         };
 
         // Act
-        var result = siteService.GetConflictingNames(sites1, sites2);
+        var result = SiteService.GetConflictingNames(sites1, sites2);
 
         // Assert
         Assert.Collection(result,
-            tuple =>
+            report =>
             {
-                Assert.Equal("2", tuple.Item1.SiteId);
-                Assert.Equal("Site B", tuple.Item1.SiteName);
-                Assert.Equal("2", tuple.Item2.SiteId);
-                Assert.Equal("Site X", tuple.Item2.SiteName);
+                Assert.Equal("2", report.Sites[0].SiteId);
+                Assert.Equal("Site B", report.Sites[0].SiteName);
+                Assert.Equal("2", report.Sites[1].SiteId);
+                Assert.Equal("Site X", report.Sites[1].SiteName);
             }
         );
     }
@@ -85,12 +85,12 @@ public class SiteServiceTests
     
         // Assert
         Assert.Collection(result,
-            tuple =>
+            report =>
             {
-                Assert.Equal("2", tuple.Item1.SiteId);
-                Assert.Equal(1, tuple.Item1.ParentSiteId);
-                Assert.Equal("2", tuple.Item2.SiteId);
-                Assert.Equal(3, tuple.Item2.ParentSiteId);
+                Assert.Equal("2", report.Sites[0].SiteId);
+                Assert.Equal("1", report.Sites[0].ParentSiteId);
+                Assert.Equal("2", report.Sites[1].SiteId);
+                Assert.Equal("3", report.Sites[1].ParentSiteId);
             }
         );
     }

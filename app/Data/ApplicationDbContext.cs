@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ReportType> ReportTypes => Set<ReportType>();
     public DbSet<Instance> Instances => Set<Instance>();
     public DbSet<ReportStatus> ReportStatus  => Set<ReportStatus>();
+    public DbSet<Site> Sites  => Set<Site>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

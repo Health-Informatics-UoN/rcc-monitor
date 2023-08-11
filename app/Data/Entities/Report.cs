@@ -4,10 +4,8 @@ public class Report
 {
     public int Id { get; set; }
     public DateTimeOffset DateTime { get; set; }
-    public string SiteName { get; set; } = string.Empty;
-    public string SiteId { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public ReportType ReportType { get; set; } = new();
-    public Instance Instance { get; set; } = new();
     public ReportStatus Status { get; set; } = new();
+    public ICollection<Site> Sites { get; set; } = new List<Site>();
 }
