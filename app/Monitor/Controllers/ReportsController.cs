@@ -24,27 +24,14 @@ public class ReportsController : ControllerBase
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());
 
-    [Authorize(nameof(AuthPolicies.CanAccessReports))]
-    [HttpPost("conflicting-site")]
-    public async Task<IActionResult> ConflictingSite(List<ReportModel> reports)
+    // [Authorize(nameof(AuthPolicies.CanAccessReports))]
+    // TODO: Fix when auth is reimplemented
+    [AllowAnonymous]
+    [HttpPost("SendSummary")]
+    public async Task<ActionResult<List<ReportModel>>> SendSummary()
     {
-        await _reportService.ConflictingSiteTriggerReport(reports);
+        await _reportService.SendSummary();
         return NoContent();
     }
     
-    [Authorize(nameof(AuthPolicies.CanAccessReports))]
-    [HttpPost("conflicting-site-name")]
-    public async Task<IActionResult> ConflictingSiteName(List<(ReportModel, ReportModel)> reports)
-    {
-        await _reportService.ConflictingSiteNameTriggerReport(reports);
-        return NoContent();
-    }
-    
-    [Authorize(nameof(AuthPolicies.CanAccessReports))]
-    [HttpPost("conflicting-site-parent")]
-    public async Task<IActionResult> ConflictingSiteParent(List<(ReportModel, ReportModel)> reports)
-    {
-        await _reportService.ConflictingSiteParentTriggerReport(reports);
-        return NoContent();
-    }
 }

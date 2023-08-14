@@ -1,3 +1,4 @@
+using Data.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Monitor.Config;
@@ -47,39 +48,49 @@ public class ReportService
             {
                 Id = x.Status.Id,
                 Name = x.Status.Name
-            }
-        });
+            },
+            Sites = x.Sites.Select(y => new SiteModel
+            {
+                Id = y.Id,
+                SiteId = y.SiteId,
+                SiteName = y.SiteName,
+                Instance = y.Instance.Name,  
+                ParentSiteId = y.ParentSiteId,
+            }).ToList()
+        }).ToList();
 
         return result;
     }
 
-    public async Task ConflictingSiteTriggerReport(List<ReportModel> reports)
+    public async Task<IEnumerable<InstanceModel>> ListInstances()
     {
-        var to = new EmailAddress(_siteConfig.ToAddress);
-
-        await _emailSender.SendEmail(
-            to,
-            "Emails/SiteIdComparison",
-            new AlertOnConflictingSites(reports));
+        var entity = await _db.Instances.ToListAsync();
+        return entity.Select(x => new InstanceModel
+        {
+            Id = x.Id,
+            Name = x.Name
+        });
     }
 
-    public async Task ConflictingSiteNameTriggerReport(List<(ReportModel, ReportModel)> reports)
+    /// <summary>
+    /// Sends a summary email of the Redcap reports.
+    /// </summary>
+    public async Task SendSummary()
     {
         var to = new EmailAddress(_siteConfig.ToAddress);
 
-        await _emailSender.SendEmail(
-            to,
-            "Emails/SiteNameComparison",
-            new AlertOnConflictingSiteName(reports));
+        var reports = await List();
+        var instances = await ListInstances();
+        var activeReports  = reports.Where(x => x.Status.Name == Status.Active).ToList();
+
+        // Build the report types.
+        var conflictingSites = activeReports.Where(x => x.ReportType.Name == Reports.ConflictingSites).ToList();
+        var conflictingNames = activeReports.Where(x => x.ReportType.Name == Reports.ConflictingSiteName).ToList();
+        var conflictingParents = activeReports.Where(x => x.ReportType.Name == Reports.ConflictingSiteParent).ToList();
+
+        if (activeReports.Any())
+            await _emailSender.SendEmail(to, "Emails/SummaryReport",
+                new SummaryReport(conflictingSites, conflictingNames, conflictingParents, instances.ToList()));
     }
     
-    public async Task ConflictingSiteParentTriggerReport(List<(ReportModel, ReportModel)> reports)
-    {
-        var to = new EmailAddress(_siteConfig.ToAddress);
-
-        await _emailSender.SendEmail(
-            to,
-            "Emails/SiteParentReport",
-            new AlertOnConflictingSiteParent(reports));
-    }
 }

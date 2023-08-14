@@ -1,0 +1,116 @@
+@model SummaryReport
+
+@{
+    ViewBag.Subject = "RedCap Health Monitor Summary";
+    ViewBag.Heading = "Site Conflicts";
+    ViewBag.Instance1 = Model.Instances[0].Name;
+    ViewBag.Instance2 = Model.Instances[2].Name;
+}
+
+<p>Dear Admin,</p>
+
+<p>This email is your RedCap health monitor, these are the current warnings:</p>
+
+@if (Model.ConflictingSites.Any())
+{
+    <strong>Conflicting Site Ids</strong>
+    <p>
+        These sites are missing in @ViewBag.Instance2, as they are present in @ViewBag.Instance1. If they are attached to a study in @ViewBag.Instance1, you will not be able to deploy that study to @ViewBag.Instance2.
+        
+        <table>
+            <thead>
+            <tr>
+                <th>Time Occurred</th>
+                <th>Status</th>
+                <th>Site Id</th>
+                <th>Site Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var report in Model.ConflictingSites)
+            {
+                <tr>
+                    <td>@report.DateTime</td>
+                    <td>@report.Status.Name</td>
+                    <td>@report.Sites[0].SiteId</td>
+                    <td>@report.Sites[0].SiteName</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </p>
+}
+
+
+@if (Model.ConflictingNames.Any())
+{
+    <p>
+        <strong>Conflicting Site Names</strong>
+        
+        These sites have different names in each instance, but the same Global Site Id. This could result in studies being deploy to incorrect sites.
+        
+        <table>
+            <thead>
+            <tr>
+                <th>Time Occurred</th>
+                <th>Status</th>
+                <th>Site Id</th>
+                <th>@ViewBag.Instance1: Name</th>
+                <th>@ViewBag.Instance2: Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var report in Model.ConflictingNames)
+            {
+                <tr>
+                    <td>@report.DateTime</td>
+                    <td>@report.Status.Name</td>
+                    <td>@report.Sites[0].SiteId</td>
+                    <td>@report.Sites[0].SiteName</td>
+                    <td>@report.Sites[1].SiteName</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </p>
+}
+
+@if (Model.ConflictingParents.Any())
+{
+    <p>
+        <strong>Conflicting Site Parent Ids</strong>
+        
+        These sites have different "Parents" in each instance. If they are attached to a study in @ViewBag.Instance1, you will not be able to deploy that study to @ViewBag.Instance2.
+        
+        <table>
+            <thead>
+            <tr>
+                <th>Time Occurred</th>
+                <th>Status</th>
+                <th>Site Id</th>
+                <th>@ViewBag.Instance1: Parent Site ID</th>
+                <th>@ViewBag.Instance2: Parent Site ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var report in Model.ConflictingParents)
+            {
+                <tr>
+                    <td>@report.DateTime</td>
+                    <td>@report.Status.Name</td>
+                    <td>@report.Sites[0].SiteId</td>
+                    <td>@report.Sites[0].ParentSiteId</td>
+                    <td>@report.Sites[1].ParentSiteId</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </p>
+    
+}
+
+<p>Please log in to RedCap and adjust these in order to resolve the issue.</p>
+
+<p>Thanks,</p>
+
+<p>&lt;SystemName&gt;</p>

@@ -23,7 +23,7 @@ public class SiteServiceTests
         };
 
         // Act
-        var result = SiteService.GetConflictingSites(sites1, sites2);
+        var result = siteService.GetConflictingSites(sites1, sites2);
         
         // Assert
         Assert.Collection(result, report => Assert.Equal("2", report.Sites[0].SiteId));
@@ -48,7 +48,7 @@ public class SiteServiceTests
         };
 
         // Act
-        var result = SiteService.GetConflictingNames(sites1, sites2);
+        var result = siteService.GetConflictingNames(sites1, sites2);
 
         // Assert
         Assert.Collection(result,
