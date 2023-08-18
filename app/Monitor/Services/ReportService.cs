@@ -31,7 +31,8 @@ public class ReportService
             .Include(x => x.ReportType)
             .Include(x => x.Status)
             .Include(x => x.Sites)
-            .ThenInclude(y => y.Instance)
+                .ThenInclude(y => y.Instance)
+            .OrderByDescending(x => x.DateTime)
             .ToListAsync();
 
         var result = entity.Select(x => new ReportModel

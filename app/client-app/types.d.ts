@@ -1,11 +1,11 @@
 type ReportType = {
   id: number;
-  name: string;
+  name: "ConflictingSite" | "ConflictingSiteName" | "ConflictingSiteParent";
 };
 
 type Status = {
   id: number;
-  name: string;
+  name: "Resolved" | "Viewed" | "Active";
 };
 
 type Instance = {
@@ -13,13 +13,19 @@ type Instance = {
   name: string;
 };
 
+type Site = {
+  siteName: string;
+  siteId: string;
+  instance: string;
+  parentSiteId: string;
+};
+
 type ReportModel = {
   id: number;
   dateTime: Date;
-  siteName: string;
-  siteId: string;
   description: string;
   reportType: ReportType;
-  instance: Instance;
   status: Status;
+  sites: Site[];
 };
+
