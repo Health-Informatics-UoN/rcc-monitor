@@ -75,3 +75,15 @@ OutboundEmail:
     AllowList: [] # String array containing email/domain that are allowed to register. Example ["@example.com", "allow@example1.com"]
     BlockList: [] # String array containing email/domain that are blocked from registration. Example ["block@example.com", "@example1.com"]
 ```
+
+The app frontend can be configured similarly using Azure Portal (Environment variables), or locally using a `.env.local` file.
+
+```bash
+API_URL=https://localhost:7007
+NODE_TLS_REJECT_UNAUTHORIZED='0'
+KEYCLOAK_ID=frontend
+KEYCLOAK_SECRET=l0ruWXoSTTPs7lp7Vpuv2N0ivTEYphxq
+KEYCLOACK_ISSUER=http://localhost:9080/realms/nuh
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=changeme
+```
