@@ -27,6 +27,6 @@ export const LogoutButton = () => {
   );
 };
 
-export const ProfileButton = () => {
-  return <Link href="/profile">Profile</Link>;
+export const ProfileButton = ({ user }: {user? : string | null }) => {
+  return <Link href="/profile">{user}</Link>;
 };

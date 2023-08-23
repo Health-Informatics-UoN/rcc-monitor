@@ -15,18 +15,18 @@ const NavButton = ({ children, to }: NavButtonType) => {
 
 export default async function Navbar() {
   const session = await getServerSession(options)
+  const username = session?.user?.name;
+
   return (
     <nav className="navbar">
       <div className="logo">NUH Collaboration</div>
       <div className="nav-menu">
         <NavButton to="/">Home</NavButton>
         <NavButton to="/reports">Reports</NavButton>
-        {JSON.stringify(session)}
+
         <div>
-          <LoginButton />
-          <RegisterButton />
-          <LogoutButton />
-          <ProfileButton />
+          {session ? <LogoutButton /> : <LoginButton />}
+          {session && <ProfileButton user={username} />}
         </div>
       </div>
     </nav>
