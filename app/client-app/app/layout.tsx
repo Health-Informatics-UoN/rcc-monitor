@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/components/auth-provider";
 import "@/styles/globals.css";
 
 export default function RootLayout({
@@ -8,13 +9,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider>
-          <Navbar />
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+    <AuthProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body>
+          <ThemeProvider>
+            <Navbar />
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </AuthProvider>
   );
 }
