@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { AuthProvider } from "@/components/auth-provider";
+import { AuthProvider } from "@/auth/components/auth-provider";
 import "@/styles/globals.css";
 
 export default function RootLayout({
