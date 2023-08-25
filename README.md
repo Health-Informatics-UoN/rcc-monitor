@@ -33,6 +33,12 @@ The easiest way is using the dotnet cli:
 - The above runs against the default local server, using the connection string in `appsettings.Development.json`
 - You can specify a connection string with the `--connection "<connection string>"` option
 
+## Authentication setup
+
+We use Keycloak for authentication, and the service runs as part of the `docker-compose`.
+
+When setting up a new environment, you need to import the Keycloak realm, found in `keycloak/keycloak-realm.json`. This realm contains a client application for the Nextjs client currently.  
+
 ## 📁 Repository contents
 
 Areas within this repo include:
