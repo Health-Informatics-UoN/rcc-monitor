@@ -1,7 +1,7 @@
 import "@/styles/navbar.css";
 import Link from "next/link";
 import { NavButtonType } from "@/types/navbar";
-import { LoginButton, RegisterButton, LogoutButton, ProfileButton  } from "@/auth/components/user-auth";
+import { LoginButton, LogoutButton  } from "@/auth/components/user-auth";
 import { getServerSession } from "next-auth";
 import { options } from "@/auth/options";
 
@@ -15,7 +15,6 @@ const NavButton = ({ children, to }: NavButtonType) => {
 
 export default async function Navbar() {
   const session = await getServerSession(options)
-  const username = session?.user?.name;
 
   return (
     <nav className="navbar">
@@ -26,7 +25,6 @@ export default async function Navbar() {
 
         <div>
           {session ? <LogoutButton /> : <LoginButton />}
-          {session && <ProfileButton user={username} />}
         </div>
       </div>
     </nav>
