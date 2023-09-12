@@ -43,12 +43,12 @@ b.Services
 b.Services.AddKeycloakAuthentication(b.Configuration);
 
 // Identity
-b.Services
-  .AddIdentity<ApplicationUser, IdentityRole>(
-    o => o.SignIn.RequireConfirmedEmail = true)
-  .AddClaimsPrincipalFactory<CustomClaimsPrincipalFactory>()
-  .AddEntityFrameworkStores<ApplicationDbContext>()
-  .AddDefaultTokenProviders();
+// b.Services
+//   .AddIdentity<ApplicationUser, IdentityRole>(
+//     o => o.SignIn.RequireConfirmedEmail = true)
+//   .AddClaimsPrincipalFactory<CustomClaimsPrincipalFactory>()
+//   .AddEntityFrameworkStores<ApplicationDbContext>()
+//   .AddDefaultTokenProviders();
 
 b.Services
   .AddApplicationInsightsTelemetry()
