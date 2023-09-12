@@ -1,4 +1,5 @@
 using ClacksMiddleware.Extensions;
+using Keycloak.AuthServices.Authentication;
 using Monitor.Extensions;
 
 using Microsoft.AspNetCore.Identity;
@@ -38,6 +39,8 @@ b.Services
         o.UseNpgsql(connectionString,
           o => o.EnableRetryOnFailure());
     });
+
+b.Services.AddKeycloakAuthentication(b.Configuration);
 
 // Identity
 b.Services

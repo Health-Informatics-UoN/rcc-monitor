@@ -16,6 +16,7 @@
     <ItemGroup>
         <PackageReference Include="ClacksMiddlware" Version="2.1.0" />
         <PackageReference Include="Flurl" Version="3.0.7" />
+        <PackageReference Include="Keycloak.AuthServices.Authentication" Version="1.5.2" />
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
         <PackageReference Include="Microsoft.AspNet.Cors" Version="5.3.0-preview1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.9" />
