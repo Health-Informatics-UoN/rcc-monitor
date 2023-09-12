@@ -1,1 +1,1 @@
-export const url = process.env.LOCAL_HOST_URL;
+export const url = process.env.BACKEND_URL;
