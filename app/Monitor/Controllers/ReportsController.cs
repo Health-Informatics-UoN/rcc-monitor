@@ -20,7 +20,7 @@ public class ReportsController : ControllerBase
     
     // TODO: Fix when auth is reimplemented
     // [AllowAnonymous]
-    // [Authorize(Policy=nameof(AuthPolicies.CanAccessReports))]
+    [Authorize(nameof(AuthPolicies.CanAccessReports))]
     [HttpGet]
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());
