@@ -8,7 +8,7 @@ namespace Monitor.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+// [Authorize]
 public class ReportsController : ControllerBase
 {
     private readonly ReportService _reportService;
@@ -19,7 +19,8 @@ public class ReportsController : ControllerBase
     }
     
     // TODO: Fix when auth is reimplemented
-    [AllowAnonymous]
+    // [AllowAnonymous]
+    // [Authorize(Policy=nameof(AuthPolicies.CanAccessReports))]
     [HttpGet]
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());

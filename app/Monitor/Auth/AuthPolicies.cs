@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 
 using System.Text.RegularExpressions;
+using Keycloak.AuthServices.Authorization;
 
 namespace Monitor.Auth;
 
@@ -27,8 +28,9 @@ public static class AuthPolicies
   
   public static AuthorizationPolicy CanAccessReports
     => new AuthorizationPolicyBuilder()
+      .RequireRealmRoles(SitePermissionClaims.AccessReports)
       .Combine(IsAuthenticatedUser)
-      .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.AccessReports)
+      // .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.AccessReports)
       .Build();
   
   public static AuthorizationPolicy CanInviteUsers

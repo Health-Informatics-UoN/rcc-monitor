@@ -1,5 +1,6 @@
 using ClacksMiddleware.Extensions;
 using Keycloak.AuthServices.Authentication;
+using Keycloak.AuthServices.Authorization;
 using Monitor.Extensions;
 
 using Microsoft.AspNetCore.Identity;
@@ -43,12 +44,12 @@ b.Services
 b.Services.AddKeycloakAuthentication(b.Configuration);
 
 // Identity
-// b.Services
-//   .AddIdentity<ApplicationUser, IdentityRole>(
-//     o => o.SignIn.RequireConfirmedEmail = true)
-//   .AddClaimsPrincipalFactory<CustomClaimsPrincipalFactory>()
-//   .AddEntityFrameworkStores<ApplicationDbContext>()
-//   .AddDefaultTokenProviders();
+b.Services
+  .AddIdentity<ApplicationUser, IdentityRole>(
+    o => o.SignIn.RequireConfirmedEmail = true)
+  .AddClaimsPrincipalFactory<CustomClaimsPrincipalFactory>()
+  .AddEntityFrameworkStores<ApplicationDbContext>()
+  .AddDefaultTokenProviders();
 
 b.Services
   .AddApplicationInsightsTelemetry()
@@ -63,6 +64,7 @@ b.Services
   .AddTransient<RegistrationRuleService>()
   .AddTransient<ReportService>();
 
+b.Services.AddKeycloakAuthorization(b.Configuration);
 b.Services.AddSwaggerGen();
 
 //TODO: Configure CORS for client app only
