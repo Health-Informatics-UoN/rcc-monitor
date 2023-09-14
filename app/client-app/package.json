@@ -6,7 +6,8 @@
     "prepare": "panda codegen",
     "dev": "rm -rf .next && next dev",
     "build": "next build",
-    "start": "next start",
+    "localStart": "next start",
+    "start": "node server.js",
     "lint": "next lint"
   },
   "dependencies": {

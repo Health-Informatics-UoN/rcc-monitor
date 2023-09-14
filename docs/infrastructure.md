@@ -1,0 +1,330 @@
+Deployments ensuring consistent Azure Resource environments are managed through ARM Templates / Bicep files.
+
+Here are some notes on our ARM setup.
+
+# Bicep?
+
+We use Bicep cos nobody (not even Microsoft) likes raw ARM templates.
+
+You don't need anything special to use them; just the Azure CLI.
+
+If writing them, you will want the VS code Bicep extension.
+
+# Bicep structure in this repo
+
+We structure our Bicep files in composed layers.
+
+## Modules
+
+- `components` are the bottom layer.
+  - These are largely not specific to the repo and aim to be fairly general ways of deploying at least one top-level resource e.g.
+    - an App Service Plan
+    - a web app App Service + associated App Insights
+  - They might feature repo-specific constraints e.g. around SKUs or other platform decisions
+    - e.g. In this repo we don't provide the option for Windows App Service Plans because we'll never need them.
+    - the Web App Service component module defaults to the .NET runtime, which suits our team 90% of the time.
+- `config` modules are also at the bottom, but differ from components in that they don't deploy top-level resources; rather intended to modify child resources e.g.
+  - An App Service would be deployed by a `component` module
+    - it might do _some_ configuration as part of the same deployment
+  - A `config` module could be used to apply App Settings or Connection Strings configuration to that App Service after its deployment
+    - This is sometimes necessary
+    - e.g. If the configuration references Key Vault secrets, the App Service has to exist before it can be granted Key Vault access, which has to be complete before you can link the settings to the secrets in the vault.
+- `stack` modules are the top layer of modules
+  - Ideally you should only need one, that represents the complete resource stack for the repo - e.g. `main.bicep`
+  - This should compose `component` and `config` modules to build a whole stack out of possibly shared resources, and environment specific resources
+  - It should be service / environment agnostic and configurable to a specific environment via parameters
+  - It is also however highly project specific, and can do any configuration that is common between environments.
+
+## Parameters
+
+Configuring the `stack` modules for an environment consists of passing parameters specific to the environment.
+
+The parameters for an environment are contained in `.bicepparam` files.
+
+Currently in this repo, environments also load common service settings from a `base.appsettings.yaml` for the service (e.g. `monitor`).
+
+In future these will be turned into a base service `.bicepparam` that the environment specific one imports / inherits from.
+
+## Examples
+
+So, the practical effects of this structure, working back down the layers from the top:
+
+- to stand up the `nuh uat` environment:
+  - just run `./main.bicep -p @monitor/uat.bicepparam` and it takes care of everything.
+- to change `monitor uat` specific config:
+  - edit `./monitor/uat.bicepparam`
+- to change common App Settings for all environments:
+  - `./monitor/base.appsettings.yaml`
+- If you want to change resources that make up the application stack for any environment, including common config values:
+  - edit `./main.bicep`
+- If you want to change the actual resources being deployed,
+  - edit `./config/*.bicep` or `./components/*.bicep` as desired.
+
+# Step by step deploy an environment
+
+Not everything is done by ARM (see below for details), so here is a list of steps for setting up a RedCap Monitor environment, including the manual bits:
+
+## Prerequisites
+
+1. Create SQL resources if necessary. See [Databases](#databases) below.
+1. Optional Custom Hostname configuration
+   - If you pass a custom hostname to an ARM Template, it _will_ do a cursory check of your DNS settings
+   - so you need to set an `asuid` subdomain TXT record to point to your Azure subscription. This is well documented by Microsoft.
+1. Decide on a suitable resource group for the environment.
+   - The bicep files here share some resources at a resource group level
+   - for example, a `non-prod` resource group could have several non production environments for several clients all share the same elastic search server and app service plan.
+1. Create the resource group if necessary
+   - give it a sensible name e.g. `biobanks-nonprod`
+   - Make the location the same as you want the resources to be, ideally. e.g. `uksouth`
+1. Create a SendGrid account?
+   - validate it
+   - create an api key
+   - see [**SendGrid**](#sendgrid) below
+1. Create Key Vaults
+   - To store secrets that will be used during deployment to configure resources
+     - e.g. DB Connection string, Sendgrid API keys, Recaptcha secrets...
+   - If you created a new shared Resource Group above, create a matching Key Vault for any shared secrets.
+     - name it `<resource-group-name>-kv` e.g. `monitor-uat`
+   - Create a Key Vault for the specific environment you're deploying
+     - name it `<service/client>-<env>-kv` e.g. `monitor-uat`
+1. Populate Environment Key Vault with App Secrets
+   - You **must** put in secrets that are expected by app settings configured by the templates else they will not be correctly linked
+   - Required Secrets are documented in the [**Key Vault**](#key-vault) section below
+
+## Deploy Environment
+
+Deploy the bicep file for the environment.
+
+If using Elastic Cloud, specify the url. This will prevent Bicep from creating an Elastic Search VM, and set the appropriate configuration for the Cloud instance.
+
+(Your params files for existing environments may already do this)
+
+### Azure CLI example
+
+```bash
+az deployment group create \
+  -n nuh-dev-20230910 \
+  -f main.bicep \
+  -g monitor-uat \
+  -p @monitor/uat.bicepparam
+```
+
+It's good practice to name a deployment using `-n`, otherwise the name of the template file (e.g. `main`) will be used.
+
+Specify desired optional parameters using `--parameters | -p` or a Parameters File.
+
+Fill out requested parameters (if any) the same way as optional, or wait to be prompted.
+
+### VS Code example
+
+Using the VS Code Bicep extension:
+
+1. Right click `main.bicep` and choose `Deploy Bicep File...`
+1. Sign into Azure if necessary
+1. Name the deployment
+1. Select subscription, RG, parameter file
+
+### Notes / Examples
+
+- All deployments are scoped to a single target resource group; no subscription level deployments.
+  - You **MUST** specify the target resource group.
+    - example: `-g monitor-uat`
+  - Double check to ensure it's correct for the environment params you're using!
+
+```bash
+# ✅
+az deployment group create \
+  -n nuh-prod-20230619 \
+  -f main.bicep \
+  -g nuh-prod \
+  -p @monitor/prod.bicepparam
+
+# ✅
+az deployment group create \
+  -n nuh-uat-20230619 \
+  -f main.bicep \
+  -g nuh-nonprod \
+  -p @monitor/uat.bicepparam
+
+# ❌
+az deployment group create \
+  -n nuh-uat-20230619 \
+  -f main.bicep \
+  -g nuh-prod \
+  -p @monitor/dev.bicepparam
+```
+
+- If you want resources in a different location than the target resource group:
+  - specify the value of the optional `location` parameter
+  - example: `-p location=uksouth`
+
+## Post deployment
+
+Any configuration once the resources are created, that can't be done by Bicep.
+
+# Databases
+
+Currently we don't manage the environment databases with ARM/Bicep.
+
+In reality, there's little manual (Portal) work required, and when the ARM work was done,
+we already had existing environments, with existing databases.
+
+Unlike App Service etc (most other Azure Resources), the existing databases aren't exactly throwaway, so this work does not cover them.
+
+Side effects of this decision:
+
+- db migrations are not run by ARM, so must be run manually / by deployment pipeline
+
+## Creating Database Server
+
+Database Servers are often shared, so this step may not be needed for every environment. e.g. Dev and QA use the same `non-prod` db server, so it only needs creating before Dev is deployed.
+
+We use PostgreSQL, so in Azure we want a Postgres Flexible Server resource.
+
+## Creating Database / Users for the App
+
+Whether creating a db server specifically for this app, or creating a db on a shared server, an app user should be created with only rights to the relevant db.
+
+This can be done as follows, given an existing Postgres server:
+
+1. Have a server admin user :)
+2. Create the db with that admin user
+
+- `CREATE DATABASE yourdbname;`
+
+3. Create a user for the app
+
+- DON'T put special characters in the password; the pg client messes them up on the command line
+- `CREATE USER youruser WITH ENCRYPTED PASSWORD 'yourpass';`
+
+4. Grant the app user permissions to the db and public schema
+
+- `GRANT ALL ON DATABASE yourdbname TO youruser;`
+
+# SendGrid
+
+SendGrid accounts are SaaS resources, and so require manual configuration with the SaaS provider (in this case SendGrid) once created in Azure.
+
+- Fill out your own details, use UoN details where applicable.
+- Sender verification
+  - SendGrid may prompt you for details of a single sender.
+  - Ideally, CANCEL that and do domain verification instead.
+  - See below for details
+- Create an API key (I would suggest per app, or at least per sender)
+- Add the API key to the environment's Key Vault as `sendgrid-api-key`
+
+## Domain Verification
+
+You'll need access to the DNS for the domain.
+
+When setting up domain verification in SendGrid, recommend choosing the "Advanced Settings" and ticking all the boxes for custom subdomains.
+
+This will let you change most of the sendgrid subdomains they want to put on your DNS to something custom instead of `em1234` or `url1234` or whatever.
+
+Also you need to use custom Domain Key prefix if you are going to use multiple sendgrid accounts against the same sending domain, but these are limited to 3 characters max.
+
+Note that when setting the DNS records, you may need a trailing `.` on domain name values, e.g. `sendgrid.net.` instead of `sendgrid.net`
+
+### Suggested custom subdomain values
+
+| Custom Item | Value Template | Example | Notes |
+| - | - | - | - |
+| Return URL | `sg<identifier>` | `sgnonprod` | `sg` = SendGrid |
+| Custom Link | `<identifier>click` | `nonprodclick` | This is used for links in emails. Suggest using plain `click` for Production to look more professional. |
+| Domain Key Prefix | `s<identifier>` | `snp` | `s` = SendGrid, `np` = Non Prod |
+
+# Key Vault
+
+Because the Templates configure resources, and some of that configuration depends on Key Vault Secrets, currently there is a manual process around Key Vault.
+
+DevOps pipelines may also make use of some KeyVault secrets.
+
+## What you need to do
+
+- You'll need 2 Key Vaults for any given environment:
+  - A resource group shared Key Vault (though this may already exist)
+    - name it `<resource-group-name>-kv`
+    - e.g. `monitor-nonprod`
+  - An environment specific one
+    - name it `<service>-<environment>-kv`
+    - e.g. `monitor-uat`
+
+1. Create a KeyVault
+
+- Secure it using Vault Access Policies
+  - currently some of our Bicep/Pipelines uses this access style to grant apps access
+- Allow Azure Resource Manager access for Template Deployments
+  - This lets our Bicep files retrieve secrets :)
+
+1. Add Secrets as required for the parts of the stack you will be deploying via ARM / DevOps.
+
+- See below for the per-environment secrets
+- Shared secrets are covered in their own sections, e.g. Elastic Search
+
+## Add Secrets
+
+Here are the Secrets requirements for ARM and DevOps deployments of bits of the stack.
+
+These go in the Environment Specific Key Vault only. e.g. `monitor-uat`.
+
+| Secret Name | Description | Consumer | Use |
+| - | - | - | - |
+| `db-connection-string` | Postgres connection string for the App DB | ARM, Pipelines | App Settings, Database migrations |
+| `api-jwt-secret` | JWT Signing Key for API Tokens | ARM | App Settings |
+| `sendgrid-api-key` | SendGrid API key | ARM | App Settings |
+
+If you need to generate a JWT Secret, you can use the same crypto cli built into the app :)
+
+## Grant Pipelines Service Connection Permissions
+
+New pipelines / new bicep environments deployed to by existing pipelines may need access granted to Key Vault resources.
+
+This is done as follows:
+
+- the "Azure Subscription" name in the pipelines is the name of the Service Connection in Azure DevOps
+- If this is a new pipeline you may need a new service connection.
+  - I suggest creating it manually in DevOps and controlling the name, then matching that in the pipeline.
+  - It will make things a lot clearer.
+- If an existing pipeline, find the service connection in DevOps by its name.
+- For the service connection, click "Manage Service Principal".
+  - This will take you to the Service Principal (the actual Azure AD account, essentially) in Azure Portal
+  - It gives you all the info you need like IDs and names
+- Go to "Branding" and change the Name to something meaningful
+  - the default is `<DevOpsOrganisation>-<DevOpsProject>-<AzureSubscriptionId>`, not unique
+  - giving it something meaningful makes the next step easier!
+  - consider matching the Service Connection name?
+- In a new tab/window go to the keyvault you're granting access to, and go to its Access Policies.
+- Go to add an access policy.
+- Grant the relevant rights (usually `Get`, `List` on `Secrets`)
+- Select Principal:
+  - copy the Service Principal's display name to search for it
+  - there may be multiple matching search results for display name
+  - find the right one by matching the "Application (client) ID" between your Service Principal and the search results.
+- Leave "Authorized Application" empty
+- After saving, the access policy should appear under "Applications"
+- DON'T FORGET TO SAVE IN THE ACCESS POLICIES PAGE!
+
+## SSH Key generation
+
+- This guide requires OpenSSH and the Azure CLI
+  - it comes with Windows (since about 2019) and macOS
+  - and most Linux distros (or easily fetched by package manager if really not)
+
+Generate an OpenSSH key pair:
+
+1. `ssh-keygen -t rsa -b 4096`
+   - give it a sensible name
+     - probably not `id_rsa` as you may already have that and not want it overwritten!
+1. Upload each file to KeyVault using the Azure CLI
+   - `az keyvault secret set --vault-name '<vault-name>' -n '<secret-name>' -f '<key-file-path>'`
+   - use a sensible secret name like `elastic-ssh-<public|private>`
+   - this has to be done via the CLI at the moment; the Portal stores the key data incorrectly
+     - https://serverfault.com/questions/848168/putting-rsa-keys-into-azure-key-vault
+   - do it for `<keyname>` (the private key) and `keyname.pub` (the public key)
+   - the PUBLIC key is the one requested by the bicep templates :)
+
+## SSH Key retrieval
+
+If you need to fetch the private key for logging in yourself:
+
+`az keyvault secret download --vault-name '<vault-name>' -n '<secret-name>' -f '<target-file-path>'`
