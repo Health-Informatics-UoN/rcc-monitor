@@ -59,9 +59,7 @@ public static class AuthConfiguration
       // This is used when `[Authorize]` is provided with no specific policy / config
       b.DefaultPolicy = AuthPolicies.IsAuthenticatedUser;
       
-      b.AddPolicy(nameof(AuthPolicies.CanManageUsers), AuthPolicies.CanManageUsers);
-      b.AddPolicy(nameof(AuthPolicies.CanAccessReports), AuthPolicies.CanAccessReports);
-      b.AddPolicy(nameof(AuthPolicies.CanInviteUsers), AuthPolicies.CanInviteUsers);
+      b.AddPolicy(nameof(AuthPolicies.IsSiteAdmin), AuthPolicies.IsSiteAdmin);
     };
 
 

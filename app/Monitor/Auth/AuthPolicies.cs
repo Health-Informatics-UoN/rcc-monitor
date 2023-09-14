@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 
 using System.Text.RegularExpressions;
 using Keycloak.AuthServices.Authorization;
+using Keycloak.AuthServices.Authorization.Requirements;
 
 namespace Monitor.Auth;
 
@@ -19,24 +20,12 @@ public static class AuthPolicies
         .Combine(IsClientApp)
         .RequireAuthenticatedUser()
         .Build();
-
-  public static AuthorizationPolicy CanManageUsers
-    => new AuthorizationPolicyBuilder()
-      .Combine(IsAuthenticatedUser)
-      .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.ManageUsers)
-      .Build();
   
-  public static AuthorizationPolicy CanAccessReports
-    => new AuthorizationPolicyBuilder()
-      .RequireRealmRoles(SitePermissionClaims.AccessReports)
-      .Combine(IsAuthenticatedUser)
-      // .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.AccessReports)
-      .Build();
-  
-  public static AuthorizationPolicy CanInviteUsers
+  public static AuthorizationPolicy IsSiteAdmin
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
-      .RequireClaim(CustomClaimTypes.SitePermission, SitePermissionClaims.InviteUsers)
+      .RequireClaim(Roles.SiteAdmin)
+      // .RequireRealmRoles(Roles.SiteAdmin)
       .Build();
 
   private static readonly Func<AuthorizationHandlerContext, bool> IsSameHost =
