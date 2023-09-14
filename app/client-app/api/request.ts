@@ -27,8 +27,9 @@ const request = async <T>(
 	options: RequestOptions = {}
 ): Promise<T> => {
   try {
+		// Get the KeyCloak id_token
 		const session = await getServerSession(authOptions);
-		const token = session.access_token
+		const token = session?.id_token
 
     const response = await fetch(`${apiUrl}/api/${url}`, {
 			method: options.method || 'GET',
