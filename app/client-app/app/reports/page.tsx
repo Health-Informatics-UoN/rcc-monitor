@@ -1,4 +1,3 @@
-import "@/styles/reports.css";
 import AlertBar from "@/components/Alert";
 import { getReports } from "@/api/reports";
 import { Metadata } from 'next';
@@ -19,7 +18,12 @@ export default async function Reports() {
 
   return (
     <>
-      <h1 className="heading">Site Reports</h1>
+      <h1 className={css({
+        mt: '10px',
+        fontSize: '35px',
+        fontWeight: 'bold',
+        textAlign: 'center'
+        })}>Site Reports</h1>
       {reports.length <= 0 ? (
         <>
           <AlertBar message="There are currently no reports." />
