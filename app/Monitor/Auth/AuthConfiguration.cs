@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Monitor.Auth;
 
@@ -13,6 +14,13 @@ public static class AuthConfiguration
       
       b.AddPolicy(nameof(AuthPolicies.IsSiteAdmin), AuthPolicies.IsSiteAdmin);
     };
-
-
+  
+  public static Action<CorsOptions> CorsOptions(IConfiguration configuration)
+  {
+    return b =>
+    {
+      b.AddPolicy(nameof(CorsPolicies.AllowFrontendApp), CorsPolicies.AllowFrontendApp(configuration));
+    };
+  }
+    
 }

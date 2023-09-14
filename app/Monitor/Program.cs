@@ -20,6 +20,9 @@ b.Services.AddKeycloakAuthentication(b.Configuration);
 b.Services.AddAuthorization(AuthConfiguration.AuthOptions)
   .AddKeycloakAuthorization(b.Configuration);
 
+// CORS
+b.Services.AddCors(AuthConfiguration.CorsOptions(b.Configuration));
+
 // MVC
 b.Services
   .AddControllersWithViews()
@@ -49,16 +52,6 @@ b.Services
   .AddTransient<ReportService>();
 
 b.Services.AddSwaggerGen();
-
-//TODO: Configure CORS for client app only
-b.Services.AddCors(options =>
-{
-  options.AddPolicy("AllowClientApp",
-    builder =>
-      builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-  );
-});
 
 #endregion
 
@@ -96,7 +89,7 @@ app.UseStaticFiles();
 app.UseVersion();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseCors("AllowClientApp");
+app.UseCors(nameof(CorsPolicies.AllowFrontendApp));
 #endregion
 
 #region Endpoint Routing
