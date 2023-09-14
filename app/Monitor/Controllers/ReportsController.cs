@@ -17,16 +17,13 @@ public class ReportsController : ControllerBase
     {
         _reportService = reportService;
     }
-    
-    // TODO: Fix when auth is reimplemented
-    // [AllowAnonymous]
-    [Authorize]
+
+    [Authorize(nameof(AuthPolicies.IsSiteAdmin))]
     [HttpGet]
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());
-
-    // [Authorize(nameof(AuthPolicies.CanAccessReports))]
-    // TODO: Fix when auth is reimplemented
+    
+    // TODO: Fix when the 
     [AllowAnonymous]
     [HttpPost("SendSummary")]
     public async Task<ActionResult<List<ReportModel>>> SendSummary()

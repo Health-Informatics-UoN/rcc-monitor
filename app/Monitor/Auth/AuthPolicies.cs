@@ -24,8 +24,7 @@ public static class AuthPolicies
   public static AuthorizationPolicy IsSiteAdmin
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
-      .RequireClaim(Roles.SiteAdmin)
-      // .RequireRealmRoles(Roles.SiteAdmin)
+      .RequireRealmRoles(Roles.SiteAdmin)
       .Build();
 
   private static readonly Func<AuthorizationHandlerContext, bool> IsSameHost =
