@@ -19,6 +19,7 @@ export const options  = {
   callbacks: {
     async jwt({token, account} : { token: JWT, account?: Account}) {
       if (account) {
+        // TODO: Decode the token and add roles.
         token = Object.assign({}, token, { id_token: account.id_token });
       }
       return token
