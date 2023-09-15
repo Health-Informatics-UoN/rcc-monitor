@@ -1,6 +1,4 @@
 import { url as apiUrl } from "@/constants";
-import { getServerSession } from "next-auth";
-import { options as authOptions } from "@/auth/options";
 
 // Error class for API errors
 class APIError extends Error {
@@ -27,13 +25,9 @@ const request = async <T>(
 	options: RequestOptions = {}
 ): Promise<T> => {
   try {
-		// Get the KeyCloak id_token
-		const session = await getServerSession(authOptions);
-		const token = session?.id_token
-
     const response = await fetch(`${apiUrl}/api/${url}`, {
 			method: options.method || 'GET',
-			headers: { ...defaultHeaders, ...options.headers, 'Authorization': `Bearer ${token}` },
+			headers: { ...defaultHeaders, ...options.headers },
 			body: options.body,
 			cache: options.cache,
 			next: options.next,
