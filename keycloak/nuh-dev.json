@@ -1,6 +1,6 @@
 {
   "id": "19eafa1d-05e5-4ebd-94ff-19e292911a50",
-  "realm": "nuh",
+  "realm": "nuh-dev",
   "displayName": "RedCap Monitor",
   "displayNameHtml": "",
   "notBefore": 0,
@@ -47,6 +47,15 @@
   "failureFactor": 30,
   "roles": {
     "realm": [
+      {
+        "id": "7d57b0cb-5012-4b01-b0fc-5ea9657dba8a",
+        "name": "SiteAdmin",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "19eafa1d-05e5-4ebd-94ff-19e292911a50",
+        "attributes": {}
+      },
       {
         "id": "fdb1945f-ef12-499e-9d9d-8eec665601d2",
         "name": "user",
@@ -321,6 +330,7 @@
       ],
       "security-admin-console": [],
       "admin-cli": [],
+      "backend": [],
       "account-console": [],
       "broker": [
         {
@@ -424,19 +434,7 @@
       "frontend": []
     }
   },
-  "groups": [
-    {
-      "id": "59ea7c3a-cd4e-42d7-ad9d-6b2068585cdf",
-      "name": "testgroup",
-      "path": "/testgroup",
-      "attributes": {},
-      "realmRoles": [
-        "user"
-      ],
-      "clientRoles": {},
-      "subGroups": []
-    }
-  ],
+  "groups": [],
   "defaultRole": {
     "id": "b6399daf-f366-4336-80ec-8ce7c488b32f",
     "name": "default-roles-nuh",
@@ -486,6 +484,18 @@
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "scopeMappings": [
     {
+      "clientScope": "roles",
+      "roles": [
+        "SiteAdmin"
+      ]
+    },
+    {
+      "clientScope": "include_roles",
+      "roles": [
+        "SiteAdmin"
+      ]
+    },
+    {
       "clientScope": "offline_access",
       "roles": [
         "offline_access"
@@ -509,13 +519,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/nuh/account/",
+      "baseUrl": "/realms/nuh-dev/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/nuh/account/*"
+        "/realms/nuh-dev/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -642,6 +652,66 @@
       ]
     },
     {
+      "id": "5e887d47-f947-42a3-bf36-ff4ad93a33c7",
+      "clientId": "backend",
+      "name": "Backend",
+      "description": ".NET Backend",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "client.secret.creation.time": "1694688698",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "use.refresh.tokens": "true",
+        "oidc.ciba.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "client_credentials.use_refresh_token": "false",
+        "acr.loa.map": "{}",
+        "require.pushed.authorization.requests": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "display.on.consent.screen": "false",
+        "token.response.type.bearer.lower-case": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
       "id": "b869f2da-4078-49ba-8277-e5ab2fd68d08",
       "clientId": "broker",
       "name": "${client_broker}",
@@ -731,6 +801,7 @@
         "acr",
         "roles",
         "profile",
+        "include_roles",
         "email"
       ],
       "optionalClientScopes": [
@@ -783,13 +854,13 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/nuh/console/",
+      "baseUrl": "/admin/nuh-dev/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/admin/nuh/console/*"
+        "/admin/nuh-dev/console/*"
       ],
       "webOrigins": [
         "+"
@@ -925,11 +996,13 @@
           "protocolMapper": "oidc-usermodel-client-role-mapper",
           "consentRequired": false,
           "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "false",
             "user.attribute": "foo",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "resource_access.${client_id}.roles",
-            "jsonType.label": "String",
-            "multivalued": "true"
+            "jsonType.label": "String"
           }
         },
         {
@@ -947,11 +1020,13 @@
           "protocolMapper": "oidc-usermodel-realm-role-mapper",
           "consentRequired": false,
           "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
             "user.attribute": "foo",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "realm_access.roles",
-            "jsonType.label": "String",
-            "multivalued": "true"
+            "jsonType.label": "String"
           }
         }
       ]
@@ -1030,6 +1105,36 @@
             "user.attribute.region": "region",
             "access.token.claim": "true",
             "user.attribute.locality": "locality"
+          }
+        }
+      ]
+    },
+    {
+      "id": "8460c2e6-0094-4626-ae05-866bdcfa12a0",
+      "name": "include_roles",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false",
+        "gui.order": "",
+        "consent.screen.text": ""
+      },
+      "protocolMappers": [
+        {
+          "id": "a1ed3a0c-64d8-404c-9bce-37c850629ecd",
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "user.attribute": "foo",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
           }
         }
       ]
@@ -1357,7 +1462,8 @@
     "email",
     "roles",
     "web-origins",
-    "acr"
+    "acr",
+    "include_roles"
   ],
   "defaultOptionalClientScopes": [
     "offline_access",
@@ -1499,7 +1605,7 @@
     ],
     "org.keycloak.userprofile.UserProfileProvider": [
       {
-        "id": "de2b1408-7a23-41f5-8402-327263f5a8ee",
+        "id": "0e45a9d7-f921-4220-a181-1a6545dc35f4",
         "providerId": "declarative-user-profile",
         "subComponents": {},
         "config": {}
