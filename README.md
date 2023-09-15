@@ -68,6 +68,21 @@ OutboundEmail:
   # If Provider == "sendgrid"
   SendGridApiKey: ""
 
+  # CORS URL
+  FrontendAppUrl: "http://localhost:3000"
+
+  Keycloak:
+    realm: "nuh-uat",
+    auth-server-url: "http://localhost:9080/",
+    ssl-required: "none",
+    resource: "backend",
+    public-client: true,
+    verify-token-audience: false,
+    confidential-port: 0,
+    credentials: 
+      secret: ""
+    RolesSource: "Realm"
+
   UserAccounts:
     SendEmail: # true or false. if true, sends an email to the user
     GenerateLink: # true or false. if true, generates link to the client
