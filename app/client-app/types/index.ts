@@ -1,3 +1,1 @@
-export type AlertType = {
-  message: string;
-};
+export {};
