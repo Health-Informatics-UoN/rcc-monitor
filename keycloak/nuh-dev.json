@@ -48,15 +48,6 @@
   "roles": {
     "realm": [
       {
-        "id": "7d57b0cb-5012-4b01-b0fc-5ea9657dba8a",
-        "name": "SiteAdmin",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "19eafa1d-05e5-4ebd-94ff-19e292911a50",
-        "attributes": {}
-      },
-      {
         "id": "fdb1945f-ef12-499e-9d9d-8eec665601d2",
         "name": "user",
         "description": "",
@@ -108,6 +99,15 @@
       {
         "id": "20de46de-73e7-41e4-8f14-7ee3ca489922",
         "name": "admin",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "19eafa1d-05e5-4ebd-94ff-19e292911a50",
+        "attributes": {}
+      },
+      {
+        "id": "65f6ef2c-34fa-4905-a86b-287d3d673573",
+        "name": "ViewSiteReports",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -434,7 +434,19 @@
       "frontend": []
     }
   },
-  "groups": [],
+  "groups": [
+    {
+      "id": "7f356bea-d7ef-4647-8ea7-41533ac65a80",
+      "name": "CanViewSiteReports",
+      "path": "/CanViewSiteReports",
+      "attributes": {},
+      "realmRoles": [
+        "ViewSiteReports"
+      ],
+      "clientRoles": {},
+      "subGroups": []
+    }
+  ],
   "defaultRole": {
     "id": "b6399daf-f366-4336-80ec-8ce7c488b32f",
     "name": "default-roles-nuh",
@@ -454,9 +466,9 @@
   "otpPolicyPeriod": 30,
   "otpPolicyCodeReusable": false,
   "otpSupportedApplications": [
-    "totpAppFreeOTPName",
+    "totpAppGoogleName",
     "totpAppMicrosoftAuthenticatorName",
-    "totpAppGoogleName"
+    "totpAppFreeOTPName"
   ],
   "webAuthnPolicyRpEntityName": "keycloak",
   "webAuthnPolicySignatureAlgorithms": [
@@ -483,18 +495,6 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "scopeMappings": [
-    {
-      "clientScope": "roles",
-      "roles": [
-        "SiteAdmin"
-      ]
-    },
-    {
-      "clientScope": "include_roles",
-      "roles": [
-        "SiteAdmin"
-      ]
-    },
     {
       "clientScope": "offline_access",
       "roles": [
@@ -801,7 +801,6 @@
         "acr",
         "roles",
         "profile",
-        "include_roles",
         "email"
       ],
       "optionalClientScopes": [
@@ -1105,36 +1104,6 @@
             "user.attribute.region": "region",
             "access.token.claim": "true",
             "user.attribute.locality": "locality"
-          }
-        }
-      ]
-    },
-    {
-      "id": "8460c2e6-0094-4626-ae05-866bdcfa12a0",
-      "name": "include_roles",
-      "description": "",
-      "protocol": "openid-connect",
-      "attributes": {
-        "include.in.token.scope": "true",
-        "display.on.consent.screen": "false",
-        "gui.order": "",
-        "consent.screen.text": ""
-      },
-      "protocolMappers": [
-        {
-          "id": "a1ed3a0c-64d8-404c-9bce-37c850629ecd",
-          "name": "realm roles",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-realm-role-mapper",
-          "consentRequired": false,
-          "config": {
-            "multivalued": "true",
-            "userinfo.token.claim": "true",
-            "user.attribute": "foo",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "claim.name": "realm_access.roles",
-            "jsonType.label": "String"
           }
         }
       ]
@@ -1454,6 +1423,35 @@
           }
         }
       ]
+    },
+    {
+      "id": "b239a19b-f2b6-484d-9412-7b55764deece",
+      "name": "groups",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false",
+        "gui.order": "",
+        "consent.screen.text": ""
+      },
+      "protocolMappers": [
+        {
+          "id": "b27d9081-603c-4850-81d2-46f1549658a6",
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "groups",
+            "jsonType.label": "String"
+          }
+        }
+      ]
     }
   ],
   "defaultDefaultClientScopes": [
@@ -1462,8 +1460,7 @@
     "email",
     "roles",
     "web-origins",
-    "acr",
-    "include_roles"
+    "acr"
   ],
   "defaultOptionalClientScopes": [
     "offline_access",

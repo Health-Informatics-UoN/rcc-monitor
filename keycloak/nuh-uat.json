@@ -85,9 +85,9 @@
         "attributes": {}
       },
       {
-        "id": "7f3ae8e6-e381-4f35-89fa-47153ce50850",
-        "name": "SiteAdmin",
-        "description": "Admin for viewing Sites information",
+        "id": "f415ad51-bc63-4d70-90c0-f471abd6c23b",
+        "name": "ViewSiteReports",
+        "description": "",
         "composite": false,
         "clientRole": false,
         "containerId": "0bd6c9ce-dd6e-47a7-8074-fb9276e0c69b",
@@ -413,7 +413,19 @@
       "frontend": []
     }
   },
-  "groups": [],
+  "groups": [
+    {
+      "id": "c6fe822f-580a-4b6e-a0ac-7d37bd921f1c",
+      "name": "CanViewSiteReports",
+      "path": "/CanViewSiteReports",
+      "attributes": {},
+      "realmRoles": [
+        "ViewSiteReports"
+      ],
+      "clientRoles": {},
+      "subGroups": []
+    }
+  ],
   "defaultRole": {
     "id": "0cf89288-26f0-4054-aaa0-1bd19b47c0be",
     "name": "default-roles-nuh-uat",
@@ -433,9 +445,9 @@
   "otpPolicyPeriod": 30,
   "otpPolicyCodeReusable": false,
   "otpSupportedApplications": [
-    "totpAppFreeOTPName",
+    "totpAppGoogleName",
     "totpAppMicrosoftAuthenticatorName",
-    "totpAppGoogleName"
+    "totpAppFreeOTPName"
   ],
   "webAuthnPolicyRpEntityName": "keycloak",
   "webAuthnPolicySignatureAlgorithms": [
