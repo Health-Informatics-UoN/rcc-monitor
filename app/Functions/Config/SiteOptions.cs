@@ -6,4 +6,5 @@ public class SiteOptions
     public string UATKey { get; set; }
     public string ProductionUrl { get; set; }
     public string UATUrl { get; set; }
+    public string ApiUrl { get; set; }
 }

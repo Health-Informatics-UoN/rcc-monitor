@@ -21,13 +21,13 @@ var host = new HostBuilder()
                 o.UseNpgsql(connectionString,
                     o => o.EnableRetryOnFailure());
         });
-        s.AddOptions<SiteOptions>()
-            .Configure<IConfiguration>((siteOptions, configuration) =>
-            {
-                configuration.GetSection("RedCap").Bind(siteOptions);
-            });
+        s.AddOptions()
+            .Configure<KeyCloakOptions>(context.Configuration.GetSection("KeyCloak"))
+            .Configure<SiteOptions>(context.Configuration.GetSection("RedCap"));
+            
         s.AddTransient<SiteService>();
         s.AddTransient<IReportingService, ReportService>();
+        s.AddHttpClient();
         
         var useRedCapData = context.Configuration.GetValue<bool>("UseRedCapData");
         if (useRedCapData) s.AddTransient<IDataService, RedCapSitesService>();
