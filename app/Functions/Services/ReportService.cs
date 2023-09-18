@@ -164,14 +164,22 @@ public class ReportService : IReportingService
 
     public async Task SendSummary()
     {
-        // authenticate and get token
+        // Authenticate and get access token
         var token = await Authenticate();
         
-        // Get API url
-        // Make send summary request with token
+        // Send summary request with token
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Post,
+            RequestUri = new Uri($"{_siteOptions.ApiUrl}/api/Reports/SendSummary"),
+
+            Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "Authorization", $"Bearer {token}" },
+            }),
+        };
+        using var response = await _client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
         
-        
-        
-        throw new NotImplementedException();
     }
 }
