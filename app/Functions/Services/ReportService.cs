@@ -122,7 +122,7 @@ public class ReportService : IReportingService
         return redCapConflicts;
     }
 
-    public void SendSummary()
+    public Task SendSummary()
     {
         throw new NotImplementedException();
     }

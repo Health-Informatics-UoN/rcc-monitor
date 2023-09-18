@@ -46,5 +46,5 @@ public interface IReportingService
     /// <summary>
     /// Requests the Webapp controller to send a summary email.
     /// </summary>
-    public void SendSummary();
+    public Task SendSummary();
 }
