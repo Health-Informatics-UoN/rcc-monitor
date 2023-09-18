@@ -11,10 +11,10 @@ public static class AuthPolicies
         .RequireAuthenticatedUser()
         .Build();
   
-  public static AuthorizationPolicy IsSiteAdmin
+  public static AuthorizationPolicy CanViewSiteReports
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
-      .RequireRealmRoles(Roles.SiteAdmin)
+      .RequireRealmRoles(SitePermissionClaims.ViewSiteReports)
       .Build();
   
 }

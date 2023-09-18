@@ -12,7 +12,7 @@ public static class AuthConfiguration
       // This is used when `[Authorize]` is provided with no specific policy / config
       b.DefaultPolicy = AuthPolicies.IsAuthenticatedUser;
       
-      b.AddPolicy(nameof(AuthPolicies.IsSiteAdmin), AuthPolicies.IsSiteAdmin);
+      b.AddPolicy(nameof(AuthPolicies.CanViewSiteReports), AuthPolicies.CanViewSiteReports);
     };
   
   public static Action<CorsOptions> CorsOptions(IConfiguration configuration)

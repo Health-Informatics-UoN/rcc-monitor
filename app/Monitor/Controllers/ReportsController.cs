@@ -18,7 +18,7 @@ public class ReportsController : ControllerBase
         _reportService = reportService;
     }
 
-    [Authorize(nameof(AuthPolicies.IsSiteAdmin))]
+    [Authorize(nameof(AuthPolicies.CanViewSiteReports))]
     [HttpGet]
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());
