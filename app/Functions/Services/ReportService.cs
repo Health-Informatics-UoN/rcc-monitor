@@ -121,4 +121,9 @@ public class ReportService : IReportingService
         
         return redCapConflicts;
     }
+
+    public void SendSummary()
+    {
+        throw new NotImplementedException();
+    }
 }

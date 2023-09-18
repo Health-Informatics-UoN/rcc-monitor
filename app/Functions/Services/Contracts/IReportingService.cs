@@ -42,4 +42,9 @@ public interface IReportingService
     /// <param name="existingConflicts">List of existing reports in the database.</param>
     /// <returns>A list of reports that do not exist in the database, so are new conflicts.</returns>
     public List<ReportModel> UpdateExistingConflicts(List<ReportModel> redCapConflicts, List<ReportModel> existingConflicts);
+
+    /// <summary>
+    /// Requests the Webapp controller to send a summary email.
+    /// </summary>
+    public void SendSummary();
 }
