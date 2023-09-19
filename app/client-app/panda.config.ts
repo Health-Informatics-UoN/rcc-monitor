@@ -1,6 +1,9 @@
 import { defineConfig } from "@pandacss/dev";
 
 export default defineConfig({
+  // Required: Add the preset to config.
+  presets: ['@shadow-panda/preset'],
+
   // Whether to use css reset
   preflight: true,
 
@@ -79,5 +82,6 @@ export default defineConfig({
   jsxFramework: "react",
 
   // The output directory for your css system
-  outdir: "styled-system",
+  emitPackage: true,
+  outdir: 'styled-system',
 });
