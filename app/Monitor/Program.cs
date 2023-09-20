@@ -1,12 +1,11 @@
 using ClacksMiddleware.Extensions;
+using Keycloak.AuthServices.Authentication;
+using Keycloak.AuthServices.Authorization;
 using Monitor.Extensions;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
-using Monitor.Data.Entities.Identity;
 
-using Monitor.Config;
 using Monitor.Services;
 using Monitor.Constants;
 using UoN.AspNetCore.VersionMiddleware;
@@ -15,6 +14,14 @@ using Monitor.Auth;
 var b = WebApplication.CreateBuilder(args);
 
 #region Configure Services
+
+// KeyCloak Identity
+b.Services.AddKeycloakAuthentication(b.Configuration);
+b.Services.AddAuthorization(AuthConfiguration.AuthOptions)
+  .AddKeycloakAuthorization(b.Configuration);
+
+// CORS
+b.Services.AddCors(AuthConfiguration.CorsOptions(b.Configuration));
 
 // MVC
 b.Services
@@ -39,40 +46,16 @@ b.Services
           o => o.EnableRetryOnFailure());
     });
 
-// Identity
-b.Services
-  .AddIdentity<ApplicationUser, IdentityRole>(
-    o => o.SignIn.RequireConfirmedEmail = true)
-  .AddClaimsPrincipalFactory<CustomClaimsPrincipalFactory>()
-  .AddEntityFrameworkStores<ApplicationDbContext>()
-  .AddDefaultTokenProviders();
-
 b.Services
   .AddApplicationInsightsTelemetry()
-  .ConfigureApplicationCookie(AuthConfiguration.IdentityCookieOptions)
-  .AddAuthorization(AuthConfiguration.AuthOptions)
-  .Configure<RegistrationOptions>(b.Configuration.GetSection("Registration"))
-  .Configure<UserAccountOptions>(b.Configuration.GetSection("UserAccounts"))
-
   .AddEmailSender(b.Configuration)
-
-  .AddTransient<UserService>()
-  .AddTransient<RegistrationRuleService>()
   .AddTransient<ReportService>();
 
 b.Services.AddSwaggerGen();
 
-//TODO: Configure CORS for client app only
-b.Services.AddCors(options =>
-{
-  options.AddPolicy("AllowClientApp",
-    builder =>
-      builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-  );
-});
-
 #endregion
+
+#region seeding
 
 var app = b.Build();
 
@@ -81,24 +64,15 @@ using (var scope = app.Services.CreateScope())
 {
   var db = scope.ServiceProvider
     .GetRequiredService<ApplicationDbContext>();
-
-  var roles = scope.ServiceProvider
-    .GetRequiredService<RoleManager<IdentityRole>>();
-
-  var registrationRule = scope.ServiceProvider
-    .GetRequiredService<RegistrationRuleService>();
-
-  var config = scope.ServiceProvider
-    .GetRequiredService<IConfiguration>();
-
-  var seeder = new DataSeeder(db, roles, registrationRule);
   
-  await seeder.SeedRoles();
-  await seeder.SeedRegistrationRules(config);
+  var seeder = new DataSeeder(db);
+  
   await seeder.SeedReportTypes();
   await seeder.SeedInstanceTypes();
   await seeder.SeedReportStatus();
 }
+
+#endregion
 
 #region Configure Pipeline
 
@@ -115,7 +89,7 @@ app.UseStaticFiles();
 app.UseVersion();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseCors("AllowClientApp");
+app.UseCors(nameof(CorsPolicies.AllowFrontendApp));
 #endregion
 
 #region Endpoint Routing
@@ -125,7 +99,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Endpoints
-
 app.MapControllers();
 
 app.MapFallbackToFile("index.html").AllowAnonymous();

@@ -1,8 +1,6 @@
 namespace Monitor.Auth;
 
-public class SitePermissionClaims
+public static class SitePermissionClaims
 {
-  public const string ManageUsers = "ManageUsers";
-  public const string AccessReports = "AccessReports";
-  public const string InviteUsers = "InviteUsers";
+    public const string ViewSiteReports = "ViewSiteReports";
 }

@@ -33,6 +33,12 @@ The easiest way is using the dotnet cli:
 - The above runs against the default local server, using the connection string in `appsettings.Development.json`
 - You can specify a connection string with the `--connection "<connection string>"` option
 
+## Authentication setup
+
+We use Keycloak for authentication, and the service runs as part of the `docker-compose`.
+
+When setting up a new environment, you need to import the Keycloak realm, found in `keycloak/nuh-dev.json`. This realm contains the client applications for backend and frontend, and custom roles.  
+
 ## 📁 Repository contents
 
 Areas within this repo include:
@@ -61,6 +67,21 @@ OutboundEmail:
 
   # If Provider == "sendgrid"
   SendGridApiKey: ""
+
+  # CORS URL
+  FrontendAppUrl: "http://localhost:3000"
+
+  Keycloak:
+    realm: "nuh-uat",
+    auth-server-url: "http://localhost:9080/",
+    ssl-required: "none",
+    resource: "backend",
+    public-client: true,
+    verify-token-audience: false,
+    confidential-port: 0,
+    credentials: 
+      secret: ""
+    RolesSource: "Realm"
 
   UserAccounts:
     SendEmail: # true or false. if true, sends an email to the user

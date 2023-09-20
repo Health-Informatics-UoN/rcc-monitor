@@ -23,9 +23,7 @@ namespace Monitor.Extensions
       else s.Configure<LocalDiskEmailOptions>(c.GetSection("OutboundEmail"));
 
       s
-              .AddTransient<TokenIssuingService>()
               .AddTransient<RazorViewService>()
-              .AddTransient<AccountEmailService>()
               .TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
       if (useSendGrid) s.AddTransient<IEmailSender, SendGridEmailSender>();
