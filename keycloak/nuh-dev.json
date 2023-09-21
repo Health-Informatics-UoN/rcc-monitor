@@ -106,6 +106,15 @@
         "attributes": {}
       },
       {
+        "id": "03b345e3-b063-4828-8666-3e3f70b9234b",
+        "name": "SendSummaryEmail",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "19eafa1d-05e5-4ebd-94ff-19e292911a50",
+        "attributes": {}
+      },
+      {
         "id": "65f6ef2c-34fa-4905-a86b-287d3d673573",
         "name": "ViewSiteReports",
         "description": "",
@@ -328,6 +337,7 @@
           "attributes": {}
         }
       ],
+      "functions": [],
       "security-admin-console": [],
       "admin-cli": [],
       "backend": [],
@@ -436,6 +446,17 @@
   },
   "groups": [
     {
+      "id": "41cd6281-17e7-458a-adce-f45c07ac350c",
+      "name": "CanSendSummary",
+      "path": "/CanSendSummary",
+      "attributes": {},
+      "realmRoles": [
+        "SendSummaryEmail"
+      ],
+      "clientRoles": {},
+      "subGroups": []
+    },
+    {
       "id": "7f356bea-d7ef-4647-8ea7-41533ac65a80",
       "name": "CanViewSiteReports",
       "path": "/CanViewSiteReports",
@@ -466,8 +487,8 @@
   "otpPolicyPeriod": 30,
   "otpPolicyCodeReusable": false,
   "otpSupportedApplications": [
-    "totpAppGoogleName",
     "totpAppMicrosoftAuthenticatorName",
+    "totpAppGoogleName",
     "totpAppFreeOTPName"
   ],
   "webAuthnPolicyRpEntityName": "keycloak",
@@ -494,6 +515,25 @@
   "webAuthnPolicyPasswordlessCreateTimeout": 0,
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
+  "users": [
+    {
+      "id": "de12a9ec-c33b-42c8-a779-daf5487dfe88",
+      "createdTimestamp": 1695041316668,
+      "username": "service-account-functions",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "serviceAccountClientId": "functions",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-nuh",
+        "SendSummaryEmail"
+      ],
+      "notBefore": 0,
+      "groups": []
+    }
+  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -796,6 +836,104 @@
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "d55daabd-3d5e-4bd4-8503-5893cfe061e2",
+      "clientId": "functions",
+      "name": "functions",
+      "description": "Azure Functions",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1695041316",
+        "backchannel.logout.session.required": "true",
+        "display.on.consent.screen": "false",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "822e952b-7113-4686-abf3-b77057608680",
+          "name": "Client ID",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "client_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "client_id",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "25998441-dce3-4567-b113-67d1af81744f",
+          "name": "Client IP Address",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientAddress",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientAddress",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "71f86313-f0ee-44df-a418-725c8987cfd5",
+          "name": "Client Host",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientHost",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientHost",
+            "jsonType.label": "String"
+          }
+        }
+      ],
       "defaultClientScopes": [
         "web-origins",
         "acr",
