@@ -1,15 +1,9 @@
-using System.Text.Json;
 using Data.Constants;
-using Functions.Config;
 using Functions.Models;
 using Functions.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Identity.Client;
 using Monitor.Data;
 using Monitor.Data.Entities;
-using LogLevel = Microsoft.Identity.Client.LogLevel;
 using Site = Monitor.Data.Entities.Site;
 
 namespace Functions.Services;
@@ -18,23 +12,14 @@ public class ReportService : IReportingService
 {
     private readonly ApplicationDbContext _db;
     private readonly HttpClient _client;
-    private readonly SiteOptions _siteOptions;
-    private readonly KeyCloakOptions _keyCloakOptions;
-    private readonly ILogger<IReportingService> _logger;
 
     public ReportService(
         ApplicationDbContext db, 
-        IHttpClientFactory httpClientFactory,
-        IOptions<SiteOptions> siteOptions, 
-        IOptions<KeyCloakOptions> keyCloakOptions,
-        ILogger<IReportingService> logger
+        IHttpClientFactory httpClientFactory
         )
     {
         _db = db;
-        _client = httpClientFactory.CreateClient();
-        _siteOptions = siteOptions.Value;
-        _keyCloakOptions = keyCloakOptions.Value;
-        _logger = logger;
+        _client = httpClientFactory.CreateClient("client");
     }
     
     public void Create(ReportModel reportModel)
@@ -144,62 +129,10 @@ public class ReportService : IReportingService
         return redCapConflicts;
     }
 
-    private async Task<string> Authenticate()
-    {
-        // Get Keycloak URL
-        // Make token request
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Post,
-            RequestUri = new Uri($"{_keyCloakOptions.Issuer}/protocol/openid-connect/token"),
-
-            Content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "client_id", _keyCloakOptions.ClientId },
-                { "grant_type", "password" },
-                { "scope", "openid" },
-                { "username", _keyCloakOptions.Username },
-                { "password", _keyCloakOptions.Password },
-                { "client_secret", _keyCloakOptions.Secret },
-            }),
-        };
-        
-        using var response = await _client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-        var json = await response.Content.ReadAsStringAsync();
-        var x = JsonSerializer.Deserialize<dynamic>(json);
-        
-        return "";
-    }
-
     public async Task SendSummary()
     {
-        string[] scopes = { "openid", "profile", "scope" };
-        var app = ConfidentialClientApplicationBuilder
-            .Create(_keyCloakOptions.ClientId)
-            .WithClientSecret(_keyCloakOptions.Secret)
-            .WithAuthority(_keyCloakOptions.Issuer)
-            .WithLogging(_logger, LogLevel.Info, false)
-            .Build();
-
-        var result = await app.AcquireTokenForClient(scopes).ExecuteAsync();
+        var response = await _client.GetAsync("Reports/SendSummary");
         
-        // Authenticate and get access token
-        // var token = await Authenticate();
-        
-        // Send summary request with token
-        // var request = new HttpRequestMessage
-        // {
-        //     Method = HttpMethod.Post,
-        //     RequestUri = new Uri($"{_siteOptions.ApiUrl}/api/Reports/SendSummary"),
-        //
-        //     Content = new FormUrlEncodedContent(new Dictionary<string, string>
-        //     {
-        //         { "Authorization", $"Bearer {token}" },
-        //     }),
-        // };
-        // using var response = await _client.SendAsync(request);
-        // response.EnsureSuccessStatusCode();
-        
+        response.EnsureSuccessStatusCode();
     }
 }
