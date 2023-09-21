@@ -22,7 +22,7 @@ public class ReportsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());
-    
+
     [Authorize(nameof(AuthPolicies.CanSendSummary))]
     [HttpPost("SendSummary")]
     public async Task<ActionResult<List<ReportModel>>> SendSummary()
@@ -30,5 +30,5 @@ public class ReportsController : ControllerBase
         await _reportService.SendSummary();
         return NoContent();
     }
-    
+
 }

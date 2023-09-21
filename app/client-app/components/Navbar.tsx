@@ -4,22 +4,24 @@ import { css } from "@/styled-system/css";
 import { flex } from "@/styled-system/patterns";
 
 interface NavButtonProps {
+  css?: {};
   to: string;
-  mr?: string;
   children: React.ReactNode;
 }
 
-const NavButton = ({ children, to, mr }: NavButtonProps) => {
+const NavButton = ({ css: cssProp = {}, children, to }: NavButtonProps) => {
   return (
     <Link href={to}>
       <button
-        className={css({
-          mr: mr,
-          p: "15px",
-          fontSize: "17px",
-          fontWeight: "bold",
-          _hover: { bg: "#50a7de" },
-        })}
+        className={css(
+          {
+            p: "15px",
+            fontSize: "17px",
+            fontWeight: "bold",
+            _hover: { bg: "#50a7de" }
+          },
+          cssProp
+        )}
       >
         {children}
       </button>
@@ -35,17 +37,24 @@ export default function Navbar() {
         position: "relative",
         alignItems: "center",
         justifyContent: "space-between",
-        bg: "linear-gradient(to right, #56a1d1, #0074d9)",
+        bg: "linear-gradient(to right, #56a1d1, #0074d9)"
       })}
     >
       <div
-        className={css({ fontSize: "1.5rem", fontWeight: "bold", ml: "25px" })}
+        className={css({
+          color: "white",
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          ml: "25px"
+        })}
       >
         RedCap Site Reports
       </div>
-      <div className={flex({ alignItems: "center", mr: "30px" })}>
+      <div
+        className={flex({ color: "white", alignItems: "center", mr: "30px" })}
+      >
         <NavButton to="/">Home</NavButton>
-        <NavButton to="/reports" mr="5px">
+        <NavButton to="/reports" css={{ mr: "5px" }}>
           Reports
         </NavButton>
         <img
@@ -55,7 +64,7 @@ export default function Navbar() {
             w: "40px",
             h: "40px",
             mr: "0.5rem",
-            borderRadius: "50%",
+            borderRadius: "50%"
           })}
         />
         <span className={css({ fontWeight: "500" })}>User Name</span>

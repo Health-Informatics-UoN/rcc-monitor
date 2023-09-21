@@ -11,11 +11,11 @@ public static class AuthConfiguration
       // Nothing in SargAssure (at this time) should use [AllowAnonymous]
       // This is used when `[Authorize]` is provided with no specific policy / config
       b.DefaultPolicy = AuthPolicies.IsAuthenticatedUser;
-      
+
       b.AddPolicy(nameof(AuthPolicies.CanViewSiteReports), AuthPolicies.CanViewSiteReports);
       b.AddPolicy(nameof(AuthPolicies.CanSendSummary), AuthPolicies.CanSendSummary);
     };
-  
+
   public static Action<CorsOptions> CorsOptions(IConfiguration configuration)
   {
     return b =>
@@ -23,5 +23,5 @@ public static class AuthConfiguration
       b.AddPolicy(nameof(CorsPolicies.AllowFrontendApp), CorsPolicies.AllowFrontendApp(configuration));
     };
   }
-    
+
 }
