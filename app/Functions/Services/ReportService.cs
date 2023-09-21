@@ -131,7 +131,7 @@ public class ReportService : IReportingService
 
     public async Task SendSummary()
     {
-        var response = await _client.GetAsync("Reports/SendSummary");
+        var response = await _client.PostAsync("Reports/SendSummary", new StringContent(""));
         
         response.EnsureSuccessStatusCode();
     }
