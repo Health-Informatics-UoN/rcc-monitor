@@ -1,6 +1,7 @@
 using Data.Constants;
 using Functions.Models;
 using Functions.Services;
+using Moq;
 
 namespace Francois.Tests.Services;
 
@@ -20,7 +21,7 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
     public void TestUpdateExistingConflicts_WithResolvedConflictedNames()
     {
         // Arrange
-        var reportService = new ReportService(_fixture.DbContext);
+        var reportService = new ReportService(_fixture.DbContext, new Mock<IHttpClientFactory>().Object);
 
         var redCapConflicts = new List<ReportModel>
         {
@@ -60,7 +61,7 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
     public async Task TestUpdateExistingConflicts_WithUnresolvedConflictedNames()
     {
         // Arrange
-        var reportService = new ReportService(_fixture.DbContext);
+        var reportService = new ReportService(_fixture.DbContext, new Mock<IHttpClientFactory>().Object);
         await _fixture.SeedTestData();
     
         var redCapConflicts = new List<ReportModel>
@@ -115,7 +116,7 @@ public class ReportServiceTests : IClassFixture<DatabaseFixture>
     public async Task TestGetActiveReports()
     {
         // Arrange
-        var reportService = new ReportService(_fixture.DbContext);
+        var reportService = new ReportService(_fixture.DbContext, new Mock<IHttpClientFactory>().Object);
         await _fixture.SeedTestData();
         
         // Add report models in DB.
