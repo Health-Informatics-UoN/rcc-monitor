@@ -13,6 +13,7 @@ public static class AuthConfiguration
       b.DefaultPolicy = AuthPolicies.IsAuthenticatedUser;
       
       b.AddPolicy(nameof(AuthPolicies.CanViewSiteReports), AuthPolicies.CanViewSiteReports);
+      b.AddPolicy(nameof(AuthPolicies.CanSendSummary), AuthPolicies.CanSendSummary);
     };
   
   public static Action<CorsOptions> CorsOptions(IConfiguration configuration)
