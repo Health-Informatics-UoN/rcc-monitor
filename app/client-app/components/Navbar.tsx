@@ -1,5 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import { LoginButton, LogoutButton } from "@/auth/components/user-auth";
+import { getServerSession } from "next-auth";
+import { options } from "@/auth/options";
+import { permissions, hasPermission } from "@/auth/permissions";
 import { css } from "@/styled-system/css";
 import { flex } from "@/styled-system/patterns";
 
@@ -18,7 +22,7 @@ const NavButton = ({ css: cssProp = {}, children, to }: NavButtonProps) => {
             p: "15px",
             fontSize: "17px",
             fontWeight: "bold",
-            _hover: { bg: "#50a7de" }
+            _hover: { bg: "#50a7de" },
           },
           cssProp
         )}
@@ -29,7 +33,9 @@ const NavButton = ({ css: cssProp = {}, children, to }: NavButtonProps) => {
   );
 };
 
-export default function Navbar() {
+export default async function Navbar() {
+  const session = await getServerSession(options);
+
   return (
     <nav
       className={flex({
@@ -37,7 +43,7 @@ export default function Navbar() {
         position: "relative",
         alignItems: "center",
         justifyContent: "space-between",
-        bg: "linear-gradient(to right, #56a1d1, #0074d9)"
+        bg: "linear-gradient(to right, #56a1d1, #0074d9)",
       })}
     >
       <div
@@ -45,7 +51,7 @@ export default function Navbar() {
           color: "white",
           fontSize: "1.5rem",
           fontWeight: "bold",
-          ml: "25px"
+          ml: "25px",
         })}
       >
         RedCap Site Reports
@@ -54,20 +60,12 @@ export default function Navbar() {
         className={flex({ color: "white", alignItems: "center", mr: "30px" })}
       >
         <NavButton to="/">Home</NavButton>
-        <NavButton to="/reports" css={{ mr: "5px" }}>
-          Reports
-        </NavButton>
-        <img
-          src="https://www.clipartmax.com/png/middle/119-1198197_anonymous-person-svg-png-icon-free-download-anonymous-icon-png.png"
-          alt="User Avatar"
-          className={css({
-            w: "40px",
-            h: "40px",
-            mr: "0.5rem",
-            borderRadius: "50%"
-          })}
-        />
-        <span className={css({ fontWeight: "500" })}>User Name</span>
+
+        {hasPermission(session?.permissions, permissions.ViewSiteReports) && (
+          <NavButton to="/reports">Reports</NavButton>
+        )}
+
+        <div>{session ? <LogoutButton /> : <LoginButton />}</div>
       </div>
     </nav>
   );

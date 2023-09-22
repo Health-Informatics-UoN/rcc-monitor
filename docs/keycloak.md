@@ -13,3 +13,5 @@ A group is a combination of roles, that can be applied to many users.
 So a user is part of a group to grant them permission to resources.
 
 We define claims in the backend, and use `RequireRealmRoles` to build policies based on them. The `SitePermissionClaims` should use the same string as the name of your Keycloak role.
+
+Additionally, these claims are defined on the frontend in `auth/permissions`, which can be accessed on the session at a request level. They are used in Next.js `middleware.ts` to authorise at a route level.

@@ -52,7 +52,7 @@ Areas within this repo include:
 
 Notes on configuration values that can be provided, and their defaults.
 
-The app can be configured in any standard way an ASP.NET Core application can. Typically from the Azure Portal (Environment variables) or an `appsettings.json`.
+The backend app can be configured in any standard way an ASP.NET Core application can. Typically from the Azure Portal (Environment variables) or an `appsettings.json`.
 
 ```yaml
 OutboundEmail:
@@ -95,4 +95,16 @@ OutboundEmail:
 
     AllowList: [] # String array containing email/domain that are allowed to register. Example ["@example.com", "allow@example1.com"]
     BlockList: [] # String array containing email/domain that are blocked from registration. Example ["block@example.com", "@example1.com"]
+```
+
+The frontend app can be configured in any standard way an Node application can. Typically from the Azure Portal (Environment variables) or an `.env.local`.
+
+```bash
+BACKEND_URL=https://localhost:7007
+NODE_TLS_REJECT_UNAUTHORIZED='0' # For development
+KEYCLOAK_ID=frontend
+KEYCLOAK_SECRET=changeme
+KEYCLOACK_ISSUER=http://localhost:9080/realms/nuh-dev
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=changeme
 ```
