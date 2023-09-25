@@ -35,7 +35,7 @@ resource appinsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites
-resource functionApp 'Microsoft.Web/sites@2020-10-01' = {
+resource app 'Microsoft.Web/sites@2020-10-01' = {
   name: appName
   location: location
   kind: 'functionapp,linux'
@@ -58,7 +58,23 @@ resource functionApp 'Microsoft.Web/sites@2020-10-01' = {
     }, tags)
 }
 
-output name string = functionApp.name
-output tenantId string = functionApp.identity.tenantId
-output principalId string = functionApp.identity.principalId
-output appInsightsName string = appinsights.name
+type AppServiceIdentityOutputs = {
+  tenantId: string
+  principalId: string
+}
+
+type AppServiceAppInsightsOutputs = {
+  name: string
+  instrumentationKey: string
+}
+
+output name string = app.name
+
+output identity AppServiceIdentityOutputs = {
+  tenantId: app.identity.tenantId
+  principalId: app.identity.principalId
+}
+output appInsights AppServiceAppInsightsOutputs = {
+  name: appinsights.name
+  instrumentationKey: appinsights.properties.InstrumentationKey
+}

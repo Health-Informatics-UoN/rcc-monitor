@@ -26,7 +26,7 @@ param location string = resourceGroup().location
 param sharedEnv string = 'shared'
 var sharedPrefix = resourceGroup().name
 
-param appServicePlanSku string = 'S1'
+param appServicePlanSku string = 'B3'
 
 // Shared Resources
 // ensure they are present,
@@ -65,7 +65,6 @@ resource kv 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: keyVaultName
 }
 
-
 // Create a storage account for worker operations
 // And add its connection string to keyvault :)
 // Blob and Queue reads/writes/triggers use this account
@@ -76,6 +75,26 @@ module workerStorage 'components/storage-account.bicep' = {
     baseAccountName: 'worker'
     keyVaultName: kv.name
     uniqueStringSource: appName
+    tags: {
+      Service: serviceName
+      Environment: env
+    }
+  }
+}
+
+// Create the Keycloak App and related bits
+// App Insights
+// App Service
+// Hostnames
+module keycloak 'components/web-app-service.bicep' = {
+  name: 'identity-${uniqueString(appName)}'
+  params: {
+    location: location
+    appName: '${appName}-identity'
+    aspName: asp.outputs.name
+    logAnalyticsWorkspaceName: la.outputs.name
+    appFramework: 'DOCKER|bitnami/keycloak:22-debian-11'
+
     tags: {
       Service: serviceName
       Environment: env
@@ -124,6 +143,16 @@ module frontend 'components/web-app-service.bicep' = {
   }
 }
 
+// Grant keycloak Key Vault access
+module keycloakKvAccess 'config/keyvault-access.bicep' = {
+  name: 'kvAccess-${uniqueString(keycloak.name)}'
+  params: {
+    keyVaultName: kv.name
+    tenantId: keycloak.outputs.identity.tenantId
+    objectId: keycloak.outputs.identity.principalId
+  }
+}
+
 // Grant the backend Key Vault access
 module backendKvAccess 'config/keyvault-access.bicep' = {
   name: 'kvAccess-${uniqueString(appName)}'
@@ -134,13 +163,22 @@ module backendKvAccess 'config/keyvault-access.bicep' = {
   }
 }
 
+// Grant the frontend Key Vault access
+module frontendKvAccess 'config/keyvault-access.bicep' = {
+  name: 'kvAccess-${uniqueString(frontend.name)}'
+  params: {
+    keyVaultName: kv.name
+    tenantId: frontend.outputs.identity.tenantId
+    objectId: frontend.outputs.identity.principalId
+  }
+}
+
 // Config (App Settings, Connection strings) here now that Key Vault links will resolve
 // Overrides for environments come through as params
 
 // Shared configs are defined inline here
 var appInsightsSettings = {
   // App Insights
-  APPINSIGHTS_INSTRUMENTATIONKEY: backend.outputs.appInsights.instrumentationKey
   ApplicationInsightsAgent_EXTENSION_VERSION: '~2'
   XDT_MicrosoftApplicationInsights_Mode: 'recommended'
   DiagnosticServices_EXTENSION_VERSION: '~3'
@@ -157,13 +195,47 @@ var friendlyEnvironmentNames = {
   uat: 'UAT'
   prod: 'Production'
 }
+
+var baseKeycloakSettings = {
+  APPINSIGHTS_INSTRUMENTATIONKEY: keycloak.outputs.appInsights.instrumentationKey
+  KEYCLOAK_ADMIN_PASSWORD: referenceSecret(kv.name, 'keycloak-admin-password')
+  KEYCLOAK_ADMIN_USER: 'identity_admin'
+  KEYCLOAK_DATABASE_HOST: referenceSecret(kv.name, 'keycloak-database-host')
+  KEYCLOAK_DATABASE_NAME: 'identity'
+  KEYCLOAK_DATABASE_PASSWORD: referenceSecret(kv.name, 'keycloak-database-password')
+  KEYCLOAK_DATABASE_USER: referenceSecret(kv.name, 'keycloak-database-user')
+  KEYCLOAK_FRONTEND_URL: 'https://${keycloak.outputs.name}.azurewebsites.net'
+  KC_PROXY: 'edge'
+  WEBSITES_PORT: '8080'
+}
+
+module keycloakSiteConfig 'config/app-service-config.bicep' = {
+  name: 'siteConfig-${uniqueString(keycloak.name)}'
+  params: {
+    appName: keycloak.outputs.name
+    appSettings: union(
+      appInsightsSettings,
+      baseKeycloakSettings)
+  }
+}
+
 var baseBackendSettings = {
   DOTNET_Environment: friendlyEnvironmentNames[env]
 
   OutboundEmail__Provider: 'sendgrid'
   OutboundEmail__SendGridApiKey: referenceSecret(kv.name, 'sendgrid-api-key')
 
+  APPINSIGHTS_INSTRUMENTATIONKEY: backend.outputs.appInsights.instrumentationKey
   JWT__Secret: referenceSecret(kv.name, 'api-jwt-secret')
+  Keycloak__realm: 'nuh-${env}'
+  Keycloak__authServerUrl: 'https://${keycloak.outputs.name}.azurewebsites.net'
+  Keycloak__sslRequired: 'none'
+  Keycloak__resource: 'backend'
+  Keycloak__publicClient: 'true'
+  Keycloak__verifyTokenAudience: 'false'
+  Keycloak__credentials__secret: referenceSecret(kv.name, 'backend-keycloak-secret')
+  RolesSource: 'Realm'
+  FrontendAppUrl: 'https://${frontend.outputs.name}.azurewebsites.net'
 }
 
 module backendSiteConfig 'config/app-service-config.bicep' = {
@@ -188,7 +260,13 @@ module backendSiteConfig 'config/app-service-config.bicep' = {
 }
 
 var baseFrontendSettings = {
-  API_URL: 'https://${backend.outputs.name}.azurewebsites.net'
+  APPINSIGHTS_INSTRUMENTATIONKEY: frontend.outputs.appInsights.instrumentationKey
+  BACKEND_URL: 'https://${backend.outputs.name}.azurewebsites.net'
+  KEYCLOAK_ID: 'frontend'
+  KEYCLOAK_SECRET: referenceSecret(kv.name, 'frontend-keycloak-secret')
+  KEYCLOAK_ISSUER: 'https://${keycloak.outputs.name}.azurewebsites.net/realms/nuh-${env}'
+  NEXTAUTH_URL: 'https://${frontend.outputs.name}.azurewebsites.net'
+  NEXTAUTH_SECRET: referenceSecret(kv.name, 'nextauth-secret')
 }
 
 module frontendSiteConfig 'config/app-service-config.bicep' = {
@@ -201,8 +279,8 @@ module frontendSiteConfig 'config/app-service-config.bicep' = {
   }
 }
 
-// Function Apps
-module functionApp 'components/functions-app.bicep' = {
+// Worker Apps
+module workerApp 'components/functions-app.bicep' = {
   name: 'function-${uniqueString(appName)}'
   params: {
     location: location
@@ -218,23 +296,37 @@ module functionApp 'components/functions-app.bicep' = {
 
 // grant the worker keyvault access for any settings it needs
 module workerKvAccess 'config/keyvault-access.bicep' = {
-  name: 'kvAccess-${uniqueString(functionApp.name)}'
+  name: 'kvAccess-${uniqueString(workerApp.name)}'
   params: {
     keyVaultName: keyVaultName
-    tenantId: functionApp.outputs.tenantId
-    objectId: functionApp.outputs.principalId
+    tenantId: workerApp.outputs.identity.tenantId
+    objectId: workerApp.outputs.identity.principalId
   }
+}
+
+var baseWorkerSettings = {
+  APPINSIGHTS_INSTRUMENTATIONKEY: workerApp.outputs.appInsights.instrumentationKey
+  UseRedCapData: 'true'
+  RedCap__ProductionUrl: 'https://nuh.eulogin.redcapcloud.com'
+  RedCap__ProductionKey: referenceSecret(kv.name, 'redcap-production-key')
+  RedCap__UATUrl: 'https://eubuild.redcapcloud.com'
+  RedCap__UATKey: referenceSecret(kv.name, 'redcap-uat-key')
+  RedCap__ApiUrl: 'https://${backend.outputs.name}.azurewebsites.net/api/'
+  Identity__Issuer: 'https://${keycloak.outputs.name}.azurewebsites.net/realms/nuh-${env}/protocol/openid-connect/token'
+  Identity__ClientId: 'functions'
+  Identity__Secret: referenceSecret(kv.name, 'worker-identity-secret')
 }
 
 // Add settings
 //(now that keyvault is accessible, if any are KeyVault linked)
-module workerAppSettings 'config/function-app-config.bicep' = {
+module workerAppConfig 'config/function-app-config.bicep' = {
   name: 'functionConfig-${uniqueString(appName)}'
   params: {
-    appName: functionApp.outputs.name
+    appName: workerApp.outputs.name
     keyVaultName: keyVaultName
-    appInsightsName: functionApp.outputs.appInsightsName
+    appInsightsName: workerApp.outputs.appInsights.name
     apiStorageConnectionStringKvRef: workerStorage.outputs.connectionStringKvRef
+    appSettings: baseWorkerSettings
   }
 }
 
