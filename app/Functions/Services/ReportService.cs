@@ -11,10 +11,17 @@ namespace Functions.Services;
 public class ReportService : IReportingService
 {
     private readonly ApplicationDbContext _db;
-    public ReportService(ApplicationDbContext db)
+    private readonly HttpClient _client;
+
+    public ReportService(
+        ApplicationDbContext db, 
+        IHttpClientFactory httpClientFactory
+        )
     {
         _db = db;
+        _client = httpClientFactory.CreateClient("client");
     }
+    
     public void Create(ReportModel reportModel)
     {
         var reportType = _db.ReportTypes.First(x => x.Name == reportModel.ReportTypeModel);
@@ -120,5 +127,12 @@ public class ReportService : IReportingService
         }
         
         return redCapConflicts;
+    }
+
+    public async Task SendSummary()
+    {
+        var response = await _client.PostAsync("Reports/SendSummary", new StringContent(""));
+        
+        response.EnsureSuccessStatusCode();
     }
 }

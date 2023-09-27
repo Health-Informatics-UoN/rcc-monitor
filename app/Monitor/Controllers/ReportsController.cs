@@ -22,14 +22,13 @@ public class ReportsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<ReportModel>>> ListAll()
         => Ok(await _reportService.List());
-    
-    // TODO: Fix when the function app has auth. 
-    [Authorize]
+
+    [Authorize(nameof(AuthPolicies.CanSendSummary))]
     [HttpPost("SendSummary")]
     public async Task<ActionResult<List<ReportModel>>> SendSummary()
     {
         await _reportService.SendSummary();
         return NoContent();
     }
-    
+
 }
