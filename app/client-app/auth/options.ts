@@ -8,9 +8,10 @@ export const options: NextAuthOptions = {
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID || "",
       clientSecret: process.env.KEYCLOAK_SECRET || "",
-      issuer: process.env.KEYCLOACK_ISSUER,
+      issuer: process.env.KEYCLOAK_ISSUER,
     }),
   ] as Provider[],
+  secret: process.env.NEXTAUTH_SECRET,
 
   // Get the id_token and roles and add to the session.
   callbacks: {

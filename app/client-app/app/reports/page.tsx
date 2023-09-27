@@ -1,5 +1,5 @@
 import Alert from "@/components/Alert";
-import { getReports } from "@/api/reports";
+import { getReports } from "@/lib/api/reports";
 import { Metadata } from "next";
 import { vstack } from "@/styled-system/patterns";
 import { css } from "@/styled-system/css";
@@ -9,11 +9,11 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  triggerStyle
+  triggerStyle,
 } from "@/components/ui/tabs";
 
 export const metadata: Metadata = {
-  title: "RedCap Site Reports"
+  title: "RedCap Site Reports",
 };
 
 export default async function Reports() {
@@ -24,13 +24,13 @@ export default async function Reports() {
       title: "Site Conflicts",
       report: reports.filter((v) => v.reportType.name == "ConflictingSite"),
       description:
-        "These sites are missing in Production, as they are present in Build. If they are attached to a study in Build, you will not be able to deploy that study to Production."
+        "These sites are missing in Production, as they are present in Build. If they are attached to a study in Build, you will not be able to deploy that study to Production.",
     },
     siteNameConflicts: {
       title: "Site Name Conflicts",
       report: reports.filter((v) => v.reportType.name == "ConflictingSiteName"),
       description:
-        "These sites have different names in each instance, but the same Global Site Id. This could result in studies being deployed to incorrect sites."
+        "These sites have different names in each instance, but the same Global Site Id. This could result in studies being deployed to incorrect sites.",
     },
     siteConflictsParents: {
       title: "Site Parent Id Conflicts",
@@ -38,8 +38,8 @@ export default async function Reports() {
         (v) => v.reportType.name == "ConflictingSiteParent"
       ),
       description:
-        "These sites have different Parents in each instance. If they are attached to a study in Build, you will not be able to deploy that study to Production."
-    }
+        "These sites have different Parents in each instance. If they are attached to a study in Build, you will not be able to deploy that study to Production.",
+    },
   };
 
   return (
@@ -49,7 +49,7 @@ export default async function Reports() {
           mt: "10px",
           fontSize: "35px",
           fontWeight: "bold",
-          textAlign: "center"
+          textAlign: "center",
         })}
       >
         Site Reports
