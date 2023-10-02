@@ -7,7 +7,7 @@ namespace Functions;
 public static class GenerateTestData
 {
     [Function("GenerateTestData")]
-    public static void Run([TimerTrigger("0 */5 * * * *")] MyInfo myTimer, FunctionContext context)
+    public static void Run([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] MyInfo myTimer, FunctionContext context)
     {
         var logger = context.GetLogger("GenerateTestData");
         logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
