@@ -69,15 +69,15 @@ public class SiteServiceTests
         var siteService = new SiteService();
         var sites1 = new List<Site>
         {
-            new Site { SiteId = "1", ParentSiteId = 0 },
-            new Site { SiteId = "2", ParentSiteId = 1 },
-            new Site { SiteId = "3", ParentSiteId = 0 }
+            new Site { Id = 1, SiteId = "1", ParentSiteId = 0 },
+            new Site { Id = 2, SiteId = "2", ParentSiteId = 1 },
+            new Site { Id = 3, SiteId = "3", ParentSiteId = 1 }
         };
         var sites2 = new List<Site>
         {
-            new Site { SiteId = "1", ParentSiteId = 0 },
-            new Site { SiteId = "2", ParentSiteId = 3 },
-            new Site { SiteId = "3", ParentSiteId = 0 }
+            new Site { Id = 1, SiteId = "1", ParentSiteId = 0 },
+            new Site { Id = 2, SiteId = "2", ParentSiteId = 1 },
+            new Site { Id = 3, SiteId = "3", ParentSiteId = 2 }
         };
     
         // Act
@@ -87,10 +87,10 @@ public class SiteServiceTests
         Assert.Collection(result,
             report =>
             {
-                Assert.Equal("2", report.Sites[0].SiteId);
+                Assert.Equal("3", report.Sites[0].SiteId);
                 Assert.Equal("1", report.Sites[0].ParentSiteId);
-                Assert.Equal("2", report.Sites[1].SiteId);
-                Assert.Equal("3", report.Sites[1].ParentSiteId);
+                Assert.Equal("3", report.Sites[1].SiteId);
+                Assert.Equal("2", report.Sites[1].ParentSiteId);
             }
         );
     }
