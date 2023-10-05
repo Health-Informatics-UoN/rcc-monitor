@@ -703,7 +703,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "changeme",
       "redirectUris": [
         "/*"
       ],
@@ -801,7 +801,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "changeme",
       "redirectUris": [
         "http://localhost:3000/*"
       ],

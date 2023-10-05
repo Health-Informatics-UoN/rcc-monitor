@@ -65,6 +65,10 @@ export default async function Navbar() {
           <NavButton to="/reports">Reports</NavButton>
         )}
 
+        {hasPermission(session?.permissions, permissions.GenerateSyntheticData) && (
+          <NavButton to="/synthetic-data">Synthetic Data</NavButton>
+        )}
+
         <div>{session ? <LogoutButton /> : <LoginButton />}</div>
       </div>
     </nav>

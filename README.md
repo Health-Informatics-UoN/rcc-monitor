@@ -37,8 +37,9 @@ The easiest way is using the dotnet cli:
 
 We use Keycloak for authentication, and the service runs as part of the `docker-compose`.
 
-When setting up a new environment, you need to import the Keycloak realm, found in `keycloak/nuh-dev.json`. This realm contains the client applications for backend and frontend, and custom roles.  
+When setting up a new environment, you need to import the Keycloak realm, found in `keycloak/nuh-dev.json`. This realm contains the client applications for backend and frontend, and custom roles.
 
+In production, the Kecloak secret for the client and backend will need to be regenerated and replaced in the environment variable and appsettings respectively, as we do not want to use default or development values.
 ## 📁 Repository contents
 
 Areas within this repo include:

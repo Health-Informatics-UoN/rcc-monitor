@@ -80,4 +80,11 @@ export default defineConfig({
   // The output directory for your css system
   emitPackage: false,
   outdir: "styled-system",
+
+  staticCss: {
+    recipes: {
+      // Load toast variant styles since it cannot be statically analyzed
+      toast: [{ variant: ["*"] }],
+    },
+  },
 });

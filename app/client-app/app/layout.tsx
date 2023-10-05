@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/toast/toaster";
 import "@/styles/globals.css";
 
 export default function RootLayout({
@@ -11,6 +12,7 @@ export default function RootLayout({
       <body>
         <Navbar />
         {children}
+        <Toaster />
       </body>
     </html>
   );

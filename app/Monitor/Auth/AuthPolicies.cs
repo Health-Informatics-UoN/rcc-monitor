@@ -22,5 +22,11 @@ public static class AuthPolicies
       .Combine(IsAuthenticatedUser)
       .RequireRealmRoles(SitePermissionClaims.SendSummaryEmail)
       .Build();
+  
+  public static AuthorizationPolicy CanGenerateSyntheticData
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.GenerateSyntheticData)
+      .Build();
 
 }

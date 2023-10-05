@@ -14,6 +14,7 @@ public static class AuthConfiguration
 
       b.AddPolicy(nameof(AuthPolicies.CanViewSiteReports), AuthPolicies.CanViewSiteReports);
       b.AddPolicy(nameof(AuthPolicies.CanSendSummary), AuthPolicies.CanSendSummary);
+      b.AddPolicy(nameof(AuthPolicies.CanGenerateSyntheticData), AuthPolicies.CanGenerateSyntheticData);
     };
 
   public static Action<CorsOptions> CorsOptions(IConfiguration configuration)
