@@ -24,17 +24,15 @@ public class SyntheticDataService
     /// <returns>A list of synthetic data.</returns>
     private static List<string> GenerateRows(string importFilePath)
     {
-        using var pck = new ExcelPackage();
-        var worksheet = pck.Workbook.Worksheets.Add("sheet");
-        
-        var file = new FileInfo(importFilePath);
-        var format = new ExcelTextFormat
-        {
-            TextQualifier = '"'
-        };
-        worksheet.Cells["A1"].LoadFromText(file, format);
+        var worksheet = OpenWorksheet(importFilePath);
 
-        var headerRows = new List<string>();
+        var headerRow = new List<string>
+        {
+            "participant_id",
+            "redcap_event_name"
+        };
+        
+        var subjectRows = new List<List<string>>();
 
         // Keep track of the current and previous form names
         // So we can generate form complete at the end of each form.
@@ -43,27 +41,65 @@ public class SyntheticDataService
         
         for (var rowIndex = 3; rowIndex <= worksheet.Dimension.End.Row; rowIndex++)
         {
+            var subjectData = new List<string>();
+            
             currentFormName = worksheet.Cells[rowIndex, 2].Text;
 
-            HandleFormNameChange(headerRows, currentFormName, previousFormName);
+            HandleFormNameChange(headerRow, currentFormName, previousFormName);
             previousFormName = currentFormName;
 
-            var cellF = worksheet.Cells[rowIndex, 6].Text;
-            var cellH = worksheet.Cells[rowIndex, 8].Text;
+            var fieldType = worksheet.Cells[rowIndex, 6].Text;
+            var choices = worksheet.Cells[rowIndex, 8].Text;
 
-            if (cellF == "checkbox" && !string.IsNullOrEmpty(cellH))
+            if (fieldType == "checkbox" && !string.IsNullOrEmpty(choices))
             {
-                ProcessCheckboxField(headerRows, worksheet.Cells[rowIndex, 1].Text, cellH);
+                ProcessCheckboxField(headerRow, worksheet.Cells[rowIndex, 1].Text, choices);
+                // TODO: generate checkbox data.
             }
             else
             {
-                ProcessRegularColumn(headerRows, worksheet.Cells[rowIndex, 1].Text);
+                ProcessRegularColumn(headerRow, worksheet.Cells[rowIndex, 1].Text);
+
+                var row = worksheet.Cells[rowIndex, 1, rowIndex, worksheet.Dimension.End.Column];
+                
+                GenerateData(row, subjectData);
+                subjectRows.Add(subjectData);
             }
         }
 
-        HandleLastForm(headerRows, currentFormName, previousFormName);
+        HandleLastForm(headerRow, currentFormName, previousFormName);
 
-        return headerRows;
+        return headerRow;
+    }
+
+    private static ExcelWorksheet OpenWorksheet(string importFilePath)
+    {
+        using var pck = new ExcelPackage();
+        var worksheet = pck.Workbook.Worksheets.Add("sheet");
+
+        var file = new FileInfo(importFilePath);
+        var format = new ExcelTextFormat
+        {
+            TextQualifier = '"'
+        };
+        worksheet.Cells["A1"].LoadFromText(file, format);
+        return worksheet;
+    }
+
+    /// <summary>
+    /// Generates synthetic subject data for a row.
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="subjectData"></param>
+    private static void GenerateData(ExcelRange row, List<string> subjectData)
+    {
+        // Get the relevant cells (the name, type, min max validation)
+        var label = row[1, 1].Text;
+        var fieldType = row[1, 6].Text;
+        var minValidation = row[1, 11].Text;
+        var maxValidation = row[1, 12].Text;
+        
+        subjectData.Add("");
     }
 
     /// <summary>
@@ -90,11 +126,9 @@ public class SyntheticDataService
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
     /// <param name="cellH">The cell of the choices of the checkbox.</param>
-    private static void ProcessCheckboxField(List<string> headerRows, string fieldName, string cellH)
+    private static void ProcessCheckboxField(List<string> headerRows, string fieldName, string choices)
     {
-        var choices = cellH.Split('|');
-
-        foreach (var choice in choices)
+        foreach (var choice in choices.Split('|'))
         {
             var label = choice.Split(',')[0].Trim('"');
             var header = fieldName + "___" + label.Trim();
