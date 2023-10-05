@@ -20,6 +20,9 @@ public class SyntheticDataService
     /// <summary>
     /// Generates rows of synthetic data based on the import file.
     /// </summary>
+    /// <remarks>
+    /// It works by generating a header row, then a column of data at a time. 
+    /// </remarks>
     /// <param name="importFilePath">Path to the .csv to import</param>
     /// <returns>A list of synthetic data.</returns>
     private static List<string> GenerateRows(string importFilePath)
@@ -60,8 +63,12 @@ public class SyntheticDataService
                 ProcessRegularColumn(headerRow, worksheet.Cells[rowIndex, 1].Text);
 
                 var row = worksheet.Cells[rowIndex, 1, rowIndex, worksheet.Dimension.End.Column];
-                
-                GenerateData(row, subjectData);
+
+                // Generate 100 rows
+                for (var i = 0; i < 100; i++)
+                {
+                    GenerateData(row, subjectData);
+                }
                 subjectColumns.Add(subjectData);
             }
         }
@@ -92,11 +99,9 @@ public class SyntheticDataService
             { "radio", new TextGenerator() },
             { "yesno", new TextGenerator() },
             { "slider", new TextGenerator() },
-            { "text", new TextGenerator() },
-            { "text", new TextGenerator() },
         };
         
-        // Get the relevant cells (the name, type, min max validation)
+        // Unpack the relevant cells
         var label = row[1, 1].Text;
         var fieldType = row[1, 6].Text;
         var minValidation = row[1, 11].Text;
@@ -159,6 +164,8 @@ public class SyntheticDataService
     /// <param name="fieldName">Name of the field to append</param>
     private static void ProcessRegularColumn(List<string> headerRows, string fieldName)
     {
+        // Skip calculated fields.
+        if (fieldName == "calc") return;
         headerRows.Add(fieldName);
     }
     
@@ -175,6 +182,7 @@ public class SyntheticDataService
         headerRows.Add(previousFormName + "_complete");
         headerRows.Add(previousFormName + "_custom_label");
         // TODO: We probably need to add subject data for these columns here.
+        // You'll actually want to pass subjectColumns - as we're adding a missing column. 
     }
 
     /// <summary>
