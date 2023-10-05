@@ -2,19 +2,27 @@ using OfficeOpenXml;
 
 namespace Functions.Services;
 
-public class DataGenerationService
+public class SyntheticDataService
 {
-    public void GenerateData()
+    /// <summary>
+    /// Generates synthetic data to a .csv file.
+    /// </summary>
+    public void Generate()
     {
         const string importFilePath = "import_dictionary.csv"; 
         const string exportFilePath = "export.csv"; 
 
-        var syntheticData = GenerateHeaderRows(importFilePath);
+        var syntheticData = GenerateRows(importFilePath);
         
         WriteRowsToFile(syntheticData, exportFilePath);
     }
     
-    private static List<string> GenerateHeaderRows(string importFilePath)
+    /// <summary>
+    /// Generates rows of synthetic data based on the import file.
+    /// </summary>
+    /// <param name="importFilePath">Path to the .csv to import</param>
+    /// <returns>A list of synthetic data.</returns>
+    private static List<string> GenerateRows(string importFilePath)
     {
         using var pck = new ExcelPackage();
         var worksheet = pck.Workbook.Worksheets.Add("sheet");
@@ -58,6 +66,12 @@ public class DataGenerationService
         return headerRows;
     }
 
+    /// <summary>
+    /// Handles the change in form name and adds completion and custom label columns.
+    /// </summary>
+    /// <param name="headerRows">List of header rows the columns are added to.</param>
+    /// <param name="currentFormName">The current form name.</param>
+    /// <param name="previousFormName">The previous form name.</param>
     private static void HandleFormNameChange(List<string> headerRows, string currentFormName, string previousFormName)
     {
         if (currentFormName == previousFormName) return;
@@ -67,14 +81,15 @@ public class DataGenerationService
     }
 
     /// <summary>
-    /// Generate the header row when field is a checkbox.
+    /// Generate the header column when field is a checkbox.
     /// </summary>
     /// <remarks>
-    /// A checkbox is different, multiple headers are produced from one row.
+    /// For a checkbox multiple header columns are produced from one row.
+    /// They take field, and choice label and append to each column row.
     /// </remarks>
-    /// <param name="headerRows"></param>
-    /// <param name="fieldName"></param>
-    /// <param name="cellH"></param>
+    /// <param name="headerRows">List of header rows the columns are added to.</param>
+    /// <param name="fieldName">Name of the field to append.</param>
+    /// <param name="cellH">The cell of the choices of the checkbox.</param>
     private static void ProcessCheckboxField(List<string> headerRows, string fieldName, string cellH)
     {
         var choices = cellH.Split('|');
@@ -87,11 +102,22 @@ public class DataGenerationService
         }
     }
 
+    /// <summary>
+    /// Generate the header column.
+    /// </summary>
+    /// <param name="headerRows">List of header rows the columns are added to.</param>
+    /// <param name="fieldName">Name of the field to append</param>
     private static void ProcessRegularColumn(List<string> headerRows, string fieldName)
     {
         headerRows.Add(fieldName);
     }
 
+    /// <summary>
+    /// Handles the last form name and adds completion and custom label columns.
+    /// </summary>
+    /// <param name="headerRows">List of header rows the columns are added to.</param>
+    /// <param name="currentFormName">The current form name.</param>
+    /// <param name="previousFormName">The previous form name.</param>
     private static void HandleLastForm(List<string> headerRows, string currentFormName, string previousFormName)
     {
         if (string.IsNullOrEmpty(currentFormName)) return;
@@ -99,6 +125,11 @@ public class DataGenerationService
         headerRows.Add(previousFormName + "_custom_label");
     }
 
+    /// <summary>
+    /// Write the rows to the spreadsheet.
+    /// </summary>
+    /// <param name="headerRows"></param>
+    /// <param name="exportFilePath"></param>
     private static void WriteRowsToFile(List<string> headerRows, string exportFilePath)
     {
         // Write to a worksheet

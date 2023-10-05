@@ -6,11 +6,11 @@ namespace Functions;
 
 public class GenerateTestData
 {
-    private readonly DataGenerationService _dataGenerationService;
+    private readonly SyntheticDataService _syntheticDataService;
     
-    public GenerateTestData(DataGenerationService dataGenerationService)
+    public GenerateTestData(SyntheticDataService syntheticDataService)
     {
-        _dataGenerationService = dataGenerationService;
+        _syntheticDataService = syntheticDataService;
     }
     
     [Function("GenerateTestData")]
@@ -19,19 +19,6 @@ public class GenerateTestData
         // TODO: Get this licensing working from config
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         
-        _dataGenerationService.GenerateData();
-
-        // Loop rows
-        
-        // Strongly typed rows
-        
-        // Get field type
-        // Get validation parameters
-        // Map special fields
-        // Generate test data
-        
-        // Save spreadsheet
-        // the output file
-        
+        _syntheticDataService.Generate();
     }
 }
