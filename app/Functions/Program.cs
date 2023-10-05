@@ -43,7 +43,8 @@ var host = new HostBuilder()
         });
         s.AddOptions()
             .Configure<SiteOptions>(context.Configuration.GetSection("RedCap"));
-            
+
+        s.AddTransient<DataGenerationService>();
         s.AddTransient<SiteService>();
         s.AddTransient<IReportingService, ReportService>();
         s.AddHttpClient();
