@@ -32,10 +32,10 @@ public class SyntheticDataService
             "redcap_event_name"
         };
         
-        var subjectRows = new List<List<string>>();
+        var subjectColumns = new List<List<string>>();
 
         // Keep track of the current and previous form names
-        // So we can generate form complete at the end of each form.
+        // So we can generate complete at the end of each CRF.
         var currentFormName = string.Empty;
         var previousFormName = string.Empty;
         
@@ -44,7 +44,6 @@ public class SyntheticDataService
             var subjectData = new List<string>();
             
             currentFormName = worksheet.Cells[rowIndex, 2].Text;
-
             HandleFormNameChange(headerRow, currentFormName, previousFormName);
             previousFormName = currentFormName;
 
@@ -63,27 +62,13 @@ public class SyntheticDataService
                 var row = worksheet.Cells[rowIndex, 1, rowIndex, worksheet.Dimension.End.Column];
                 
                 GenerateData(row, subjectData);
-                subjectRows.Add(subjectData);
+                subjectColumns.Add(subjectData);
             }
         }
 
         HandleLastForm(headerRow, currentFormName, previousFormName);
 
         return headerRow;
-    }
-
-    private static ExcelWorksheet OpenWorksheet(string importFilePath)
-    {
-        using var pck = new ExcelPackage();
-        var worksheet = pck.Workbook.Worksheets.Add("sheet");
-
-        var file = new FileInfo(importFilePath);
-        var format = new ExcelTextFormat
-        {
-            TextQualifier = '"'
-        };
-        worksheet.Cells["A1"].LoadFromText(file, format);
-        return worksheet;
     }
 
     /// <summary>
@@ -127,21 +112,26 @@ public class SyntheticDataService
             // Can't handle the datatype so we don't enter it.
         }
     }
-
+    
     /// <summary>
-    /// Handles the change in form name and adds completion and custom label columns.
+    /// Opens the .csv into a worksheet
     /// </summary>
-    /// <param name="headerRows">List of header rows the columns are added to.</param>
-    /// <param name="currentFormName">The current form name.</param>
-    /// <param name="previousFormName">The previous form name.</param>
-    private static void HandleFormNameChange(List<string> headerRows, string currentFormName, string previousFormName)
+    /// <param name="importFilePath">Path to the .csv</param>
+    /// <returns>The worksheet with data loaded.</returns>
+    private static ExcelWorksheet OpenWorksheet(string importFilePath)
     {
-        if (currentFormName == previousFormName) return;
-        if (string.IsNullOrEmpty(previousFormName)) return;
-        headerRows.Add(previousFormName + "_complete");
-        headerRows.Add(previousFormName + "_custom_label");
-    }
+        using var pck = new ExcelPackage();
+        var worksheet = pck.Workbook.Worksheets.Add("sheet");
 
+        var file = new FileInfo(importFilePath);
+        var format = new ExcelTextFormat
+        {
+            TextQualifier = '"'
+        };
+        worksheet.Cells["A1"].LoadFromText(file, format);
+        return worksheet;
+    }
+    
     /// <summary>
     /// Generate the header column when field is a checkbox.
     /// </summary>
@@ -171,6 +161,21 @@ public class SyntheticDataService
     {
         headerRows.Add(fieldName);
     }
+    
+    /// <summary>
+    /// Handles if there has been a change in form name, adding completion check columns.
+    /// </summary>
+    /// <param name="headerRows">List of header rows the columns are added to.</param>
+    /// <param name="currentFormName">The current form name.</param>
+    /// <param name="previousFormName">The previous form name.</param>
+    private static void HandleFormNameChange(List<string> headerRows, string currentFormName, string previousFormName)
+    {
+        if (currentFormName == previousFormName) return;
+        if (string.IsNullOrEmpty(previousFormName)) return;
+        headerRows.Add(previousFormName + "_complete");
+        headerRows.Add(previousFormName + "_custom_label");
+        // TODO: We probably need to add subject data for these columns here.
+    }
 
     /// <summary>
     /// Handles the last form name and adds completion and custom label columns.
@@ -183,6 +188,7 @@ public class SyntheticDataService
         if (string.IsNullOrEmpty(currentFormName)) return;
         headerRows.Add(currentFormName + "_complete");
         headerRows.Add(previousFormName + "_custom_label");
+        // TODO: Also probably need to do it here.
     }
 
     /// <summary>
