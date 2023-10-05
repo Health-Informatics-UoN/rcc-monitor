@@ -186,7 +186,7 @@ public class SyntheticDataService
     }
 
     /// <summary>
-    /// Handles the last form name and adds completion and custom label columns.
+    /// Handles if its the last CRF, adding completion check columns.
     /// </summary>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="currentFormName">The current form name.</param>
