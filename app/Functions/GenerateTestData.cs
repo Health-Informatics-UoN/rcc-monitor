@@ -1,4 +1,4 @@
-using Functions.Services;
+using Functions.Services.SyntheticData;
 using Microsoft.Azure.Functions.Worker;
 using OfficeOpenXml;
 

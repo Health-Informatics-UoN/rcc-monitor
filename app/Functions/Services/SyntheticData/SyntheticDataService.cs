@@ -1,6 +1,6 @@
 using OfficeOpenXml;
 
-namespace Functions.Services;
+namespace Functions.Services.SyntheticData;
 
 public class SyntheticDataService
 {
@@ -93,13 +93,39 @@ public class SyntheticDataService
     /// <param name="subjectData"></param>
     private static void GenerateData(ExcelRange row, List<string> subjectData)
     {
+        // Map data types to generator classes
+        var dataTypeMapping = new Dictionary<string, DataGenerator>
+        {
+            { "Date Box", new DateBoxGenerator() },
+            { "text", new TextGenerator() },
+            { "Number Box (Decimal)", new NumberGenerator() },
+            { "select", new TextGenerator() },
+            { "file", new TextGenerator() },
+            { "notes", new TextGenerator() },
+            { "Phone", new TextGenerator() },
+            { "E-mail", new TextGenerator() },
+            { "radio", new TextGenerator() },
+            { "yesno", new TextGenerator() },
+            { "slider", new TextGenerator() },
+            { "text", new TextGenerator() },
+            { "text", new TextGenerator() },
+        };
+        
         // Get the relevant cells (the name, type, min max validation)
         var label = row[1, 1].Text;
         var fieldType = row[1, 6].Text;
         var minValidation = row[1, 11].Text;
         var maxValidation = row[1, 12].Text;
         
-        subjectData.Add("");
+        if (dataTypeMapping.TryGetValue(fieldType, out var generator))
+        {
+            var generatedData = generator.GenerateData(minValidation, maxValidation);
+            subjectData.Add(generatedData);
+        }
+        else
+        {
+            // Can't handle the datatype so we don't enter it.
+        }
     }
 
     /// <summary>

@@ -2,6 +2,7 @@ using Francois.FunctionApp.Services;
 using Functions.Config;
 using Functions.Services;
 using Functions.Services.Contracts;
+using Functions.Services.SyntheticData;
 using IdentityModel.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
