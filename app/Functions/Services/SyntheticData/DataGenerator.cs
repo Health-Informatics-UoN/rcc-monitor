@@ -22,7 +22,7 @@ public class DateBoxGenerator : DataGenerator
         var range = (maxDate - minDate).Days;
         var generatedDate = minDate.AddDays(random.Next(range));
         
-        // TODO: Check the default redcap import date format.
+        // The default RedCap import date format
         return generatedDate.ToString("yyyy-MM-dd");
     }
 }
@@ -39,6 +39,13 @@ public class NumberGenerator : DataGenerator
 {
     public override string GenerateData(string? min = "0", string? max = "1")
     {
-        return "0";
+        var minValue = int.Parse(min ?? "0");
+        var maxValue = int.Parse(max ?? "1");
+        
+        var random = new Random();
+        var randomNumber = random.Next(minValue, maxValue + 1);
+        
+        return randomNumber.ToString();
     }
 }
+
