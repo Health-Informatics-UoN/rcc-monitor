@@ -99,10 +99,12 @@ public class SyntheticDataService
     }
 
     /// <summary>
-    /// Generates synthetic subject data for a row.
+    /// Generates synthetic subject data.
     /// </summary>
-    /// <param name="row"></param>
     /// <param name="subjectData"></param>
+    /// <param name="fieldType"></param>
+    /// <param name="minValidation"></param>
+    /// <param name="maxValidation"></param>
     private static void GenerateData(List<string> subjectData, string fieldType, string minValidation, string maxValidation)
     {
         // Map data types to generator classes
@@ -111,14 +113,13 @@ public class SyntheticDataService
             { "Date Box", new DateBoxGenerator() },
             { "text", new TextGenerator() },
             { "Number Box (Decimal)", new NumberGenerator() },
-            { "select", new TextGenerator() },
-            { "file", new TextGenerator() },
+            { "select", new NumberGenerator() },
             { "notes", new TextGenerator() },
-            { "Phone", new TextGenerator() },
+            { "Phone", new NumberGenerator() },
             { "E-mail", new TextGenerator() },
-            { "radio", new TextGenerator() },
-            { "yesno", new TextGenerator() },
-            { "slider", new TextGenerator() },
+            { "radio", new NumberGenerator() },
+            { "yesno", new NumberGenerator() },
+            { "slider", new NumberGenerator() },
         };
         
         if (dataTypeMapping.TryGetValue(fieldType, out var generator))
