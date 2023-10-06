@@ -5,6 +5,7 @@ namespace Functions.Services.SyntheticData;
 public class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
+    private const string EventName = "test event";
     
     /// <summary>
     /// Generates synthetic data to a .csv file.
@@ -19,27 +20,23 @@ public class SyntheticDataService
         var export = package.Workbook.Worksheets["export"];
         var syntheticData = GenerateRows(worksheet);
         
-        WriteRowsToFile(syntheticData.headerRow, syntheticData.subjectColumns, export);
+        WriteToFile(syntheticData.headerRow, syntheticData.subjectColumns, export);
     }
     
     /// <summary>
     /// Generates rows of synthetic data based on the import file.
     /// </summary>
     /// <remarks>
-    /// It works by generating a header row, then a column of data at a time. 
+    /// It works by generating a header row, and a column of data at a time. 
     /// </remarks>
     /// <param name="worksheet">Path to the .csv to import</param>
     /// <returns>A list of synthetic data.</returns>
     private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(ExcelWorksheet worksheet)
     {
-        // TODO: Need to generate columns for these rows.
-        var headerRow = new List<string>
-        {
-            "participant_id",
-            "redcap_event_name"
-        };
-        
+        var headerRow = new List<string>();
         var subjectColumns = new List<List<string>>();
+        
+        GenerateParticipantId(headerRow, subjectColumns);
 
         // Keep track of the current and previous form names
         // So we can generate complete at the end of each CRF.
@@ -54,24 +51,27 @@ public class SyntheticDataService
             HandleFormNameChange(headerRow, currentFormName, previousFormName);
             previousFormName = currentFormName;
 
+            var fieldName = worksheet.Cells[rowIndex, 1].Text;
             var fieldType = worksheet.Cells[rowIndex, 6].Text;
             var choices = worksheet.Cells[rowIndex, 8].Text;
+            var minValidation = worksheet.Cells[rowIndex, 11].Text;
+            var maxValidation = worksheet.Cells[rowIndex, 12].Text;
 
             if (fieldType == "checkbox" && !string.IsNullOrEmpty(choices))
             {
-                ProcessCheckboxField(headerRow, worksheet.Cells[rowIndex, 1].Text, choices);
+                ProcessCheckboxField(headerRow, fieldName, choices);
                 // TODO: generate checkbox data.
             }
             else
             {
-                ProcessRegularColumn(headerRow, worksheet.Cells[rowIndex, 1].Text);
-
-                var row = worksheet.Cells[rowIndex, 1, rowIndex, worksheet.Dimension.End.Column];
-
-                // Generate 100 rows
+                ProcessRegularColumn(headerRow, fieldName);
+                
+                // TODO: Check if choices is not null, and then change min/max validation to their lengths.
+                
+                // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
                 {
-                    GenerateData(row, rowIndex, subjectData);
+                    GenerateData(subjectData, fieldType, minValidation, maxValidation);
                 }
                 subjectColumns.Add(subjectData);
             }
@@ -82,12 +82,28 @@ public class SyntheticDataService
         return (headerRow, subjectColumns);
     }
 
+    private static void GenerateParticipantId(List<string> headerRows, List<List<string>> subjectColumns)
+    {
+        headerRows.AddRange(new List<string>
+        {
+            "participant_id", "redcap_event_name"
+        });
+        
+        var participantIds = Enumerable.Range(1, SubjectsToGenerate).ToList();
+        var eventNames = Enumerable.Repeat(EventName, SubjectsToGenerate).ToList();
+        subjectColumns.AddRange(new List<List<string>>
+        {
+            participantIds.ConvertAll(id => id.ToString()),
+            eventNames,
+        });
+    }
+
     /// <summary>
     /// Generates synthetic subject data for a row.
     /// </summary>
     /// <param name="row"></param>
     /// <param name="subjectData"></param>
-    private static void GenerateData(ExcelRange row, int rowIndex, List<string> subjectData)
+    private static void GenerateData(List<string> subjectData, string fieldType, string minValidation, string maxValidation)
     {
         // Map data types to generator classes
         var dataTypeMapping = new Dictionary<string, DataGenerator>
@@ -104,12 +120,6 @@ public class SyntheticDataService
             { "yesno", new TextGenerator() },
             { "slider", new TextGenerator() },
         };
-        
-        // Unpack the relevant cells
-        var label = row[rowIndex, 1].Text;
-        var fieldType = row[rowIndex, 6].Text;
-        var minValidation = row[rowIndex, 11].Text;
-        var maxValidation = row[rowIndex, 12].Text;
         
         if (dataTypeMapping.TryGetValue(fieldType, out var generator))
         {
@@ -151,7 +161,7 @@ public class SyntheticDataService
     /// </remarks>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
-    /// <param name="cellH">The cell of the choices of the checkbox.</param>
+    /// <param name="choices">The choices of the checkbox.</param>
     private static void ProcessCheckboxField(List<string> headerRows, string fieldName, string choices)
     {
         foreach (var choice in choices.Split('|'))
@@ -205,21 +215,20 @@ public class SyntheticDataService
     }
 
     /// <summary>
-    /// Write the rows to the spreadsheet.
+    /// Write the data to the spreadsheet.
     /// </summary>
     /// <param name="headerRow"></param>
-    /// <param name="exportFilePath"></param>
-    private static void WriteRowsToFile(List<string> headerRow, List<List<string>> subjectColumns, ExcelWorksheet export)
+    /// <param name="subjectColumns"></param>
+    /// <param name="export"></param>
+    private static void WriteToFile(List<string> headerRow, List<List<string>> subjectColumns, ExcelWorksheet export)
     {
-        // Write to a worksheet
-        // using var package = new ExcelPackage();
-        // var export = package.Workbook.Worksheets.Add("export");
-        
+        // Write headers
         for (var i = 0; i < headerRow.Count; i++)
         {
             export.Cells[1, i + 1].Value = headerRow[i];
         }
 
+        // Write subject data
         for (var i = 0; i < subjectColumns.Count; i++)
         {
             for (var j = 0; j < subjectColumns[i].Count; j++)
