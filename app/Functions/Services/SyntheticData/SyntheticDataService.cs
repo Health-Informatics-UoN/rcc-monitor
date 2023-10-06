@@ -219,11 +219,19 @@ public class SyntheticDataService
         {
             export.Cells[1, i + 1].Value = headerRow[i];
         }
+
+        for (var i = 0; i < subjectColumns.Count; i++)
+        {
+            for (var j = 0; j < subjectColumns[i].Count; j++)
+            {
+                export.Cells[j + 2, i + 1].Value = subjectColumns[i][j];
+            }
+        }
         
         // Write to .csv
         var output = new FileInfo("export.csv");
         var outputFormat = new ExcelOutputTextFormat();
-        export.Cells[1, 1, 1, headerRow.Count].SaveToText(output, outputFormat);
+        export.Cells[1, 1, SubjectsToGenerate, headerRow.Count].SaveToText(output, outputFormat);
         
     }
 }
