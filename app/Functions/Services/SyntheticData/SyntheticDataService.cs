@@ -38,20 +38,20 @@ public class SyntheticDataService
 
         GenerateParticipantId(headerRow, subjectColumns);
 
-        // Keep track of the current and previous form names
-        // So we can generate complete at the end of each CRF.
-        var currentFormName = string.Empty;
-        var previousFormName = string.Empty;
+        // Keep track of the current and previous CRF to generate completion columns
+        var currentCrfName = string.Empty;
+        var previousCrfName = string.Empty;
 
         // Skip the header row
         for (var rowIndex = 3; rowIndex <= worksheet.Dimension.End.Row; rowIndex++)
         {
             var subjectData = new List<string>();
 
-            currentFormName = worksheet.Cells[rowIndex, 2].Text;
-            HandleFormNameChange(headerRow, subjectColumns, currentFormName, previousFormName);
-            previousFormName = currentFormName;
+            currentCrfName = worksheet.Cells[rowIndex, 2].Text;
+            HandleCrfChange(headerRow, subjectColumns, currentCrfName, previousCrfName);
+            previousCrfName = currentCrfName;
 
+            // Unpack the values we need and clean them
             var fieldName = worksheet.Cells[rowIndex, 1].Text;
             var fieldType = worksheet.Cells[rowIndex, 6].Text;
             var choices = worksheet.Cells[rowIndex, 8].Text;
@@ -85,7 +85,7 @@ public class SyntheticDataService
             {
                 GenerateFieldHeader(headerRow, fieldName);
 
-                // Fix max validation to choices if there are any.
+                // Fix max validation to the number of choices if there are any.
                 if (!string.IsNullOrEmpty(choices))
                 {
                     maxValidation = cleanedChoices.Count.ToString();
@@ -101,16 +101,16 @@ public class SyntheticDataService
             }
         }
 
-        HandleLastForm(headerRow, subjectColumns, currentFormName, previousFormName);
+        HandleLastCrf(headerRow, subjectColumns, currentCrfName, previousCrfName);
 
         return (headerRow, subjectColumns);
     }
 
     /// <summary>
-    /// 
+    /// Generates Participant and Event Name header row and columns.
     /// </summary>
-    /// <param name="headerRows"></param>
-    /// <param name="subjectColumns"></param>
+    /// <param name="headerRows">List of header rows the columns are added to.</param>
+    /// <param name="subjectColumns">List of subjects the columns are added to.</param>
     private static void GenerateParticipantId(List<string> headerRows, List<List<string>> subjectColumns)
     {
         headerRows.AddRange(new List<string>
@@ -130,10 +130,13 @@ public class SyntheticDataService
     /// <summary>
     /// Generates synthetic subject data.
     /// </summary>
-    /// <param name="subjectData"></param>
-    /// <param name="fieldType"></param>
-    /// <param name="minValidation"></param>
-    /// <param name="maxValidation"></param>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="subjectData">Subject the synthetic data are added to.</param>
+    /// <param name="fieldType">The type of field to be generated.</param>
+    /// <param name="minValidation">The minimum value to be generated.</param>
+    /// <param name="maxValidation">The maximum value to be generated.</param>
     private static void GenerateData(List<string> subjectData, string fieldType, string minValidation,
         string maxValidation)
     {
@@ -160,10 +163,10 @@ public class SyntheticDataService
     }
 
     /// <summary>
-    /// Opens the .csv into a worksheet
+    /// Creates a workbook loading in the data.
     /// </summary>
     /// <param name="importFilePath">Path to the .csv</param>
-    /// <returns>The worksheet with data loaded.</returns>
+    /// <returns>The ExcelPackage with data loaded.</returns>
     private static ExcelPackage CreateWorkbook(string importFilePath)
     {
         var pck = new ExcelPackage();
@@ -183,7 +186,7 @@ public class SyntheticDataService
     /// Generate the header column.
     /// </summary>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
-    /// <param name="fieldName">Name of the field to append</param>
+    /// <param name="fieldName">Name of the field to append.</param>
     private static void GenerateFieldHeader(List<string> headerRows, string fieldName)
     {
         // Skip calculated fields.
@@ -195,8 +198,8 @@ public class SyntheticDataService
     /// Generate the header column when field is a checkbox.
     /// </summary>
     /// <remarks>
-    /// For a checkbox multiple header columns a re produced from one row.
-    /// They take field, and choice label and append to each column row.
+    /// For a checkbox multiple header columns are produced from one row.
+    /// Combines the field and choice label, and append to each column row.
     /// </remarks>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
@@ -207,12 +210,13 @@ public class SyntheticDataService
     }
 
     /// <summary>
-    /// Handles if there has been a change in form name, adding completion check columns.
+    /// Handles if there has been a change in CRF, adding completion check columns.
     /// </summary>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
-    /// <param name="currentFormName">The current form name.</param>
-    /// <param name="previousFormName">The previous form name.</param>
-    private static void HandleFormNameChange(List<string> headerRows, List<List<string>> subjectColumns,
+    /// <param name="subjectColumns">List of subjects the columns are added to.</param>
+    /// <param name="currentFormName">The current CRF name.</param>
+    /// <param name="previousFormName">The previous CRF name.</param>
+    private static void HandleCrfChange(List<string> headerRows, List<List<string>> subjectColumns,
         string currentFormName, string previousFormName)
     {
         if (currentFormName == previousFormName) return;
@@ -231,9 +235,10 @@ public class SyntheticDataService
     /// Handles if its the last CRF, adding completion check columns.
     /// </summary>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
-    /// <param name="currentFormName">The current form name.</param>
-    /// <param name="previousFormName">The previous form name.</param>
-    private static void HandleLastForm(List<string> headerRows, List<List<string>> subjectColumns,
+    /// <param name="subjectColumns">List of subjects the columns are added to.</param>
+    /// <param name="currentFormName">The current CRF name.</param>
+    /// <param name="previousFormName">The previous CRF name.</param>
+    private static void HandleLastCrf(List<string> headerRows, List<List<string>> subjectColumns,
         string currentFormName, string previousFormName)
     {
         if (string.IsNullOrEmpty(currentFormName)) return;
@@ -250,9 +255,9 @@ public class SyntheticDataService
     /// <summary>
     /// Write the data to the spreadsheet.
     /// </summary>
-    /// <param name="headerRow"></param>
-    /// <param name="subjectColumns"></param>
-    /// <param name="export"></param>
+    /// <param name="headerRow">List of header rows to write.</param>
+    /// <param name="subjectColumns">List of columns of subject data to write.</param>
+    /// <param name="export">The worksheet to export with.</param>
     private static void WriteToFile(List<string> headerRow, List<List<string>> subjectColumns, ExcelWorksheet export)
     {
         // Write headers
