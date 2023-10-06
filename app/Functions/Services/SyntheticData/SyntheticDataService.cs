@@ -18,7 +18,8 @@ public class SyntheticDataService
         var worksheet = package.Workbook.Worksheets["import"];
         var export = package.Workbook.Worksheets["export"];
         var syntheticData = GenerateRows(worksheet);
-        WriteRowsToFile(syntheticData, exportFilePath);
+        
+        WriteRowsToFile(syntheticData.headerRow, syntheticData.subjectColumns, export);
     }
     
     /// <summary>
@@ -29,8 +30,9 @@ public class SyntheticDataService
     /// </remarks>
     /// <param name="worksheet">Path to the .csv to import</param>
     /// <returns>A list of synthetic data.</returns>
-    private static List<string> GenerateRows(ExcelWorksheet worksheet)
+    private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(ExcelWorksheet worksheet)
     {
+        // TODO: Need to generate columns for these rows.
         var headerRow = new List<string>
         {
             "participant_id",
@@ -77,7 +79,7 @@ public class SyntheticDataService
 
         HandleLastForm(headerRow, currentFormName, previousFormName);
 
-        return headerRow;
+        return (headerRow, subjectColumns);
     }
 
     /// <summary>
@@ -205,23 +207,23 @@ public class SyntheticDataService
     /// <summary>
     /// Write the rows to the spreadsheet.
     /// </summary>
-    /// <param name="headerRows"></param>
+    /// <param name="headerRow"></param>
     /// <param name="exportFilePath"></param>
-    private static void WriteRowsToFile(List<string> headerRows, string exportFilePath)
+    private static void WriteRowsToFile(List<string> headerRow, List<List<string>> subjectColumns, ExcelWorksheet export)
     {
         // Write to a worksheet
-        using var package = new ExcelPackage();
-        var export = package.Workbook.Worksheets.Add("export");
+        // using var package = new ExcelPackage();
+        // var export = package.Workbook.Worksheets.Add("export");
         
-        for (var i = 0; i < headerRows.Count; i++)
+        for (var i = 0; i < headerRow.Count; i++)
         {
-            export.Cells[1, i + 1].Value = headerRows[i];
+            export.Cells[1, i + 1].Value = headerRow[i];
         }
         
         // Write to .csv
-        var output = new FileInfo(exportFilePath);
+        var output = new FileInfo("export.csv");
         var outputFormat = new ExcelOutputTextFormat();
-        export.Cells[1, 1, 1, headerRows.Count].SaveToText(output, outputFormat);
+        export.Cells[1, 1, 1, headerRow.Count].SaveToText(output, outputFormat);
         
     }
 }
