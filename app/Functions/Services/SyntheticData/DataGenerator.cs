@@ -49,3 +49,19 @@ public class NumberGenerator : DataGenerator
     }
 }
 
+public class PhoneGenerator : DataGenerator
+{
+    public override string GenerateData(string? min, string? max)
+    {
+        return "01151234567";
+    }
+}
+
+public class EmailGenerator : DataGenerator
+{
+    public override string GenerateData(string? min, string max)
+    {
+        return "synthetic@example.com";
+    }
+}
+
