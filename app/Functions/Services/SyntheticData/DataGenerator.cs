@@ -37,7 +37,7 @@ public class TextGenerator : DataGenerator
 
 public class NumberGenerator : DataGenerator
 {
-    public override string GenerateData(string? min = "0", string? max = "1")
+    public override string GenerateData(string? min = "0", string? max = "2")
     {
         // Check for empty strings and set to defaults
         if (string.IsNullOrWhiteSpace(min))
@@ -47,7 +47,7 @@ public class NumberGenerator : DataGenerator
 
         if (string.IsNullOrWhiteSpace(max))
         {
-            max = "1";
+            max = "2";
         }
         
         var minValue = double.Parse(min);
