@@ -87,7 +87,7 @@ public class SyntheticDataService
                 // Fix max validation to choices if there are any.
                 if (!string.IsNullOrEmpty(choices))
                 {
-                    maxValidation = choices.Length.ToString();
+                    maxValidation = cleanedChoices.Count.ToString();
                 }
 
                 // Generate subjects
@@ -136,7 +136,7 @@ public class SyntheticDataService
     private static void GenerateData(List<string> subjectData, string fieldType, string minValidation,
         string maxValidation)
     {
-        // Map data types to generator classes
+        // Map RedCap field types to generator classes
         var dataTypeMapping = new Dictionary<string, DataGenerator>
         {
             { "Date Box", new DateBoxGenerator() },
@@ -151,15 +151,10 @@ public class SyntheticDataService
             { "slider", new NumberGenerator() },
         };
 
-        if (dataTypeMapping.TryGetValue(fieldType, out var generator))
-        {
-            var generatedData = generator.GenerateData(minValidation, maxValidation);
-            subjectData.Add(generatedData);
-        }
-        else
-        {
-            // Can't handle the datatype so we don't enter it.
-        }
+        // If we can't handle the data type it is skipped
+        if (!dataTypeMapping.TryGetValue(fieldType, out var generator)) return;
+        var generatedData = generator.GenerateData(minValidation, maxValidation);
+        subjectData.Add(generatedData);
     }
 
     /// <summary>

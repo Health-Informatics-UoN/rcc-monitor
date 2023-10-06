@@ -39,15 +39,46 @@ public class NumberGenerator : DataGenerator
 {
     public override string GenerateData(string? min = "0", string? max = "1")
     {
-        var minValue = int.Parse(min ?? "0");
-        var maxValue = int.Parse(max ?? "1");
+        // Check for empty strings and set to defaults
+        if (string.IsNullOrWhiteSpace(min))
+        {
+            min = "0";
+        }
+
+        if (string.IsNullOrWhiteSpace(max))
+        {
+            max = "1";
+        }
         
-        var random = new Random();
-        var randomNumber = random.Next(minValue, maxValue + 1);
-        
-        return randomNumber.ToString();
+        var minValue = double.Parse(min);
+        var maxValue = double.Parse(max);
+
+        if (IsInteger(minValue) && IsInteger(maxValue))
+        {
+            // Generate a random integer
+            var minIntValue = (int)minValue;
+            var maxIntValue = (int)maxValue;
+
+            var random = new Random();
+            var randomNumber = random.Next(minIntValue, maxIntValue);
+
+            return randomNumber.ToString();
+        }
+        else
+        {
+            // Generate a random double/float
+            var randomValue = minValue + (maxValue - minValue) * new Random().NextDouble();
+            return randomValue.ToString();
+        }
+    }
+
+    // Helper method to check if a double is an integer
+    private static bool IsInteger(double value)
+    {
+        return value == Math.Floor(value);
     }
 }
+
 
 public class PhoneGenerator : DataGenerator
 {
