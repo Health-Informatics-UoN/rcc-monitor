@@ -67,17 +67,18 @@ public class SyntheticDataService
             if (fieldType == "checkbox" && !string.IsNullOrEmpty(choices))
             {
                 GenerateCheckboxHeaders(headerRow, fieldName, cleanedChoices);
-                // Add 0 or 1 for each checkbox choice
-                var random = new Random();
-                foreach (var randomValues in cleanedChoices.Select(_ => new List<string>()))
+                
+                // So generate a column for each checkbox choice
+                foreach (var _ in cleanedChoices.Select(_ => new List<string>()))
                 {
                     for (var i = 0; i < SubjectsToGenerate; i++)
                     {
-                        var randomValue = random.Next(2); // Generate either 0 or 1
-                        randomValues.Add(randomValue.ToString());
+                        GenerateData(subjectData, fieldType, minValidation, maxValidation);
                     }
-
-                    subjectColumns.Add(randomValues);
+                    
+                    // copy the list so we can get random values for each column
+                    subjectColumns.Add(new List<string>(subjectData));
+                    subjectData.Clear();
                 }
             }
             else
@@ -149,6 +150,7 @@ public class SyntheticDataService
             { "radio", new NumberGenerator() },
             { "yesno", new NumberGenerator() },
             { "slider", new NumberGenerator() },
+            { "checkbox", new NumberGenerator() },
         };
 
         // If we can't handle the data type it is skipped
