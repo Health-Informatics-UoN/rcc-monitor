@@ -4,16 +4,20 @@ namespace Functions.Services.SyntheticData;
 
 public class SyntheticDataService
 {
+    private const int SubjectsToGenerate = 100;
+    
     /// <summary>
     /// Generates synthetic data to a .csv file.
     /// </summary>
     public void Generate()
     {
         const string importFilePath = "import_dictionary.csv"; 
-        const string exportFilePath = "export.csv"; 
+        const string exportFilePath = "export.csv";
 
-        var syntheticData = GenerateRows(importFilePath);
-        
+        var package = CreateWorkbook(importFilePath);
+        var worksheet = package.Workbook.Worksheets["import"];
+        var export = package.Workbook.Worksheets["export"];
+        var syntheticData = GenerateRows(worksheet);
         WriteRowsToFile(syntheticData, exportFilePath);
     }
     
@@ -23,12 +27,10 @@ public class SyntheticDataService
     /// <remarks>
     /// It works by generating a header row, then a column of data at a time. 
     /// </remarks>
-    /// <param name="importFilePath">Path to the .csv to import</param>
+    /// <param name="worksheet">Path to the .csv to import</param>
     /// <returns>A list of synthetic data.</returns>
-    private static List<string> GenerateRows(string importFilePath)
+    private static List<string> GenerateRows(ExcelWorksheet worksheet)
     {
-        var worksheet = OpenWorksheet(importFilePath);
-
         var headerRow = new List<string>
         {
             "participant_id",
@@ -65,9 +67,9 @@ public class SyntheticDataService
                 var row = worksheet.Cells[rowIndex, 1, rowIndex, worksheet.Dimension.End.Column];
 
                 // Generate 100 rows
-                for (var i = 0; i < 100; i++)
+                for (var i = 0; i < SubjectsToGenerate; i++)
                 {
-                    GenerateData(row, subjectData);
+                    GenerateData(row, rowIndex, subjectData);
                 }
                 subjectColumns.Add(subjectData);
             }
@@ -83,7 +85,7 @@ public class SyntheticDataService
     /// </summary>
     /// <param name="row"></param>
     /// <param name="subjectData"></param>
-    private static void GenerateData(ExcelRange row, List<string> subjectData)
+    private static void GenerateData(ExcelRange row, int rowIndex, List<string> subjectData)
     {
         // Map data types to generator classes
         var dataTypeMapping = new Dictionary<string, DataGenerator>
@@ -102,10 +104,10 @@ public class SyntheticDataService
         };
         
         // Unpack the relevant cells
-        var label = row[1, 1].Text;
-        var fieldType = row[1, 6].Text;
-        var minValidation = row[1, 11].Text;
-        var maxValidation = row[1, 12].Text;
+        var label = row[rowIndex, 1].Text;
+        var fieldType = row[rowIndex, 6].Text;
+        var minValidation = row[rowIndex, 11].Text;
+        var maxValidation = row[rowIndex, 12].Text;
         
         if (dataTypeMapping.TryGetValue(fieldType, out var generator))
         {
@@ -123,18 +125,19 @@ public class SyntheticDataService
     /// </summary>
     /// <param name="importFilePath">Path to the .csv</param>
     /// <returns>The worksheet with data loaded.</returns>
-    private static ExcelWorksheet OpenWorksheet(string importFilePath)
+    private static ExcelPackage CreateWorkbook(string importFilePath)
     {
-        using var pck = new ExcelPackage();
-        var worksheet = pck.Workbook.Worksheets.Add("sheet");
+        var pck = new ExcelPackage();
+        var import = pck.Workbook.Worksheets.Add("import");
+        pck.Workbook.Worksheets.Add("export");
 
         var file = new FileInfo(importFilePath);
         var format = new ExcelTextFormat
         {
             TextQualifier = '"'
         };
-        worksheet.Cells["A1"].LoadFromText(file, format);
-        return worksheet;
+        import.Cells["A1"].LoadFromText(file, format);
+        return pck;
     }
     
     /// <summary>
