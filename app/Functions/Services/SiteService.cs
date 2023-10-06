@@ -114,10 +114,10 @@ public class SiteService
             .Where(report =>
             {
                 // Get the parent site for the current site
-                var site1Parent = sites1.FirstOrDefault(site => site.SiteId == report.Sites[0].ParentSiteId);
+                var site1Parent = sites1.FirstOrDefault(site => site.Id.ToString() == report.Sites[0].ParentSiteId);
                 
                 // Get prods parent and check if they match
-                var site2Parent = sites2.FirstOrDefault(site => site.SiteId == report.Sites[1].ParentSiteId);
+                var site2Parent = sites2.FirstOrDefault(site => site.Id.ToString() == report.Sites[1].ParentSiteId);
                 
                 return site2Parent != null && site1Parent != null &&
                        site2Parent.SiteId != site1Parent.SiteId;

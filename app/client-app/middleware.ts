@@ -6,6 +6,7 @@ import { permissions } from "@/auth/permissions";
 // Map the permission that a path needs to be accessed.
 const permissionPathMapping = {
   [permissions.ViewSiteReports]: ["/reports"],
+  [permissions.GenerateSyntheticData]: ["/synthetic-data"],
 };
 
 export default withAuth({

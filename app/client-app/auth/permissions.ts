@@ -13,4 +13,5 @@ export function hasPermission(
 
 export const permissions = {
   ViewSiteReports: "ViewSiteReports",
+  GenerateSyntheticData: "GenerateSyntheticData"
 };

@@ -1,60 +1,87 @@
 "use client";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Box } from "@/styled-system/jsx";
 import { css } from "@/styled-system/css";
-import { useState } from "react";
+import { useSortingAndFiltering } from "@/lib/hooks/useSortingAndFiltering";
 
-export default function ReportsTable({ reports }: { reports: ReportModel[] }) {
-  const [filterValue, setFilterValue] = useState("");
+interface ReportRow {
+  dateTime: string;
+  status: string;
+  instance?: string;
+  parentId?: string;
+  siteId?: string;
+  siteName?: string;
+  parentInBuild?: string;
+  parentIdInProduction?: string;
+  parentIdInUAT?: string;
+  siteNameInBuild?: string;
+  siteNameInProduction?: string;
+  siteNameInUAT?: string;
+}
 
-  const filteredReports = reports.filter((report) => {
-    return (
-      report.dateTime.toString().includes(filterValue) ||
-      report.description.includes(filterValue) ||
-      report.status.name.includes(filterValue)
-    );
-  });
+interface ReportsTableProps {
+  columns: string[];
+  rows: ReportRow[];
+}
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterValue(event.target.value);
-  };
+function toCamelCase(str: string) {
+  let ans = str.toLowerCase();
+  return ans.split(" ").reduce((s, c) => s + (c.charAt(0).toUpperCase() + c.slice(1)));
+}
+
+export default function ReportsTable({ columns, rows }: ReportsTableProps) {
+  const { onSort, filter, setFilter, outputList } = useSortingAndFiltering(
+    rows,
+    "siteName",
+    {
+      initialSort: { key: "dateTime", asc: true },
+      sorters: {
+        dateTime: { sorter: (asc) => (a, b) => asc ? a - b : b - a }
+      },
+      storageKey: "reportsTableSorting"
+    }
+  );
 
   return (
-    <Box w="50%">
+    <Box>
       <Input
         placeholder="Filter..."
         maxW="sm"
         m="0px auto 10px 0px"
-        onChange={handleFilterChange}
-        value={filterValue}
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
       />
       <Table m="10px auto">
         <TableHeader>
           <TableRow>
-            <TableHead>Date Time</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Status</TableHead>
+            {columns.map((column, index) => (
+              <TableHead key={index} onClick={() => onSort(toCamelCase(column))}>
+                {column}
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredReports.length <= 0 && (
+          {outputList.length === 0 && (
             <h3 className={css({ fontWeight: "bold", m: "20px" })}>
               No results found
             </h3>
           )}
-          {filteredReports.map((report) => (
-            <TableRow key={report.id}>
-              <TableCell>{report.dateTime.toString()}</TableCell>
-              <TableCell>{report.description}</TableCell>
-              <TableCell>{report.status.name}</TableCell>
+          {outputList.map((row, index) => (
+            <TableRow key={index}>
+              {Object.values(row).map((cell: string, index: number) => (
+                <TableCell key={index}>
+                  {cell}
+                </TableCell>
+              ))}
             </TableRow>
           ))}
         </TableBody>
