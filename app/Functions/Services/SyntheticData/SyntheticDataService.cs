@@ -56,10 +56,15 @@ public class SyntheticDataService
             var choices = worksheet.Cells[rowIndex, 8].Text;
             var minValidation = worksheet.Cells[rowIndex, 11].Text;
             var maxValidation = worksheet.Cells[rowIndex, 12].Text;
+            
+            var cleanedChoices = choices
+                .Split('|')
+                .Select(choice => choice.Split(',')[0].Trim('"').Trim())
+                .ToList();
 
             if (fieldType == "checkbox" && !string.IsNullOrEmpty(choices))
             {
-                ProcessCheckboxField(headerRow, fieldName, choices);
+                ProcessCheckboxField(headerRow, fieldName, cleanedChoices);
                 // TODO: generate checkbox data.
             }
             else
@@ -157,20 +162,15 @@ public class SyntheticDataService
     /// Generate the header column when field is a checkbox.
     /// </summary>
     /// <remarks>
-    /// For a checkbox multiple header columns are produced from one row.
+    /// For a checkbox multiple header columns a re produced from one row.
     /// They take field, and choice label and append to each column row.
     /// </remarks>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
     /// <param name="choices">The choices of the checkbox.</param>
-    private static void ProcessCheckboxField(List<string> headerRows, string fieldName, string choices)
+    private static void ProcessCheckboxField(List<string> headerRows, string fieldName, List<string> choices)
     {
-        foreach (var choice in choices.Split('|'))
-        {
-            var label = choice.Split(',')[0].Trim('"');
-            var header = fieldName + "___" + label.Trim();
-            headerRows.Add(header);
-        }
+        headerRows.AddRange(choices.Select(choice => fieldName + "___" + choice));
     }
 
     /// <summary>
