@@ -37,8 +37,8 @@ public class TextGenerator : DataGenerator
 
 public class NumberGenerator : DataGenerator
 {
-    public override string GenerateData(string? min, string? max)
+    public override string GenerateData(string? min = "0", string? max = "1")
     {
-        return "1";
+        return "0";
     }
 }

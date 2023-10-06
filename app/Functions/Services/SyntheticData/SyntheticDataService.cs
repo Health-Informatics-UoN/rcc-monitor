@@ -48,7 +48,7 @@ public class SyntheticDataService
             var subjectData = new List<string>();
             
             currentFormName = worksheet.Cells[rowIndex, 2].Text;
-            HandleFormNameChange(headerRow, currentFormName, previousFormName);
+            HandleFormNameChange(headerRow, subjectColumns, currentFormName, previousFormName);
             previousFormName = currentFormName;
 
             var fieldName = worksheet.Cells[rowIndex, 1].Text;
@@ -65,14 +65,23 @@ public class SyntheticDataService
             if (fieldType == "checkbox" && !string.IsNullOrEmpty(choices))
             {
                 ProcessCheckboxField(headerRow, fieldName, cleanedChoices);
-                // TODO: generate checkbox data.
+                // Add 1 or 0 for each checkbox choice
+                var random = new Random();
+                foreach (var randomValues in cleanedChoices.Select(_ => new List<string>()))
+                {
+                    for (var i = 0; i < SubjectsToGenerate; i++)
+                    {
+                        var randomValue = random.Next(2); // Generate either 0 or 1
+                        randomValues.Add(randomValue.ToString());
+                    }
+                    subjectColumns.Add(randomValues);
+                }
             }
             else
             {
                 ProcessRegularColumn(headerRow, fieldName);
                 
                 // TODO: Check if choices is not null, and then change min/max validation to their lengths.
-                
                 // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
                 {
@@ -82,7 +91,7 @@ public class SyntheticDataService
             }
         }
 
-        HandleLastForm(headerRow, currentFormName, previousFormName);
+        HandleLastForm(headerRow, subjectColumns, currentFormName, previousFormName);
 
         return (headerRow, subjectColumns);
     }
@@ -191,14 +200,18 @@ public class SyntheticDataService
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="currentFormName">The current form name.</param>
     /// <param name="previousFormName">The previous form name.</param>
-    private static void HandleFormNameChange(List<string> headerRows, string currentFormName, string previousFormName)
+    private static void HandleFormNameChange(List<string> headerRows, List<List<string>> subjectColumns, string currentFormName, string previousFormName)
     {
         if (currentFormName == previousFormName) return;
         if (string.IsNullOrEmpty(previousFormName)) return;
         headerRows.Add(previousFormName + "_complete");
         headerRows.Add(previousFormName + "_custom_label");
-        // TODO: We probably need to add subject data for these columns here.
-        // You'll actually want to pass subjectColumns - as we're adding a missing column. 
+        
+        subjectColumns.AddRange(new List<List<string>>
+        {
+            Enumerable.Repeat("1", SubjectsToGenerate).ToList(),
+            Enumerable.Repeat("", SubjectsToGenerate).ToList(),
+        });
     }
 
     /// <summary>
@@ -207,12 +220,17 @@ public class SyntheticDataService
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="currentFormName">The current form name.</param>
     /// <param name="previousFormName">The previous form name.</param>
-    private static void HandleLastForm(List<string> headerRows, string currentFormName, string previousFormName)
+    private static void HandleLastForm(List<string> headerRows, List<List<string>> subjectColumns, string currentFormName, string previousFormName)
     {
         if (string.IsNullOrEmpty(currentFormName)) return;
         headerRows.Add(currentFormName + "_complete");
         headerRows.Add(previousFormName + "_custom_label");
-        // TODO: Also probably need to do it here.
+        
+        subjectColumns.AddRange(new List<List<string>>
+        {
+            Enumerable.Repeat("1", SubjectsToGenerate).ToList(),
+            Enumerable.Repeat("", SubjectsToGenerate).ToList(),
+        });
     }
 
     /// <summary>
