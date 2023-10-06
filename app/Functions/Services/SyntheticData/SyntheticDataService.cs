@@ -82,6 +82,11 @@ public class SyntheticDataService
                 ProcessRegularColumn(headerRow, fieldName);
                 
                 // TODO: Check if choices is not null, and then change min/max validation to their lengths.
+                if (!string.IsNullOrEmpty(choices))
+                {
+                    minValidation = "0";
+                    maxValidation = choices.Length.ToString();
+                }
                 // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
                 {
