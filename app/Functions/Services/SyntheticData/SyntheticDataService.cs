@@ -56,8 +56,8 @@ public class SyntheticDataService
             { "Field Type", nameof(FieldColumns.FieldType) },
             { "Form Name", nameof(FieldColumns.FormName) },
             { "Choices, Calculations, OR Slider Labels", nameof(FieldColumns.Choices) },
-            { "Text Validation Min", nameof(FieldColumns.TextValidationMin) },
-            { "Text Validation Max", nameof(FieldColumns.TextValidationMax) }
+            { "Text Validation Min", nameof(FieldColumns.ValidationMin) },
+            { "Text Validation Max", nameof(FieldColumns.ValidationMax) }
         };
 
         var fieldColumns = new FieldColumns();
@@ -77,14 +77,22 @@ public class SyntheticDataService
         }
 
         return fieldColumns;
-
     }
 
+    private static FieldRow GetFieldRow(ExcelWorksheet worksheet, int rowIndex, FieldColumns fieldColumns)
+    {
+        return new FieldRow(fieldName: worksheet.Cells[rowIndex, fieldColumns.FieldName].Text,
+            fieldType: worksheet.Cells[rowIndex, fieldColumns.FieldType].Text,
+            choices: worksheet.Cells[rowIndex, fieldColumns.Choices].Text,
+            validationMin: worksheet.Cells[rowIndex, fieldColumns.ValidationMin].Text,
+            validationMax: worksheet.Cells[rowIndex, fieldColumns.ValidationMax].Text);
+    }
+    
     /// <summary>
     /// Generates rows of synthetic data based on the import file.
     /// </summary>
     /// <remarks>
-    /// It works by generating a header row, and a column of data at a time. 
+    /// It works by generating a header row, and a "subject" column of data at a time. 
     /// </remarks>
     /// <param name="worksheet">Path to the .csv to import</param>
     /// <returns>A list of synthetic data.</returns>
@@ -100,38 +108,30 @@ public class SyntheticDataService
         var currentCrfName = string.Empty;
         var previousCrfName = string.Empty;
 
-        // Skip the header row
+        // Skip the header rows
         for (var rowIndex = 3; rowIndex <= worksheet.Dimension.End.Row; rowIndex++)
         {
             var subjectData = new List<string>();
 
+            // Add any completion columns if we're changing CRF
             currentCrfName = worksheet.Cells[rowIndex, headerFields.FormName].Text;
             HandleCrfChange(headerRow, subjectColumns, currentCrfName, previousCrfName);
             previousCrfName = currentCrfName;
 
             // Unpack the values we need and clean them
-            var fieldName = worksheet.Cells[rowIndex, headerFields.FieldName].Text;
-            var fieldType = worksheet.Cells[rowIndex, headerFields.FieldType].Text;
-            var choices = worksheet.Cells[rowIndex, headerFields.Choices].Text;
-            var minValidation = worksheet.Cells[rowIndex, headerFields.TextValidationMin].Text;
-            var maxValidation = worksheet.Cells[rowIndex, headerFields.TextValidationMax].Text;
-
-            var cleanedChoices = choices
-                .Split('|')
-                .Select(choice => choice.Split(',')[0].Trim('"').Trim())
-                .ToList();
-
+            var fieldRow = GetFieldRow(worksheet, rowIndex, headerFields);
+            
             // Checkboxes generate multiple columns per field
-            if (fieldType == "checkbox" && !string.IsNullOrEmpty(choices))
+            if (fieldRow.FieldType == "checkbox" && !string.IsNullOrEmpty(fieldRow.Choices))
             {
-                GenerateCheckboxHeaders(headerRow, fieldName, cleanedChoices);
+                GenerateCheckboxHeaders(headerRow, fieldRow.FieldName, fieldRow.CleanedChoices);
                 
                 // So generate a column for each checkbox choice
-                foreach (var _ in cleanedChoices.Select(_ => new List<string>()))
+                foreach (var _ in fieldRow.CleanedChoices.Select(_ => new List<string>()))
                 {
                     for (var i = 0; i < SubjectsToGenerate; i++)
                     {
-                        GenerateData(subjectData, fieldType, minValidation, maxValidation);
+                        GenerateData(subjectData, fieldRow.FieldType, fieldRow.ValidationMin, fieldRow.ValidationMax);
                     }
                     
                     // copy the list so we can get random values for each column
@@ -141,24 +141,25 @@ public class SyntheticDataService
             }
             else
             {
-                GenerateFieldHeader(headerRow, fieldName);
+                GenerateFieldHeader(headerRow, fieldRow.FieldName);
 
                 // Fix max validation to the number of choices if there are any.
-                if (!string.IsNullOrEmpty(choices))
+                if (!string.IsNullOrEmpty(fieldRow.Choices))
                 {
-                    maxValidation = cleanedChoices.Count.ToString();
+                    fieldRow.ValidationMax = fieldRow.CleanedChoices.Count.ToString();
                 }
 
                 // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
                 {
-                    GenerateData(subjectData, fieldType, minValidation, maxValidation);
+                    GenerateData(subjectData, fieldRow.FieldType, fieldRow.ValidationMin, fieldRow.ValidationMax);
                 }
 
                 subjectColumns.Add(subjectData);
             }
         }
 
+        // Final CRF needs completion columns.
         HandleLastCrf(headerRow, subjectColumns, currentCrfName, previousCrfName);
 
         return (headerRow, subjectColumns);

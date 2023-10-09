@@ -6,6 +6,6 @@ public class FieldColumns
     public int FieldType { get; set; }
     public int FormName { get; set; }
     public int Choices { get; set; }
-    public int TextValidationMin { get; set; }
-    public int TextValidationMax { get; set; }
+    public int ValidationMin { get; set; }
+    public int ValidationMax { get; set; }
 }
