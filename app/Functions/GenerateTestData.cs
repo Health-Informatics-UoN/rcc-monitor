@@ -19,6 +19,7 @@ public class GenerateTestData
         // TODO: Get this licensing working from config
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         
-        _syntheticDataService.Generate();
+        // _syntheticDataService.Generate();
+        _syntheticDataService.GenerateFolder();
     }
 }

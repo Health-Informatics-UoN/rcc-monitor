@@ -1,3 +1,5 @@
+using System.Text;
+using Functions.Models;
 using OfficeOpenXml;
 
 namespace Functions.Services.SyntheticData;
@@ -10,17 +12,72 @@ public class SyntheticDataService
     /// <summary>
     /// Generates synthetic data to a .csv file.
     /// </summary>
-    public void Generate()
+    public void Generate(string importFilePath = "import_dictionary.csv", string exportFilePath = "export.csv")
     {
-        const string importFilePath = "import_dictionary.csv";
-        const string exportFilePath = "export.csv";
-
         var package = CreateWorkbook(importFilePath);
         var worksheet = package.Workbook.Worksheets["import"];
         var export = package.Workbook.Worksheets["export"];
         var syntheticData = GenerateRows(worksheet);
 
-        WriteToFile(syntheticData.headerRow, syntheticData.subjectColumns, export);
+        WriteToFile(syntheticData.headerRow, syntheticData.subjectColumns, export, exportFilePath);
+    }
+
+    /// <summary>
+    /// Test generate data against a whole folder of these things
+    /// </summary>
+    public void GenerateFolder()
+    {
+        const string importFolder = "redcap-dictionaries/";
+        var csvFiles = Directory.GetFiles(importFolder, "*.csv");
+        
+        // for file in import folder if file ends with .csv
+        foreach (var file in csvFiles)
+        {
+            Generate(importFilePath: file, exportFilePath: $"redcap-export/export-{Path.GetFileNameWithoutExtension(file)}.csv");
+        }
+        
+    }
+
+    /// <summary>
+    /// Gets the field indexes for a set of column labels.
+    /// </summary>
+    /// <remarks>
+    /// This is necessary as field columns are not consistent between data dictionaries,
+    /// so we have to go looking for the column indexes we want.
+    /// </remarks>
+    /// <param name="worksheet">Worksheet to map from.</param>
+    /// <returns>A model with indexes for the column names.</returns>
+    private static FieldColumns GetHeaderField(ExcelWorksheet worksheet)
+    {
+        // Mapping between field names and property names
+        var fieldMappings = new Dictionary<string, string>
+        {
+            { "Variable / Field Name", nameof(FieldColumns.FieldName) },
+            { "Field Type", nameof(FieldColumns.FieldType) },
+            { "Form Name", nameof(FieldColumns.FormName) },
+            { "Choices, Calculations, OR Slider Labels", nameof(FieldColumns.Choices) },
+            { "Text Validation Min", nameof(FieldColumns.TextValidationMin) },
+            { "Text Validation Max", nameof(FieldColumns.TextValidationMax) }
+        };
+
+        var fieldColumns = new FieldColumns();
+
+        // Search the first row, index is 1 based.
+        for (var col = 1; col <= worksheet.Dimension.End.Column; col++)
+        {
+            var cellValue = worksheet.Cells[1, col].Text;
+
+            if (!fieldMappings.TryGetValue(cellValue, out var propertyName)) continue;
+            // Set property by name
+            var propertyInfo = typeof(FieldColumns).GetProperty(propertyName);
+            if (propertyInfo != null)
+            {
+                propertyInfo.SetValue(fieldColumns, col);
+            }
+        }
+
+        return fieldColumns;
+
     }
 
     /// <summary>
@@ -33,6 +90,7 @@ public class SyntheticDataService
     /// <returns>A list of synthetic data.</returns>
     private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(ExcelWorksheet worksheet)
     {
+        var headerFields = GetHeaderField(worksheet);
         var headerRow = new List<string>();
         var subjectColumns = new List<List<string>>();
 
@@ -47,16 +105,16 @@ public class SyntheticDataService
         {
             var subjectData = new List<string>();
 
-            currentCrfName = worksheet.Cells[rowIndex, 2].Text;
+            currentCrfName = worksheet.Cells[rowIndex, headerFields.FormName].Text;
             HandleCrfChange(headerRow, subjectColumns, currentCrfName, previousCrfName);
             previousCrfName = currentCrfName;
 
             // Unpack the values we need and clean them
-            var fieldName = worksheet.Cells[rowIndex, 1].Text;
-            var fieldType = worksheet.Cells[rowIndex, 6].Text;
-            var choices = worksheet.Cells[rowIndex, 8].Text;
-            var minValidation = worksheet.Cells[rowIndex, 11].Text;
-            var maxValidation = worksheet.Cells[rowIndex, 12].Text;
+            var fieldName = worksheet.Cells[rowIndex, headerFields.FieldName].Text;
+            var fieldType = worksheet.Cells[rowIndex, headerFields.FieldType].Text;
+            var choices = worksheet.Cells[rowIndex, headerFields.Choices].Text;
+            var minValidation = worksheet.Cells[rowIndex, headerFields.TextValidationMin].Text;
+            var maxValidation = worksheet.Cells[rowIndex, headerFields.TextValidationMax].Text;
 
             var cleanedChoices = choices
                 .Split('|')
@@ -176,9 +234,10 @@ public class SyntheticDataService
         var file = new FileInfo(importFilePath);
         var format = new ExcelTextFormat
         {
-            TextQualifier = '"' // Text is wrapped in quotations in data dictionary
+            TextQualifier = '\"', // Text is wrapped in quotations in data dictionary
+            Encoding = new UTF8Encoding(),
         };
-        import.Cells["A1"].LoadFromText(file, format);
+        import.Cells["A1"].LoadFromText(file, format, null, true);
         return pck;
     }
 
@@ -258,7 +317,7 @@ public class SyntheticDataService
     /// <param name="headerRow">List of header rows to write.</param>
     /// <param name="subjectColumns">List of columns of subject data to write.</param>
     /// <param name="export">The worksheet to export with.</param>
-    private static void WriteToFile(List<string> headerRow, List<List<string>> subjectColumns, ExcelWorksheet export)
+    private static void WriteToFile(List<string> headerRow, List<List<string>> subjectColumns, ExcelWorksheet export, string exportFilePath)
     {
         // Write headers
         for (var i = 0; i < headerRow.Count; i++)
@@ -276,7 +335,7 @@ public class SyntheticDataService
         }
 
         // Write to .csv
-        var output = new FileInfo("export.csv");
+        var output = new FileInfo(exportFilePath);
         var outputFormat = new ExcelOutputTextFormat();
         export.Cells[1, 1, SubjectsToGenerate, headerRow.Count].SaveToText(output, outputFormat);
     }
