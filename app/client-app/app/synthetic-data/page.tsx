@@ -7,6 +7,7 @@ import { AlertCircle, FileDown, UploadCloud, XCircle } from "lucide-react";
 import { useToast } from "@/components/ui/toast/use-toast";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { postSpreadsheet } from "@/lib/api/actions";
+import Spinner from "@/components/ui/spinner";
 
 function ErrorText() {
   return (
@@ -18,15 +19,18 @@ function ErrorText() {
 
 function ValidationText() {
   return (
-    <h1
-      className={css({
-        m: "auto",
-        fontSize: "xl",
-        fontStyle: "italic",
-      })}
-    >
-      Validating...
-    </h1>
+    <Flex>
+      <Spinner />
+      <h1
+        className={css({
+          m: "auto",
+          fontSize: "xl",
+          fontStyle: "italic",
+        })}
+      >
+        Validating...
+      </h1>
+    </Flex>
   );
 }
 
@@ -91,6 +95,7 @@ export default function SyntheticData() {
       }
     } else {
       setError(true);
+      setValidated("");
     }
   }
 
@@ -133,7 +138,7 @@ export default function SyntheticData() {
           {error && <ErrorText />}
 
           <Flex
-            w={uploaded ? "55%" : validated === "success" ? "85%" : "75%"}
+            w={uploaded ? "58%" : validated === "success" ? "85%" : "75%"}
             justifyContent="space-between"
           >
             <Button
