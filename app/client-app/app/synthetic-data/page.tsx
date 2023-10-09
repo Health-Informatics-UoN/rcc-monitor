@@ -9,6 +9,11 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { postSpreadsheet } from "@/lib/api/actions";
 import Spinner from "@/components/ui/spinner";
 
+interface ValidatedButtonProps {
+  variant: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}
+
 function ErrorText() {
   return (
     <p className={css({ color: "red", m: "-16px 0px 10px" })}>
@@ -34,7 +39,7 @@ function ValidationText() {
   );
 }
 
-function ValidatedButton({ variant }: { variant: string }) {
+function ValidatedButton({ variant, onClick }: ValidatedButtonProps) {
   const type: boolean = variant === "success";
 
   return (
@@ -49,6 +54,7 @@ function ValidatedButton({ variant }: { variant: string }) {
       h="55px"
       border="2px solid"
       borderColor={type ? "green.600" : "red.600"}
+      onClick={onClick}
     >
       {type ? <FileDown color="green" /> : <XCircle color="red" />}
       {type ? "Download spreadsheet" : "Validation failed"}
@@ -170,7 +176,10 @@ export default function SyntheticData() {
                   </a>
                 )
               ) : (
-                <ValidatedButton variant={validated} />
+                <ValidatedButton
+                  variant={validated}
+                  onClick={() => setValidated("")}
+                />
               ))}
           </Flex>
         </form>

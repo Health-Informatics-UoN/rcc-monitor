@@ -6,6 +6,7 @@ import { options } from "@/auth/options";
 import { permissions, hasPermission } from "@/auth/permissions";
 import { css } from "@/styled-system/css";
 import { flex } from "@/styled-system/patterns";
+import { getServerConfig } from "@/lib/api/config";
 
 interface NavButtonProps {
   css?: {};
@@ -35,6 +36,7 @@ const NavButton = ({ css: cssProp = {}, children, to }: NavButtonProps) => {
 
 export default async function Navbar() {
   const session = await getServerSession(options);
+  const { siteMonitoringEnabled } = await getServerConfig();
 
   return (
     <nav
@@ -61,9 +63,8 @@ export default async function Navbar() {
       >
         <NavButton to="/">Home</NavButton>
 
-        {hasPermission(session?.permissions, permissions.ViewSiteReports) && (
-          <NavButton to="/reports">Reports</NavButton>
-        )}
+        {hasPermission(session?.permissions, permissions.ViewSiteReports) &&
+          siteMonitoringEnabled && <NavButton to="/reports">Reports</NavButton>}
 
         {hasPermission(session?.permissions, permissions.GenerateSyntheticData) && (
           <NavButton to="/synthetic-data">Synthetic Data</NavButton>
