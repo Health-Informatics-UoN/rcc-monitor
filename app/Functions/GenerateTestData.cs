@@ -1,6 +1,5 @@
 using Functions.Services.SyntheticData;
 using Microsoft.Azure.Functions.Worker;
-using OfficeOpenXml;
 
 namespace Functions;
 
@@ -16,10 +15,9 @@ public class GenerateTestData
     [Function("GenerateTestData")]
     public void Run([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] MyInfo myTimer, FunctionContext context)
     {
-        // TODO: Get this licensing working from config
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        
-        // _syntheticDataService.Generate();
-        _syntheticDataService.GenerateFolder();
+        _syntheticDataService.Generate();
+
+        // _syntheticDataService.Generate("redcap-dictionaries/GenMalCarb__eConsent_.csv");
+        // _syntheticDataService.GenerateFolder();
     }
 }

@@ -1,10 +1,7 @@
 using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Functions.Models;
-using OfficeOpenXml;
 
 namespace Functions.Services.SyntheticData;
 
@@ -68,48 +65,6 @@ public partial class SyntheticDataService
         return records;
     }
     
-
-    /// <summary>
-    /// Gets the field indexes for a set of column labels.
-    /// </summary>
-    /// <remarks>
-    /// This is necessary as field columns are not consistent between data dictionaries,
-    /// so we have to go looking for the column indexes we want.
-    /// </remarks>
-    /// <param name="worksheet">Worksheet to map from.</param>
-    /// <returns>A model with indexes for the column names.</returns>
-    private static FieldColumns GetHeaderField(ExcelWorksheet worksheet)
-    {
-        // Mapping between field names and property names
-        var fieldMappings = new Dictionary<string, string>
-        {
-            { "Variable / Field Name", nameof(FieldColumns.FieldName) },
-            { "Field Type", nameof(FieldColumns.FieldType) },
-            { "Form Name", nameof(FieldColumns.FormName) },
-            { "Choices, Calculations, OR Slider Labels", nameof(FieldColumns.Choices) },
-            { "Text Validation Min", nameof(FieldColumns.ValidationMin) },
-            { "Text Validation Max", nameof(FieldColumns.ValidationMax) }
-        };
-
-        var fieldColumns = new FieldColumns();
-
-        // Search the first row, index is 1 based.
-        for (var col = 1; col <= worksheet.Dimension.End.Column; col++)
-        {
-            var cellValue = worksheet.Cells[1, col].Text;
-
-            if (!fieldMappings.TryGetValue(cellValue, out var propertyName)) continue;
-            // Set property by name
-            var propertyInfo = typeof(FieldColumns).GetProperty(propertyName);
-            if (propertyInfo != null)
-            {
-                propertyInfo.SetValue(fieldColumns, col);
-            }
-        }
-
-        return fieldColumns;
-    }
-
     
     /// <summary>
     /// Generates rows of synthetic data based on the import file.
