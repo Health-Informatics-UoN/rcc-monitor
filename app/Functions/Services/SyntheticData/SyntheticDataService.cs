@@ -46,19 +46,24 @@ public class SyntheticDataService
     private static List<FieldRow> ReadCsv(string filePath)
     {
         using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture));
         var records = new List<FieldRow>();
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            ShouldSkipRecord = (row) => string.IsNullOrEmpty(row.Row[0]) || row.Row[0] == "{}"
+        };
+        
+        using var csv = new CsvReader(reader, config);
         csv.Read();
         csv.ReadHeader();
         while (csv.Read())
         {
             var record = new FieldRow(
-                csv.GetField("Variable / Field Name"), 
-                csv.GetField("Field Type"),
-                csv.GetField("Form Name"),
-                csv.GetField("Choices, Calculations, OR Slider Labels"),
-                csv.GetField("Text Validation Min"),
-                csv.GetField("Text Validation Max")
+                csv.GetField("Variable / Field Name") ?? string.Empty, 
+                csv.GetField("Field Type") ?? string.Empty,
+                csv.GetField("Form Name") ?? string.Empty,
+                csv.GetField("Choices, Calculations, OR Slider Labels") ?? string.Empty,
+                csv.GetField("Text Validation Min") ?? string.Empty,
+                csv.GetField("Text Validation Max") ?? string.Empty
             );
             records.Add(record);
         }
@@ -72,11 +77,10 @@ public class SyntheticDataService
     /// <remarks>
     /// It works by generating a header row, and a "subject" column of data at a time. 
     /// </remarks>
-    /// <param name="worksheet">Path to the .csv to import</param>
+    /// <param name="rows">List of fields to generate data against.</param>
     /// <returns>A list of synthetic data.</returns>
     private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows)
     {
-        // var headerFields = GetHeaderField(worksheet);
         var headerRow = new List<string>();
         var subjectColumns = new List<List<string>>();
 
@@ -181,14 +185,14 @@ public class SyntheticDataService
             { "text", new TextGenerator() },
             { "Number Box (Decimal)", new DecimalGenerator() },
             { "Number Box (Integer)", new IntegerGenerator() },
-            { "select", new DecimalGenerator() },
+            { "select", new IntegerGenerator() },
             { "notes", new TextGenerator() },
             { "Phone", new PhoneGenerator() },
             { "E-mail", new EmailGenerator() },
-            { "radio", new DecimalGenerator() },
-            { "yesno", new DecimalGenerator() },
-            { "slider", new DecimalGenerator() },
-            { "checkbox", new DecimalGenerator() },
+            { "radio", new IntegerGenerator() },
+            { "yesno", new IntegerGenerator() },
+            { "slider", new IntegerGenerator() },
+            { "checkbox", new IntegerGenerator() },
         };
 
         // If we can't handle the data type it is skipped
