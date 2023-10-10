@@ -46,16 +46,11 @@ public class TextGenerator : DataGenerator
     }
 }
 
-public class NumberGenerator : DataGenerator
+public class DecimalGenerator : DataGenerator
 {
     /// <summary>
-    /// Generates a random number between two values.
+    /// Generates a random decimal between two values.
     /// </summary>
-    /// <remarks>
-    /// RedCap data uses a Number Box to handle both natural numbers and decimals.
-    /// When given a natural number for validation, we should generate a natural number.
-    /// And then given a decimal for validation, we should generate a decimal.
-    /// </remarks>
     /// <param name="min">The minimum number.</param>
     /// <param name="max">The maximum number.</param>
     /// <returns>A random number between the min/max</returns>
@@ -74,31 +69,42 @@ public class NumberGenerator : DataGenerator
         
         var minValue = double.Parse(min);
         var maxValue = double.Parse(max);
+        
+        var random = new Random();
+        var randomNumber = minValue + (maxValue - minValue) * random.NextDouble();
 
-        if (IsInteger(minValue) && IsInteger(maxValue))
-        {
-            // Generate a random integer
-            var minIntValue = (int)minValue;
-            var maxIntValue = (int)maxValue;
-
-            var random = new Random();
-            var randomNumber = random.Next(minIntValue, maxIntValue);
-
-            return randomNumber.ToString();
-        }
-        else
-        {
-            // Generate a random double/float
-            var randomValue = minValue + (maxValue - minValue) * new Random().NextDouble();
-            return randomValue.ToString();
-        }
+        return randomNumber.ToString();
     }
-
-    // Helper method to check if a double is an integer
-    private static bool IsInteger(double value)
+}
+public class IntegerGenerator : DataGenerator
+{
+    /// <summary>
+    /// Generates a random integer between two values.
+    /// </summary>
+    /// <param name="min">The minimum number.</param>
+    /// <param name="max">The maximum number.</param>
+    /// <returns>A random number between the min/max</returns>
+    public override string GenerateData(string? min = "0", string? max = "2")
     {
-        return value == Math.Floor(value);
+        if (string.IsNullOrWhiteSpace(min))
+        {
+            min = "0";
+        }
+
+        if (string.IsNullOrWhiteSpace(max))
+        {
+            max = "2";
+        }
+
+        var minValue = int.Parse(min);
+        var maxValue = int.Parse(max);
+
+        var random = new Random();
+        var randomNumber = random.Next(minValue, maxValue + 1);
+
+        return randomNumber.ToString();
     }
+    
 }
 
 

@@ -5,7 +5,7 @@ using Functions.Models;
 
 namespace Functions.Services.SyntheticData;
 
-public partial class SyntheticDataService
+public class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
     private const string EventName = "test event";
@@ -179,15 +179,16 @@ public partial class SyntheticDataService
         {
             { "Date Box", new DateBoxGenerator() },
             { "text", new TextGenerator() },
-            { "Number Box (Decimal)", new NumberGenerator() },
-            { "select", new NumberGenerator() },
+            { "Number Box (Decimal)", new DecimalGenerator() },
+            { "Number Box (Integer)", new IntegerGenerator() },
+            { "select", new DecimalGenerator() },
             { "notes", new TextGenerator() },
             { "Phone", new PhoneGenerator() },
             { "E-mail", new EmailGenerator() },
-            { "radio", new NumberGenerator() },
-            { "yesno", new NumberGenerator() },
-            { "slider", new NumberGenerator() },
-            { "checkbox", new NumberGenerator() },
+            { "radio", new DecimalGenerator() },
+            { "yesno", new DecimalGenerator() },
+            { "slider", new DecimalGenerator() },
+            { "checkbox", new DecimalGenerator() },
         };
 
         // If we can't handle the data type it is skipped
