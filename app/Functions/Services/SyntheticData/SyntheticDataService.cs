@@ -122,10 +122,12 @@ public class SyntheticDataService
             {
                 GenerateFieldHeader(headerRow, row.FieldName);
 
-                // Fix max validation to the number of choices if there are any.
+                // Fix validation to the choices options if there are any.
+                // These can start at any number, so we have to get the value.
                 if (!string.IsNullOrEmpty(row.Choices))
                 {
-                    row.ValidationMax = row.CleanedChoices.Count.ToString();
+                    row.ValidationMin = row.CleanedChoices.First().ToString();
+                    row.ValidationMax = row.CleanedChoices.Last().ToString();
                 }
 
                 // Generate subjects
@@ -224,7 +226,7 @@ public class SyntheticDataService
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
     /// <param name="choices">The choices of the checkbox.</param>
-    private static void GenerateCheckboxHeaders(List<string> headerRows, string fieldName, List<string> choices)
+    private static void GenerateCheckboxHeaders(List<string> headerRows, string fieldName, List<int> choices)
     {
         headerRows.AddRange(choices.Select(choice => fieldName + "___" + choice));
     }

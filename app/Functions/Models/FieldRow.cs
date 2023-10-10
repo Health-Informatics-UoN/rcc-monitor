@@ -19,7 +19,7 @@ public class FieldRow
     public string Choices { get; set; } = string.Empty;
     public string ValidationMin { get; set; } = string.Empty;
     public string ValidationMax { get; set; } = string.Empty;
-    public List<string> CleanedChoices { get; set; } = new List<string>();
+    public List<int> CleanedChoices { get; set; } = new List<int>();
 
     /// <summary>
     /// Clean the list of choices into a usable list.
@@ -27,7 +27,17 @@ public class FieldRow
     private void CleanChoices()
     {
         CleanedChoices = Choices.Split('|')
-            .Select(choice => choice.Split(',')[0].Trim('"').Trim())
+            .Select(choice =>
+            {
+                var parts = choice.Split(',');
+                if (parts.Length > 0 && int.TryParse(parts[0].Trim('"').Trim(), out var number))
+                {
+                    return number;
+                }
+                return -1; // Default value for invalid choices
+            })
+            .Where(number => number != -1) // Filter out invalid choices
+            .OrderBy(number => number) // Sort the numbers
             .ToList();
     }
 }
