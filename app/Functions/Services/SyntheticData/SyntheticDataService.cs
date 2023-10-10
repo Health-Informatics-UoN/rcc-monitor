@@ -272,28 +272,27 @@ public partial class SyntheticDataService
     /// </summary>
     /// <param name="headerRow">List of header rows to write.</param>
     /// <param name="subjectColumns">List of columns of subject data to write.</param>
-    /// <param name="export">The worksheet to export with.</param>
+    /// <param name="exportFilePath">The path to export it to.</param>
     private static void WriteCsv(List<string> headerRow, List<List<string>> subjectColumns, string exportFilePath)
     {
-        // Write headers
-        for (var i = 0; i < headerRow.Count; i++)
-        {
-            export.Cells[1, i + 1].Value = headerRow[i];
-        }
+        using var writer = new StreamWriter(exportFilePath);
 
-        // Write subject data
-        for (var i = 0; i < subjectColumns.Count; i++)
+        // Write the header row
+        writer.WriteLine(string.Join(",", headerRow));
+
+        // Transpose the subject columns
+        var numRows = subjectColumns.Max(col => col.Count);
+        for (var row = 0; row < numRows; row++)
         {
-            for (var j = 0; j < subjectColumns[i].Count; j++)
+            var rowData = new List<string>();
+            foreach (var column in subjectColumns)
             {
-                export.Cells[j + 2, i + 1].Value = subjectColumns[i][j];
+                rowData.Add(row < column.Count ? $"\"{column[row]}\"" : "");
             }
-        }
 
-        // Write to .csv
-        var output = new FileInfo(exportFilePath);
-        var outputFormat = new ExcelOutputTextFormat();
-        export.Cells[1, 1, SubjectsToGenerate, headerRow.Count].SaveToText(output, outputFormat);
+            // Write the rowData as a CSV line
+            writer.WriteLine(string.Join(",", rowData));
+        }
     }
     
 }
