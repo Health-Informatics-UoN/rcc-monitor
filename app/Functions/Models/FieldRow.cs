@@ -2,16 +2,18 @@ namespace Functions.Models;
 
 public class FieldRow
 {
-    public FieldRow(string fieldName, string fieldType, string choices, string validationMin, string validationMax)
+    public FieldRow(string fieldName, string fieldType, string crfName, string choices, string validationMin, string validationMax)
     {
         FieldName = fieldName;
         FieldType = fieldType;
+        CrfName = crfName;
         Choices = choices;
         ValidationMin = validationMin;
         ValidationMax = validationMax;
         CleanChoices();
     }
 
+    public string CrfName { get; set; } = string.Empty;
     public string FieldName { get; set; } = string.Empty;
     public string FieldType { get; set; } = string.Empty;
     public string Choices { get; set; } = string.Empty;
