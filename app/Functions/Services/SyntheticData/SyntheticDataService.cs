@@ -1,10 +1,14 @@
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Functions.Models;
 using OfficeOpenXml;
 
 namespace Functions.Services.SyntheticData;
 
-public class SyntheticDataService
+public partial class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
     private const string EventName = "test event";
@@ -14,12 +18,10 @@ public class SyntheticDataService
     /// </summary>
     public void Generate(string importFilePath = "import_dictionary.csv", string exportFilePath = "export.csv")
     {
-        var package = CreateWorkbook(importFilePath);
-        var worksheet = package.Workbook.Worksheets["import"];
-        var export = package.Workbook.Worksheets["export"];
-        var syntheticData = GenerateRows(worksheet);
-
-        WriteToFile(syntheticData.headerRow, syntheticData.subjectColumns, export, exportFilePath);
+        var rows = ReadCsv(importFilePath);
+        var syntheticData = GenerateRows(rows);
+        
+        WriteCsv(syntheticData.headerRow, syntheticData.subjectColumns, exportFilePath);
     }
 
     /// <summary>
@@ -30,6 +32,7 @@ public class SyntheticDataService
         const string importFolder = "redcap-dictionaries/";
         var csvFiles = Directory.GetFiles(importFolder, "*.csv");
         
+        
         // for file in import folder if file ends with .csv
         foreach (var file in csvFiles)
         {
@@ -37,6 +40,34 @@ public class SyntheticDataService
         }
         
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    private static List<FieldRow> ReadCsv(string filePath)
+    {
+        using var reader = new StreamReader(filePath);
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture));
+        var records = new List<FieldRow>();
+        csv.Read();
+        csv.ReadHeader();
+        while (csv.Read())
+        {
+            var record = new FieldRow(
+                csv.GetField("Variable / Field Name"), 
+                csv.GetField("Field Type"),
+                csv.GetField("Form Name"),
+                csv.GetField("Choices, Calculations, OR Slider Labels"),
+                csv.GetField("Text Validation Min"),
+                csv.GetField("Text Validation Max")
+            );
+            records.Add(record);
+        }
+        return records;
+    }
+    
 
     /// <summary>
     /// Gets the field indexes for a set of column labels.
@@ -79,14 +110,6 @@ public class SyntheticDataService
         return fieldColumns;
     }
 
-    private static FieldRow GetFieldRow(ExcelWorksheet worksheet, int rowIndex, FieldColumns fieldColumns)
-    {
-        return new FieldRow(fieldName: worksheet.Cells[rowIndex, fieldColumns.FieldName].Text,
-            fieldType: worksheet.Cells[rowIndex, fieldColumns.FieldType].Text,
-            choices: worksheet.Cells[rowIndex, fieldColumns.Choices].Text,
-            validationMin: worksheet.Cells[rowIndex, fieldColumns.ValidationMin].Text,
-            validationMax: worksheet.Cells[rowIndex, fieldColumns.ValidationMax].Text);
-    }
     
     /// <summary>
     /// Generates rows of synthetic data based on the import file.
@@ -96,9 +119,9 @@ public class SyntheticDataService
     /// </remarks>
     /// <param name="worksheet">Path to the .csv to import</param>
     /// <returns>A list of synthetic data.</returns>
-    private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(ExcelWorksheet worksheet)
+    private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows)
     {
-        var headerFields = GetHeaderField(worksheet);
+        // var headerFields = GetHeaderField(worksheet);
         var headerRow = new List<string>();
         var subjectColumns = new List<List<string>>();
 
@@ -109,50 +132,47 @@ public class SyntheticDataService
         var previousCrfName = string.Empty;
 
         // Skip the header rows
-        for (var rowIndex = 3; rowIndex <= worksheet.Dimension.End.Row; rowIndex++)
+        foreach (var row in rows)
         {
             var subjectData = new List<string>();
 
             // Add any completion columns if we're changing CRF
-            currentCrfName = worksheet.Cells[rowIndex, headerFields.FormName].Text;
+            currentCrfName = row.CrfName;
             HandleCrfChange(headerRow, subjectColumns, currentCrfName, previousCrfName);
             previousCrfName = currentCrfName;
-
-            // Unpack the values we need and clean them
-            var fieldRow = GetFieldRow(worksheet, rowIndex, headerFields);
             
-            // Checkboxes generate multiple columns per field
-            if (fieldRow.FieldType == "checkbox" && !string.IsNullOrEmpty(fieldRow.Choices))
+            // Checkboxes generate multiple columns per field so handled differently
+            if (row.FieldType == "checkbox" && !string.IsNullOrEmpty(row.Choices))
             {
-                GenerateCheckboxHeaders(headerRow, fieldRow.FieldName, fieldRow.CleanedChoices);
+                GenerateCheckboxHeaders(headerRow, row.FieldName, row.CleanedChoices);
                 
-                // So generate a column for each checkbox choice
-                foreach (var _ in fieldRow.CleanedChoices.Select(_ => new List<string>()))
+                // Generate a column for each checkbox choice
+                foreach (var _ in row.CleanedChoices.Select(_ => new List<string>()))
                 {
                     for (var i = 0; i < SubjectsToGenerate; i++)
                     {
-                        GenerateData(subjectData, fieldRow.FieldType, fieldRow.ValidationMin, fieldRow.ValidationMax);
+                        GenerateData(subjectData, row.FieldType, row.ValidationMin, row.ValidationMax);
                     }
                     
-                    // copy the list so we can get random values for each column
+                    // Make a copy so we can get random values for each column
                     subjectColumns.Add(new List<string>(subjectData));
                     subjectData.Clear();
                 }
             }
             else
             {
-                GenerateFieldHeader(headerRow, fieldRow.FieldName);
+                GenerateFieldHeader(headerRow, row.FieldName);
 
                 // Fix max validation to the number of choices if there are any.
-                if (!string.IsNullOrEmpty(fieldRow.Choices))
+                if (!string.IsNullOrEmpty(row.Choices))
                 {
-                    fieldRow.ValidationMax = fieldRow.CleanedChoices.Count.ToString();
+                    row.ValidationMax = row.CleanedChoices.Count.ToString();
                 }
 
                 // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
                 {
-                    GenerateData(subjectData, fieldRow.FieldType, fieldRow.ValidationMin, fieldRow.ValidationMax);
+                    GenerateData(subjectData, row.FieldType, row.ValidationMin, row.ValidationMax);
                 }
 
                 subjectColumns.Add(subjectData);
@@ -221,27 +241,7 @@ public class SyntheticDataService
         subjectData.Add(generatedData);
     }
 
-    /// <summary>
-    /// Creates a workbook loading in the data.
-    /// </summary>
-    /// <param name="importFilePath">Path to the .csv</param>
-    /// <returns>The ExcelPackage with data loaded.</returns>
-    private static ExcelPackage CreateWorkbook(string importFilePath)
-    {
-        var pck = new ExcelPackage();
-        var import = pck.Workbook.Worksheets.Add("import");
-        pck.Workbook.Worksheets.Add("export");
-
-        var file = new FileInfo(importFilePath);
-        var format = new ExcelTextFormat
-        {
-            TextQualifier = '\"', // Text is wrapped in quotations in data dictionary
-            Encoding = new UTF8Encoding(),
-        };
-        import.Cells["A1"].LoadFromText(file, format, null, true);
-        return pck;
-    }
-
+    
     /// <summary>
     /// Generate the header column.
     /// </summary>
@@ -318,7 +318,7 @@ public class SyntheticDataService
     /// <param name="headerRow">List of header rows to write.</param>
     /// <param name="subjectColumns">List of columns of subject data to write.</param>
     /// <param name="export">The worksheet to export with.</param>
-    private static void WriteToFile(List<string> headerRow, List<List<string>> subjectColumns, ExcelWorksheet export, string exportFilePath)
+    private static void WriteCsv(List<string> headerRow, List<List<string>> subjectColumns, string exportFilePath)
     {
         // Write headers
         for (var i = 0; i < headerRow.Count; i++)
@@ -340,4 +340,5 @@ public class SyntheticDataService
         var outputFormat = new ExcelOutputTextFormat();
         export.Cells[1, 1, SubjectsToGenerate, headerRow.Count].SaveToText(output, outputFormat);
     }
+    
 }
