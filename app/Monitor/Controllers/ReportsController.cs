@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
+using Monitor.Constants;
 using Monitor.Models;
 using Monitor.Services;
 
 namespace Monitor.Controllers;
 
 [ApiController]
+[FeatureGate(FeatureFlags.SiteMonitoring)]
 [Route("api/[controller]")]
 [Authorize]
 public class ReportsController : ControllerBase

@@ -7,6 +7,12 @@ import { AlertCircle, FileDown, UploadCloud, XCircle } from "lucide-react";
 import { useToast } from "@/components/ui/toast/use-toast";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { postSpreadsheet } from "@/lib/api/actions";
+import Spinner from "@/components/ui/spinner";
+
+interface ValidatedButtonProps {
+  variant: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}
 
 function ErrorText() {
   return (
@@ -18,19 +24,22 @@ function ErrorText() {
 
 function ValidationText() {
   return (
-    <h1
-      className={css({
-        m: "auto",
-        fontSize: "xl",
-        fontStyle: "italic",
-      })}
-    >
-      Validating...
-    </h1>
+    <Flex>
+      <Spinner />
+      <h1
+        className={css({
+          m: "auto",
+          fontSize: "xl",
+          fontStyle: "italic",
+        })}
+      >
+        Validating...
+      </h1>
+    </Flex>
   );
 }
 
-function ValidatedButton({ variant }: { variant: string }) {
+function ValidatedButton({ variant, onClick }: ValidatedButtonProps) {
   const type: boolean = variant === "success";
 
   return (
@@ -45,6 +54,7 @@ function ValidatedButton({ variant }: { variant: string }) {
       h="55px"
       border="2px solid"
       borderColor={type ? "green.600" : "red.600"}
+      onClick={onClick}
     >
       {type ? <FileDown color="green" /> : <XCircle color="red" />}
       {type ? "Download spreadsheet" : "Validation failed"}
@@ -91,6 +101,7 @@ export default function SyntheticData() {
       }
     } else {
       setError(true);
+      setValidated("");
     }
   }
 
@@ -133,7 +144,7 @@ export default function SyntheticData() {
           {error && <ErrorText />}
 
           <Flex
-            w={uploaded ? "55%" : validated === "success" ? "85%" : "75%"}
+            w={uploaded ? "58%" : validated === "success" ? "85%" : "75%"}
             justifyContent="space-between"
           >
             <Button
@@ -165,7 +176,10 @@ export default function SyntheticData() {
                   </a>
                 )
               ) : (
-                <ValidatedButton variant={validated} />
+                <ValidatedButton
+                  variant={validated}
+                  onClick={() => setValidated("")}
+                />
               ))}
           </Flex>
         </form>

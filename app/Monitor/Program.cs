@@ -4,6 +4,7 @@ using Keycloak.AuthServices.Authorization;
 using Monitor.Extensions;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 using Monitor.Data;
 
 using Monitor.Services;
@@ -54,6 +55,8 @@ b.Services
   .AddTransient<SyntheticDataService>();
 
 b.Services.AddSwaggerGen();
+
+b.Services.AddFeatureManagement();
 
 #endregion
 
