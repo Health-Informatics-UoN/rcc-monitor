@@ -23,6 +23,7 @@ public class FieldRow
 
     /// <summary>
     /// Clean the list of choices into a usable list of "Values".
+    /// These values are an unordered mixed list that can be any data type.
     /// </summary>
     private void CleanChoices()
     {
