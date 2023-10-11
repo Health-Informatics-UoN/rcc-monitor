@@ -1,18 +1,26 @@
 namespace Functions.Services.SyntheticData;
 
+/// <summary>
+/// Base class for data generator, override to add further data types.
+/// </summary>
 public abstract class DataGenerator
 {
     /// <summary>
     /// Generate data between 2 values.
     /// </summary>
-    /// <param name="min"></param>
-    /// <param name="max"></param>
-    /// <returns></returns>
+    /// <param name="min">Minimum validation.</param>
+    /// <param name="max">Maximum validation.</param>
+    /// <returns>Generated sample data.</returns>
     public virtual string GenerateData(string min, string max)
     {
         return "";
     }
 
+    /// <summary>
+    /// Generate data from a list of choices.  
+    /// </summary>
+    /// <param name="choices">List of choices to get.</param>
+    /// <returns>Generated sample data.</returns>
     public virtual string GenerateData(List<string> choices)
     {
         return "";
@@ -115,6 +123,12 @@ public class IntegerGenerator : DataGenerator
 
 public class TextGenerator : DataGenerator
 {
+    /// <summary>
+    /// Generates sample text.
+    /// </summary>
+    /// <param name="min">Unused minimum.</param>
+    /// <param name="max">Unused maximum.</param>
+    /// <returns>Sample generated text.</returns>
     public override string GenerateData(string min, string max)
     {
         return "Generated Text";

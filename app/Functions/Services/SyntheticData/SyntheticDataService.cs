@@ -38,10 +38,10 @@ public class SyntheticDataService
     }
     
     /// <summary>
-    /// 
+    /// Read a csv file to a list of RedCap fields.
     /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns></returns>
+    /// <param name="filePath">Path to csv file</param>
+    /// <returns>List of RedCap fields.</returns>
     private static List<FieldRow> ReadCsv(string filePath)
     {
         using var reader = new StreamReader(filePath);
@@ -98,6 +98,7 @@ public class SyntheticDataService
             HandleCrfChange(headerRow, subjectColumns, currentCrfName, previousCrfName);
             previousCrfName = currentCrfName;
 
+            // For 
             if (!string.IsNullOrEmpty(row.Choices))
             {
                 // Checkboxes generate multiple columns per field so handled differently
@@ -171,6 +172,13 @@ public class SyntheticDataService
     }
 
     
+    /// <summary>
+    /// Generates synthetic subject data.
+    /// </summary>
+    /// <param name="subjectData">Subject the synthetic data are added to.</param>
+    /// <param name="fieldType">Type of field to generate.</param>
+    /// <param name="minValidation">Minimum value.</param>
+    /// <param name="maxValidation">Maximum value.</param>
     private static void GenerateData(List<string> subjectData, string fieldType, string minValidation, string maxValidation)
     {
         // Map RedCap field types to generator classes
@@ -198,18 +206,14 @@ public class SyntheticDataService
     /// <summary>
     /// Generates synthetic subject data.
     /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
     /// <param name="subjectData">Subject the synthetic data are added to.</param>
-    /// <param name="choices">List of choices.</param>
+    /// <param name="choices">List of choices to choose from.</param>
     private static void GenerateData(List<string> subjectData, List<string> choices)
     {
         var generator = new ChoicesGenerator();
         var generatedData = generator.GenerateData(choices);
         subjectData.Add(generatedData);
     }
-
     
     /// <summary>
     /// Generate the header column.
@@ -291,10 +295,10 @@ public class SyntheticDataService
     {
         using var writer = new StreamWriter(exportFilePath);
 
-        // Write the header row
+        // Write header row
         writer.WriteLine(string.Join(",", headerRow));
 
-        // Transpose the subject columns
+        // Transpose subject columns
         var numRows = subjectColumns.Max(col => col.Count);
         for (var row = 0; row < numRows; row++)
         {
@@ -303,8 +307,7 @@ public class SyntheticDataService
             {
                 rowData.Add(row < column.Count ? $"\"{column[row]}\"" : "");
             }
-
-            // Write the rowData as a CSV line
+            
             writer.WriteLine(string.Join(",", rowData));
         }
     }
