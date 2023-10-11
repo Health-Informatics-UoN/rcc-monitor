@@ -10,41 +10,29 @@ public class SyntheticDataService
     private const int SubjectsToGenerate = 100;
     private const string EventName = "test event";
 
-    /// <summary>
-    /// Generates synthetic data to a .csv file.
-    /// </summary>
-    public void Generate(string importFilePath = "import_dictionary.csv", string exportFilePath = "export.csv")
-    {
-        var rows = ReadCsv(importFilePath);
-        var syntheticData = GenerateRows(rows);
-        
-        WriteCsv(syntheticData.headerRow, syntheticData.subjectColumns, exportFilePath);
-    }
 
     /// <summary>
-    /// Test generate data against a whole folder of these things
+    /// Generate synthetic data.
     /// </summary>
-    public void GenerateFolder()
+    /// <param name="file"></param>
+    /// <returns>A .csv bytes of Synthetic Data.</returns>
+    public byte[] Generate(IFormFile file)
     {
-        const string importFolder = "redcap-dictionaries/";
-        var csvFiles = Directory.GetFiles(importFolder, "*.csv");
+        using var stream = file.OpenReadStream();
+        var rows = ReadCsv(stream);
+        var syntheticData = GenerateRows(rows);
         
-        // for file in import folder if file ends with .csv
-        foreach (var file in csvFiles)
-        {
-            Generate(importFilePath: file, exportFilePath: $"redcap-export/export-{Path.GetFileNameWithoutExtension(file)}.csv");
-        }
-        
+        return ExportCsv(syntheticData.headerRow, syntheticData.subjectColumns);
     }
     
     /// <summary>
     /// Read a csv file to a list of RedCap fields.
     /// </summary>
-    /// <param name="filePath">Path to csv file</param>
+    /// <param name="stream">File stream.</param>
     /// <returns>List of RedCap fields.</returns>
-    private static List<FieldRow> ReadCsv(string filePath)
+    private static List<FieldRow> ReadCsv(Stream stream)
     {
-        using var reader = new StreamReader(filePath);
+        using var reader = new StreamReader(stream);
         var records = new List<FieldRow>();
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
@@ -290,11 +278,11 @@ public class SyntheticDataService
     /// </summary>
     /// <param name="headerRow">List of header rows to write.</param>
     /// <param name="subjectColumns">List of columns of subject data to write.</param>
-    /// <param name="exportFilePath">The path to export it to.</param>
-    private static void WriteCsv(List<string> headerRow, List<List<string>> subjectColumns, string exportFilePath)
+    private static byte[] ExportCsv(List<string> headerRow, List<List<string>> subjectColumns)
     {
-        using var writer = new StreamWriter(exportFilePath);
-
+        using var memoryStream = new MemoryStream();
+        using var writer = new StreamWriter(memoryStream);
+     
         // Write header row
         writer.WriteLine(string.Join(",", headerRow));
 
@@ -307,9 +295,11 @@ public class SyntheticDataService
             {
                 rowData.Add(row < column.Count ? $"\"{column[row]}\"" : "");
             }
-            
+
             writer.WriteLine(string.Join(",", rowData));
         }
+
+        return memoryStream.ToArray();
     }
     
 }

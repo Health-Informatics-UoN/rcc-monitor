@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
 using Monitor.Constants;
+using Monitor.Services.SyntheticData;
 
 namespace Monitor.Controllers;
 
@@ -11,9 +12,17 @@ namespace Monitor.Controllers;
 [Authorize]
 public class SyntheticDataController : ControllerBase
 {
-    [HttpPost("synthetic-data")]
-    public async Task<ActionResult<IFormFile>> GenerateSyntheticData(IFormFile file)
+    private readonly SyntheticDataService _syntheticData;
+    
+    public SyntheticDataController(SyntheticDataService syntheticDataService)
     {
-        throw new NotImplementedException();
+        _syntheticData = syntheticDataService;
+    }
+    
+    [HttpPost("synthetic-data")]
+    public Task<ActionResult<IFormFile>> GenerateSyntheticData(IFormFile file)
+    {
+        var generatedCsv = _syntheticData.Generate(file);
+        return Task.FromResult<ActionResult<IFormFile>>(File(generatedCsv, "text/csv", "generated-data.csv"));
     }
 }
