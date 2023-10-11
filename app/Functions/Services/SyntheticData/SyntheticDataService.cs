@@ -186,7 +186,7 @@ public class SyntheticDataService
             { "yesno", new IntegerGenerator() },
             { "slider", new IntegerGenerator() },
         };
-
+        
         // If we can't handle the data type it is skipped
         if (!dataTypeMapping.TryGetValue(fieldType, out var generator)) return;
 

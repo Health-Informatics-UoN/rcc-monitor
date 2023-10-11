@@ -8,7 +8,7 @@ public abstract class DataGenerator
     /// <param name="min"></param>
     /// <param name="max"></param>
     /// <returns></returns>
-    public virtual string GenerateData(string? min, string? max)
+    public virtual string GenerateData(string min, string max)
     {
         return "";
     }
@@ -60,15 +60,6 @@ public class ChoicesGenerator : DataGenerator
     }
 }
 
-public class TextGenerator : DataGenerator
-{
-    public override string GenerateData(string? min, string? max)
-    {
-        return "Generated Text";
-    }
-}
-
-
 public class DecimalGenerator : DataGenerator
 {
     /// <summary>
@@ -77,21 +68,11 @@ public class DecimalGenerator : DataGenerator
     /// <param name="min">The minimum number.</param>
     /// <param name="max">The maximum number.</param>
     /// <returns>A random number between the min/max</returns>
-    public override string GenerateData(string? min = "0", string? max = "2")
+    public override string GenerateData(string min, string max)
     {
-        // Check for empty strings and set to defaults
-        if (string.IsNullOrWhiteSpace(min))
-        {
-            min = "0";
-        }
-    
-        if (string.IsNullOrWhiteSpace(max))
-        {
-            max = "2";
-        }
-        
-        var minValue = double.Parse(min);
-        var maxValue = double.Parse(max);
+        // Safely unwrap min/max and profile defaults if either, or both are empty strings.
+        double minValue = string.IsNullOrWhiteSpace(min) ? 0 : double.TryParse(min, out minValue) ? minValue : 0;
+        double maxValue = string.IsNullOrWhiteSpace(max) ? (minValue + 2) : double.TryParse(max, out maxValue) ? maxValue : (minValue + 2);
         
         var random = new Random();
         var randomNumber = minValue + (maxValue - minValue) * random.NextDouble();
@@ -109,20 +90,11 @@ public class IntegerGenerator : DataGenerator
     /// <param name="min">The minimum number.</param>
     /// <param name="max">The maximum number.</param>
     /// <returns>A random number between the min/max</returns>
-    public override string GenerateData(string? min = "0", string? max = "2")
+    public override string GenerateData(string min, string max)
     {
-        if (string.IsNullOrWhiteSpace(min))
-        {
-            min = "0";
-        }
-    
-        if (string.IsNullOrWhiteSpace(max))
-        {
-            max = "2";
-        }
-    
-        var minValue = int.Parse(min);
-        var maxValue = int.Parse(max);
+        // Safely unwrap min/max and profile defaults if either, or both are empty strings.
+        int minValue = string.IsNullOrWhiteSpace(min) ? 0 : int.TryParse(min, out minValue) ? minValue : 0;
+        int maxValue = string.IsNullOrWhiteSpace(max) ? (minValue + 2) : int.TryParse(max, out maxValue) ? maxValue : (minValue + 2);
     
         var random = new Random();
         var randomNumber = random.Next(minValue, maxValue + 1);
@@ -132,6 +104,13 @@ public class IntegerGenerator : DataGenerator
     
 }
 
+public class TextGenerator : DataGenerator
+{
+    public override string GenerateData(string min, string max)
+    {
+        return "Generated Text";
+    }
+}
 
 public class PhoneGenerator : DataGenerator
 {
@@ -141,7 +120,7 @@ public class PhoneGenerator : DataGenerator
     /// <param name="min">Unused minimum.</param>
     /// <param name="max">Unused maximum.</param>
     /// <returns>A phone number as a string.</returns>
-    public override string GenerateData(string? min, string? max)
+    public override string GenerateData(string min, string max)
     {
         return "01151234567";
     }
@@ -155,7 +134,7 @@ public class EmailGenerator : DataGenerator
     /// <param name="min">Unused minimum.</param>
     /// <param name="max">Unused maximum.</param>
     /// <returns>An email address as a string.</returns>
-    public override string GenerateData(string? min, string? max)
+    public override string GenerateData(string min, string max)
     {
         return "synthetic@example.com";
     }
