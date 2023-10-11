@@ -29,7 +29,6 @@ public class SyntheticDataService
         const string importFolder = "redcap-dictionaries/";
         var csvFiles = Directory.GetFiles(importFolder, "*.csv");
         
-        
         // for file in import folder if file ends with .csv
         foreach (var file in csvFiles)
         {
@@ -89,8 +88,7 @@ public class SyntheticDataService
         // Keep track of the current and previous CRF to generate completion columns
         var currentCrfName = string.Empty;
         var previousCrfName = string.Empty;
-
-        // Skip the header rows
+        
         foreach (var row in rows)
         {
             var subjectData = new List<string>();
@@ -99,37 +97,42 @@ public class SyntheticDataService
             currentCrfName = row.CrfName;
             HandleCrfChange(headerRow, subjectColumns, currentCrfName, previousCrfName);
             previousCrfName = currentCrfName;
-            
-            // Checkboxes generate multiple columns per field so handled differently
-            if (row.FieldType == "checkbox" && !string.IsNullOrEmpty(row.Choices))
+
+            if (!string.IsNullOrEmpty(row.Choices))
             {
-                GenerateCheckboxHeaders(headerRow, row.FieldName, row.CleanedChoices);
-                
-                // Generate a column for each checkbox choice
-                foreach (var _ in row.CleanedChoices.Select(_ => new List<string>()))
+                // Checkboxes generate multiple columns per field so handled differently
+                if (row.FieldType == "checkbox")
                 {
+                    GenerateCheckboxHeaders(headerRow, row.FieldName, row.CleanedChoices);
+                    
+                    // Generate a column for each checkbox choice
+                    foreach (var _ in row.CleanedChoices.Select(_ => new List<string>()))
+                    {
+                        for (var i = 0; i < SubjectsToGenerate; i++)
+                        {
+                            GenerateData(subjectData, "yesno", "0", "1");
+                        }
+                        
+                        // Make a copy so we can get random values for each column
+                        subjectColumns.Add(new List<string>(subjectData));
+                        subjectData.Clear();
+                    }
+                }
+                else
+                {
+                    GenerateFieldHeader(headerRow, row.FieldName);
+                    
                     for (var i = 0; i < SubjectsToGenerate; i++)
                     {
-                        GenerateData(subjectData, row.FieldType, row.ValidationMin, row.ValidationMax);
+                        GenerateData(subjectData, row.CleanedChoices);
                     }
-                    
-                    // Make a copy so we can get random values for each column
-                    subjectColumns.Add(new List<string>(subjectData));
-                    subjectData.Clear();
+                    subjectColumns.Add(subjectData);
                 }
             }
             else
             {
                 GenerateFieldHeader(headerRow, row.FieldName);
-
-                // Fix validation to the choices options if there are any.
-                // These can start at any number, so we have to get the value.
-                if (!string.IsNullOrEmpty(row.Choices))
-                {
-                    row.ValidationMin = row.CleanedChoices.First().ToString();
-                    row.ValidationMax = row.CleanedChoices.Last().ToString();
-                }
-
+                
                 // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
                 {
@@ -167,18 +170,8 @@ public class SyntheticDataService
         });
     }
 
-    /// <summary>
-    /// Generates synthetic subject data.
-    /// </summary>
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// <param name="subjectData">Subject the synthetic data are added to.</param>
-    /// <param name="fieldType">The type of field to be generated.</param>
-    /// <param name="minValidation">The minimum value to be generated.</param>
-    /// <param name="maxValidation">The maximum value to be generated.</param>
-    private static void GenerateData(List<string> subjectData, string fieldType, string minValidation,
-        string maxValidation)
+    
+    private static void GenerateData(List<string> subjectData, string fieldType, string minValidation, string maxValidation)
     {
         // Map RedCap field types to generator classes
         var dataTypeMapping = new Dictionary<string, DataGenerator>
@@ -187,19 +180,33 @@ public class SyntheticDataService
             { "text", new TextGenerator() },
             { "Number Box (Decimal)", new DecimalGenerator() },
             { "Number Box (Integer)", new IntegerGenerator() },
-            { "select", new IntegerGenerator() },
             { "notes", new TextGenerator() },
             { "Phone", new PhoneGenerator() },
             { "E-mail", new EmailGenerator() },
-            { "radio", new IntegerGenerator() },
             { "yesno", new IntegerGenerator() },
             { "slider", new IntegerGenerator() },
-            { "checkbox", new IntegerGenerator() },
         };
 
         // If we can't handle the data type it is skipped
         if (!dataTypeMapping.TryGetValue(fieldType, out var generator)) return;
+
         var generatedData = generator.GenerateData(minValidation, maxValidation);
+        subjectData.Add(generatedData);
+        
+    }
+
+    /// <summary>
+    /// Generates synthetic subject data.
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="subjectData">Subject the synthetic data are added to.</param>
+    /// <param name="choices">List of choices.</param>
+    private static void GenerateData(List<string> subjectData, List<string> choices)
+    {
+        var generator = new ChoicesGenerator();
+        var generatedData = generator.GenerateData(choices);
         subjectData.Add(generatedData);
     }
 
@@ -226,7 +233,7 @@ public class SyntheticDataService
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
     /// <param name="choices">The choices of the checkbox.</param>
-    private static void GenerateCheckboxHeaders(List<string> headerRows, string fieldName, List<int> choices)
+    private static void GenerateCheckboxHeaders(List<string> headerRows, string fieldName, List<string> choices)
     {
         headerRows.AddRange(choices.Select(choice => fieldName + "___" + choice));
     }

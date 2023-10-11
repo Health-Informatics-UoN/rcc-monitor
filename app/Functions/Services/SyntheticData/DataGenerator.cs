@@ -8,7 +8,15 @@ public abstract class DataGenerator
     /// <param name="min"></param>
     /// <param name="max"></param>
     /// <returns></returns>
-    public abstract string GenerateData(string? min, string? max);
+    public virtual string GenerateData(string? min, string? max)
+    {
+        return "";
+    }
+
+    public virtual string GenerateData(List<string> choices)
+    {
+        return "";
+    }
 }
 
 public class DateBoxGenerator : DataGenerator
@@ -24,10 +32,10 @@ public class DateBoxGenerator : DataGenerator
     {
         // Default min date to a week ago
         var minDate = !string.IsNullOrEmpty(min) ? DateTime.Parse(min) : DateTime.Now.AddDays(-7);
-
+    
         // Default max date to today
         var maxDate = !string.IsNullOrEmpty(max) ? DateTime.Parse(max) : DateTime.Now;
-
+    
         // Generate a random date between minDate and maxDate
         var random = new Random();
         var range = (maxDate - minDate).Days;
@@ -35,6 +43,20 @@ public class DateBoxGenerator : DataGenerator
         
         // The default RedCap import date format
         return generatedDate.ToString("yyyy-MM-dd");
+    }    
+    
+}
+public class ChoicesGenerator : DataGenerator
+{
+    /// <summary>
+    /// Given a list of choices, picks a random choice.
+    /// </summary>
+    /// <param name="choices"></param>
+    /// <returns>The random choice.</returns>
+    public override string GenerateData(List<string> choices)
+    {
+        var random = new Random();
+        return choices[random.Next(0, choices.Count)];
     }
 }
 
@@ -45,6 +67,7 @@ public class TextGenerator : DataGenerator
         return "Generated Text";
     }
 }
+
 
 public class DecimalGenerator : DataGenerator
 {
@@ -61,7 +84,7 @@ public class DecimalGenerator : DataGenerator
         {
             min = "0";
         }
-
+    
         if (string.IsNullOrWhiteSpace(max))
         {
             max = "2";
@@ -72,10 +95,12 @@ public class DecimalGenerator : DataGenerator
         
         var random = new Random();
         var randomNumber = minValue + (maxValue - minValue) * random.NextDouble();
-
+    
         return randomNumber.ToString();
     }
+    
 }
+
 public class IntegerGenerator : DataGenerator
 {
     /// <summary>
@@ -90,18 +115,18 @@ public class IntegerGenerator : DataGenerator
         {
             min = "0";
         }
-
+    
         if (string.IsNullOrWhiteSpace(max))
         {
             max = "2";
         }
-
+    
         var minValue = int.Parse(min);
         var maxValue = int.Parse(max);
-
+    
         var random = new Random();
         var randomNumber = random.Next(minValue, maxValue + 1);
-
+    
         return randomNumber.ToString();
     }
     
