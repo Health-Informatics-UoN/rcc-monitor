@@ -1,9 +1,9 @@
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Functions.Models;
+using Monitor.Models.SyntheticData;
 
-namespace Functions.Services.SyntheticData;
+namespace Monitor.Services.SyntheticData;
 
 public class SyntheticDataService
 {

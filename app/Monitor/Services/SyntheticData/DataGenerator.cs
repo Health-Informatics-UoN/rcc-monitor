@@ -1,4 +1,4 @@
-namespace Functions.Services.SyntheticData;
+namespace Monitor.Services.SyntheticData;
 
 /// <summary>
 /// Base class for data generator, override to add further data types.

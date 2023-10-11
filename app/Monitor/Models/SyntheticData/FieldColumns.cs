@@ -1,4 +1,4 @@
-namespace Functions.Models;
+namespace Monitor.Models.SyntheticData;
 
 public class FieldColumns
 {
