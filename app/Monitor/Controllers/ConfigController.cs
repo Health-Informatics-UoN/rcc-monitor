@@ -20,6 +20,7 @@ public class ConfigController
     [HttpGet]
     public async Task<IActionResult> Index() => new JsonResult(new
     {
-        siteMonitoringEnabled = await _featureManager.IsEnabledAsync(FeatureFlags.SiteMonitoring)
+        siteMonitoringEnabled = await _featureManager.IsEnabledAsync(FeatureFlags.SiteMonitoring),
+        syntheticDataEnabled = await _featureManager.IsEnabledAsync(FeatureFlags.SyntheticData)
     });
 }

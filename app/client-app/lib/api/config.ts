@@ -2,6 +2,7 @@ import request from "./request";
 
 interface ConfigModel {
   siteMonitoringEnabled: boolean;
+  syntheticDataEnabled: boolean;
 }
 
 const fetchKeys = {
@@ -13,6 +14,9 @@ export async function getServerConfig(): Promise<ConfigModel> {
     return await request<ConfigModel>(fetchKeys.list);
   } catch (error) {
     console.warn("Failed to fetch data.");
-    return { siteMonitoringEnabled: false };
+    return {
+      siteMonitoringEnabled: false,
+      syntheticDataEnabled: false,
+    };
   }
 }

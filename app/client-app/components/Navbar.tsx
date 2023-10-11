@@ -36,7 +36,7 @@ const NavButton = ({ css: cssProp = {}, children, to }: NavButtonProps) => {
 
 export default async function Navbar() {
   const session = await getServerSession(options);
-  const { siteMonitoringEnabled } = await getServerConfig();
+  const { siteMonitoringEnabled, syntheticDataEnabled } = await getServerConfig();
 
   return (
     <nav
@@ -66,9 +66,8 @@ export default async function Navbar() {
         {hasPermission(session?.permissions, permissions.ViewSiteReports) &&
           siteMonitoringEnabled && <NavButton to="/reports">Reports</NavButton>}
 
-        {hasPermission(session?.permissions, permissions.GenerateSyntheticData) && (
-          <NavButton to="/synthetic-data">Synthetic Data</NavButton>
-        )}
+        {hasPermission(session?.permissions, permissions.GenerateSyntheticData) && 
+          syntheticDataEnabled && <NavButton to="/synthetic-data">Synthetic Data</NavButton>}
 
         <div>{session ? <LogoutButton /> : <LoginButton />}</div>
       </div>
