@@ -26,26 +26,35 @@ public class DateBoxGenerator : DataGenerator
     /// If there are no min/max provided, default to between a week ago and today.
     /// </summary>
     /// <param name="min">Minimum date.</param>
-    /// <param name="max">Maximum date. </param>
-    /// <returns></returns>
+    /// <param name="max">Maximum date.</param>
+    /// <returns>A date string in the default RedCap import format.</returns>
     public override string GenerateData(string? min, string? max)
     {
-        // Default min date to a week ago
-        var minDate = !string.IsNullOrEmpty(min) ? DateTime.Parse(min) : DateTime.Now.AddDays(-7);
-    
-        // Default max date to today
-        var maxDate = !string.IsNullOrEmpty(max) ? DateTime.Parse(max) : DateTime.Now;
-    
-        // Generate a random date between minDate and maxDate
+        // Default min/max to a week ago/today if empty.
+        var minDate = string.IsNullOrEmpty(min) ? DateTime.Now.AddDays(-7) : DateTime.Parse(min);
+        var maxDate = string.IsNullOrEmpty(max) ? DateTime.Now : DateTime.Parse(max);
+        
+        // If max is set and min is empty
+        if (minDate > maxDate & string.IsNullOrEmpty(min))
+        {
+            minDate = maxDate.AddDays(-7);
+        }
+
+        // If min is set in the future and max is empty
+        if (minDate > maxDate & string.IsNullOrEmpty(max))
+        {
+            maxDate = minDate.AddDays(7);
+        }
+        
         var random = new Random();
         var range = (maxDate - minDate).Days;
         var generatedDate = minDate.AddDays(random.Next(range));
-        
+
         // The default RedCap import date format
         return generatedDate.ToString("yyyy-MM-dd");
-    }    
-    
+    }
 }
+
 public class ChoicesGenerator : DataGenerator
 {
     /// <summary>
