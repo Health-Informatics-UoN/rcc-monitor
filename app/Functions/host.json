@@ -7,12 +7,5 @@
                 "excludedTypes": "Request"
             }
         }
-    },
-    "extensions": {
-        "EPPlus": {
-            "ExcelPackage": {
-                "LicenseContext": "NonCommercial"
-            }
-        }
     }
 }
