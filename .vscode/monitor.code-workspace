@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": "../"
+    },
+    {
+      "name": "app/client-app",
+      "path": "../app/client-app"
+    },
+    {
+      "name": "src/Data",
+      "path": "../app/Data"
+    },
+    {
+      "name": "src/Functions",
+      "path": "../app/Functions"
+    },
+    {
+      "name": "src/Monitor",
+      "path": "../app/Monitor"
+    },
+  ],
+}
