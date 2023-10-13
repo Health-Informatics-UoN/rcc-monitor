@@ -20,13 +20,27 @@ public class SyntheticDataController : ControllerBase
         _syntheticData = syntheticDataService;
     }
 
-    [Authorize(nameof(AuthPolicies.CanGenerateSyntheticData))]
+    // [Authorize(nameof(AuthPolicies.CanGenerateSyntheticData))]
+    [AllowAnonymous]
     [HttpPost("generate")]
-    public Task<ActionResult<IFormFile>> Generate([FromForm] IFormFile file)
+    public async Task<ActionResult<string>> Generate([FromForm] IFormFile file)
     {
         // TODO: Add server side validation.
         var generatedCsv = _syntheticData.Generate(file);
-        return Task.FromResult<ActionResult<IFormFile>>(File(generatedCsv, "text/csv", "generated-data.csv"));
+        
+        HttpContext.Session.Set("export", generatedCsv);
+        
+        return Ok(new KeyValuePair<bool, string>(true, Url.Action("TempExport", "SyntheticData")));
     }
+
+    // [Authorize(nameof(AuthPolicies.CanGenerateSyntheticData))]
+    [AllowAnonymous]
+    [HttpGet("tempexport")]
+    public ActionResult TempExport()
+    {
+        var bytes = HttpContext.Session.Get("export");
+        return File(bytes, "text/csv", "generated-data.csv");
+    }
+    
     
 }
