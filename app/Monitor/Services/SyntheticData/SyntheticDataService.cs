@@ -143,7 +143,7 @@ public class SyntheticDataService
     /// </summary>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="subjectColumns">List of subjects the columns are added to.</param>
-    private static void GenerateParticipantId(List<string> headerRows, List<List<string>> subjectColumns)
+    public static void GenerateParticipantId(List<string> headerRows, List<List<string>> subjectColumns)
     {
         headerRows.AddRange(new List<string>
         {
@@ -167,7 +167,7 @@ public class SyntheticDataService
     /// <param name="fieldType">Type of field to generate.</param>
     /// <param name="minValidation">Minimum value.</param>
     /// <param name="maxValidation">Maximum value.</param>
-    private static void GenerateData(List<string> subjectData, string fieldType, string minValidation, string maxValidation)
+    public static void GenerateData(List<string> subjectData, string fieldType, string minValidation, string maxValidation)
     {
         // Map RedCap field types to generator classes
         var dataTypeMapping = new Dictionary<string, DataGenerator>
@@ -208,7 +208,7 @@ public class SyntheticDataService
     /// </summary>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
-    private static void GenerateFieldHeader(List<string> headerRows, string fieldName)
+    public static void GenerateFieldHeader(List<string> headerRows, string fieldName)
     {
         // Skip calculated fields.
         if (fieldName == "calc") return;
@@ -225,7 +225,7 @@ public class SyntheticDataService
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="fieldName">Name of the field to append.</param>
     /// <param name="choices">The choices of the checkbox.</param>
-    private static void GenerateCheckboxHeaders(List<string> headerRows, string fieldName, List<string> choices)
+    public static void GenerateCheckboxHeaders(List<string> headerRows, string fieldName, List<string> choices)
     {
         headerRows.AddRange(choices.Select(choice => fieldName + "___" + choice));
     }
@@ -237,7 +237,7 @@ public class SyntheticDataService
     /// <param name="subjectColumns">List of subjects the columns are added to.</param>
     /// <param name="currentFormName">The current CRF name.</param>
     /// <param name="previousFormName">The previous CRF name.</param>
-    private static void HandleCrfChange(List<string> headerRows, List<List<string>> subjectColumns,
+    public static void HandleCrfChange(List<string> headerRows, List<List<string>> subjectColumns,
         string currentFormName, string previousFormName)
     {
         if (currentFormName == previousFormName) return;
@@ -259,7 +259,7 @@ public class SyntheticDataService
     /// <param name="subjectColumns">List of subjects the columns are added to.</param>
     /// <param name="currentFormName">The current CRF name.</param>
     /// <param name="previousFormName">The previous CRF name.</param>
-    private static void HandleLastCrf(List<string> headerRows, List<List<string>> subjectColumns,
+    public static void HandleLastCrf(List<string> headerRows, List<List<string>> subjectColumns,
         string currentFormName, string previousFormName)
     {
         if (string.IsNullOrEmpty(currentFormName)) return;
