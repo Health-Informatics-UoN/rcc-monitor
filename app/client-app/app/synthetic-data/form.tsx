@@ -6,33 +6,33 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 import { postSpreadsheet } from "@/lib/api/syntheticdata";
 
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, FileDown, UploadCloud, XCircle } from "lucide-react";
+import { FileDown, UploadCloud, XCircle } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { css } from "@/styled-system/css";
 
 const initialState = {
   message: null,
 };
 
-interface ValidatedButtonProps {
-  variant: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+interface ValidatedButtonProps extends ButtonProps {
+  state: string;
 }
 
-function ValidatedButton({ variant, onClick }: ValidatedButtonProps) {
-  const type: boolean = variant === "success";
+function ValidatedButton({ state }: ValidatedButtonProps) {
+  const success: boolean = state === "success";
 
   return (
     <Button
       variant="outline"
-      color={type ? "green.600" : "red.600"}
+      color={success ? "green.600" : "red.600"}
       border="2px solid"
-      borderColor={type ? "green.600" : "red.600"}
+      borderColor={success ? "green.600" : "red.600"}
       h="55px"
-      onClick={onClick}
     >
-      {type ? <FileDown color="green" /> : <XCircle color="red" />}
-      {type ? "Download spreadsheet" : "Validation failed"}
+      {success ? <FileDown color="green" /> : <XCircle color="red" />}
+      {success ? "Download spreadsheet" : "Validation failed"}
     </Button>
   );
 }
@@ -61,11 +61,16 @@ export function AddForm() {
   const [state, formAction] = useFormState(postSpreadsheet, initialState);
 
   return (
-    <form action={formAction}>
-      <label htmlFor="file">Enter File</label>
+    <form
+      action={formAction}
+      className={css({
+        spaceY: "4",
+      })}
+    >
+      <Label htmlFor="file">Enter File</Label>
       <Input name="file" type="file" required />
       <SubmitButton />
-      {state.message && <ValidatedButton variant={state?.message} />}
+      {state.message && <ValidatedButton state={state?.message} />}
     </form>
   );
 }
