@@ -55,8 +55,8 @@ b.Services
   .AddTransient<SyntheticDataService>();
 
 b.Services.AddSwaggerGen();
-
 b.Services.AddFeatureManagement();
+b.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromMinutes(10); });
 
 #endregion
 
@@ -100,6 +100,7 @@ app.UseCors(nameof(CorsPolicies.AllowFrontendApp));
 #region Endpoint Routing
 
 app.UseRouting();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
