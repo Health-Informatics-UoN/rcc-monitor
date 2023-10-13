@@ -18,10 +18,6 @@ interface RequestOptions {
   next?: { revalidate: number };
 }
 
-const defaultHeaders: HeadersInit = {
-  "Content-Type": "application/json",
-};
-
 const request = async <T>(
   url: string,
   options: RequestOptions = {}
@@ -31,20 +27,21 @@ const request = async <T>(
     const session = await getServerSession(authOptions);
     const token = session?.id_token;
 
+    const headers: HeadersInit = {
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {}),
+    };
+
     const response = await fetch(`${apiUrl}/api/${url}`, {
       method: options.method || "GET",
-      headers: {
-        ...defaultHeaders,
-        ...options.headers,
-        Authorization: `Bearer ${token}`,
-      },
+      headers: headers,
       body: options.body,
       cache: options.cache,
       next: options.next,
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text();
+      const errorMessage = response.statusText;
       throw new APIError(errorMessage, response.status);
     }
 
