@@ -11,7 +11,6 @@ using Monitor.Services;
 using Monitor.Constants;
 using UoN.AspNetCore.VersionMiddleware;
 using Monitor.Auth;
-using Monitor.Services.SyntheticData;
 
 var b = WebApplication.CreateBuilder(args);
 
@@ -51,12 +50,11 @@ b.Services
 b.Services
   .AddApplicationInsightsTelemetry()
   .AddEmailSender(b.Configuration)
-  .AddTransient<ReportService>()
-  .AddTransient<SyntheticDataService>();
+  .AddTransient<ReportService>();
 
 b.Services.AddSwaggerGen();
+
 b.Services.AddFeatureManagement();
-b.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromMinutes(10); });
 
 #endregion
 
@@ -100,7 +98,6 @@ app.UseCors(nameof(CorsPolicies.AllowFrontendApp));
 #region Endpoint Routing
 
 app.UseRouting();
-app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
