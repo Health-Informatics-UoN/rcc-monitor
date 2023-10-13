@@ -6,10 +6,7 @@ const fetchKeys = {
   generate: "syntheticdata/generate",
 };
 
-export async function postSpreadsheet(
-  prevState: any,
-  formData: FormData
-): Promise<File> {
+export async function postSpreadsheet(prevState: any, formData: FormData) {
   try {
     // Transform file.
     const newFormData = new FormData();
@@ -23,9 +20,9 @@ export async function postSpreadsheet(
       body: newFormData,
     });
 
-    return response;
+    return { message: "success", response };
   } catch (error) {
     console.error(error);
-    return Promise.reject(error);
+    return { message: "Failed to upload file." };
   }
 }
