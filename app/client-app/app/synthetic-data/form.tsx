@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { FileDown, UploadCloud, XCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { css } from "@/styled-system/css";
+import { hstack } from "@/styled-system/patterns";
 
 const initialState = {
   message: null,
@@ -73,8 +74,10 @@ export function AddForm() {
       <Label htmlFor="file">Enter File</Label>
       <Input name="file" type="file" required />
 
-      <SubmitButton />
-      {state.message && <ValidatedButton state={state?.message} />}
+      <div className={hstack({ gap: "6" })}>
+        <SubmitButton />
+        {state.message && <ValidatedButton state={state?.message} />}
+      </div>
     </form>
   );
 }
