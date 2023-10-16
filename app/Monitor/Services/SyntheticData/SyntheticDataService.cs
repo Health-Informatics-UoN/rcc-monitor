@@ -8,19 +8,18 @@ namespace Monitor.Services.SyntheticData;
 public class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
-    private const string EventName = "test event";
-
 
     /// <summary>
     /// Generate synthetic data.
     /// </summary>
-    /// <param name="file"></param>
+    /// <param name="file">RedCap data dictionary to generate data against.</param>
+    /// <param name="eventName">RedCap event name to generate for.</param>
     /// <returns>A .csv bytes of Synthetic Data.</returns>
-    public byte[] Generate(IFormFile file)
+    public byte[] Generate(IFormFile file, string eventName)
     {
         using var stream = file.OpenReadStream();
         var rows = ReadCsv(stream);
-        var syntheticData = GenerateRows(rows);
+        var syntheticData = GenerateRows(rows, eventName);
         
         return ExportCsv(syntheticData.headerRow, syntheticData.subjectColumns);
     }
@@ -65,13 +64,14 @@ public class SyntheticDataService
     /// It works by generating a header row, and a "subject" column of data at a time. 
     /// </remarks>
     /// <param name="rows">List of fields to generate data against.</param>
+    /// <param name="eventName">RedCap event name to generate for.</param>
     /// <returns>A list of synthetic data.</returns>
-    private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows)
+    private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows, string eventName)
     {
         var headerRow = new List<string>();
         var subjectColumns = new List<List<string>>();
 
-        GenerateParticipantId(headerRow, subjectColumns);
+        GenerateParticipantId(headerRow, subjectColumns, eventName);
 
         // Keep track of the current and previous CRF to generate completion columns
         var currentCrfName = string.Empty;
@@ -143,7 +143,8 @@ public class SyntheticDataService
     /// </summary>
     /// <param name="headerRows">List of header rows the columns are added to.</param>
     /// <param name="subjectColumns">List of subjects the columns are added to.</param>
-    public static void GenerateParticipantId(List<string> headerRows, List<List<string>> subjectColumns)
+    /// <param name="eventName">RedCap event name to generate for.</param>
+    public static void GenerateParticipantId(List<string> headerRows, List<List<string>> subjectColumns, string eventName)
     {
         headerRows.AddRange(new List<string>
         {
@@ -151,7 +152,7 @@ public class SyntheticDataService
         });
 
         var participantIds = Enumerable.Range(1, SubjectsToGenerate).ToList();
-        var eventNames = Enumerable.Repeat(EventName, SubjectsToGenerate).ToList();
+        var eventNames = Enumerable.Repeat(eventName, SubjectsToGenerate).ToList();
         subjectColumns.AddRange(new List<List<string>>
         {
             participantIds.ConvertAll(id => id.ToString()),
