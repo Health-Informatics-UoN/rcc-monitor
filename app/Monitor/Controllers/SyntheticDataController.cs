@@ -21,7 +21,7 @@ public class SyntheticDataController : ControllerBase
     }
     
     [HttpPost("generate")]
-    public Task<ActionResult<string>> Generate([FromForm] IFormFile file)
+    public Task<ActionResult<string>> Generate([FromForm] IFormFile file, [FromForm] string eventName)
     {
         var generatedCsv = _syntheticData.Generate(file);
         return Task.FromResult<ActionResult<string>>(File(generatedCsv, "text/csv", "generated-data.csv"));

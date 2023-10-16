@@ -67,8 +67,12 @@ export function AddForm() {
         spaceY: "4",
       })}
     >
+      <Label htmlFor="event">Event Name</Label>
+      <Input name="eventName" type="text" required min={3} />
+
       <Label htmlFor="file">Enter File</Label>
       <Input name="file" type="file" required />
+
       <SubmitButton />
       {state.message && <ValidatedButton state={state?.message} />}
     </form>
