@@ -58,20 +58,26 @@ function SubmitButton() {
   );
 }
 
-export function AddForm() {
+export function UploadFile() {
   const [state, formAction] = useFormState(postSpreadsheet, initialState);
 
   return (
     <form
       action={formAction}
       className={css({
-        spaceY: "4",
+        spaceY: "2",
       })}
     >
-      <Label htmlFor="event">Event Name</Label>
-      <Input name="eventName" type="text" required min={3} />
+      <Label htmlFor="event">RedCap Event Name</Label>
+      <Input
+        name="eventName"
+        type="text"
+        required
+        min={3}
+        placeholder="Event Name"
+      />
 
-      <Label htmlFor="file">Enter File</Label>
+      <Label htmlFor="file">Select File</Label>
       <Input name="file" type="file" required />
 
       <div className={hstack({ gap: "6" })}>

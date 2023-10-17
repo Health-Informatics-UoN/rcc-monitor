@@ -1,10 +1,10 @@
 import { Metadata } from "next";
-import { AddForm } from "./form";
+import { UploadFile } from "./form";
 import { css } from "@/styled-system/css";
-import { Box, VStack } from "@/styled-system/jsx";
+import { Box, Flex } from "@/styled-system/jsx";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { vstack, flex } from "@/styled-system/patterns";
+import { vstack, grid, flex } from "@/styled-system/patterns";
 
 export const metadata: Metadata = {
   title: "RedCap Synthetic Data",
@@ -12,8 +12,14 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   return (
-    <div className={vstack({ lineHeight: "2rem", md: { maxWidth: "1/2" } })}>
-      <Box gap={"2"}>
+    <div
+      className={grid({
+        columns: { base: 1, md: 2 },
+        gap: "6",
+        lineHeight: "2rem",
+      })}
+    >
+      <Box>
         <h1
           className={css({
             fontSize: "2rem",
@@ -93,15 +99,17 @@ export default async function Page() {
             The synthetic data should now have populated your subjects data.
           </li>
         </ol>
+      </Box>
 
-        <Alert backgroundColor="blue.200" mb="10px">
+      <Flex direction={"column"} justifyContent={"center"} gap={"6"}>
+        <UploadFile />
+        <Alert backgroundColor="blue.200">
           <AlertCircle />
           <AlertTitle>
             You can upload a spreadsheet in a supported format: .csv
           </AlertTitle>
         </Alert>
-        <AddForm />
-      </Box>
+      </Flex>
     </div>
   );
 }
