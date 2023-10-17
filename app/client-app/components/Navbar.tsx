@@ -57,7 +57,7 @@ export default async function Navbar() {
           ml: "25px",
         })}
       >
-        <Link href="/">RedCap Monitoring</Link>
+        <Link href="/">RedCap Monitor</Link>
       </div>
       <div
         className={flex({ color: "white", alignItems: "center", mr: "30px" })}
