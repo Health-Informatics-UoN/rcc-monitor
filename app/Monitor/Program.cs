@@ -4,6 +4,7 @@ using Keycloak.AuthServices.Authorization;
 using Monitor.Extensions;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.FeatureManagement;
 using Monitor.Data;
 
@@ -51,11 +52,17 @@ b.Services
 b.Services
   .AddApplicationInsightsTelemetry()
   .AddEmailSender(b.Configuration)
-  .AddTransient<AzureStorageService>()
   .AddTransient<ReportService>()
   .AddTransient<SyntheticDataService>();
 
 b.Services.AddSwaggerGen();
+
+// Blob storage
+b.Services.AddAzureClients(builder =>
+{
+  builder.AddBlobServiceClient(b.Configuration.GetConnectionString("AzureBlobStorageConnectionString"));
+});
+b.Services.AddScoped<AzureStorageService>();
 
 b.Services.AddFeatureManagement();
 
