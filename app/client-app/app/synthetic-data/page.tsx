@@ -4,6 +4,7 @@ import { css } from "@/styled-system/css";
 import { Box, VStack } from "@/styled-system/jsx";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { vstack, flex } from "@/styled-system/patterns";
 
 export const metadata: Metadata = {
   title: "RedCap Synthetic Data",
@@ -11,8 +12,8 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   return (
-    <VStack maxWidth={"1/2"} lineHeight={"2rem"}>
-      <Box m="auto" gap={"2"}>
+    <div className={vstack({ lineHeight: "2rem", md: { maxWidth: "1/2" } })}>
+      <Box gap={"2"}>
         <h1
           className={css({
             fontSize: "2rem",
@@ -101,6 +102,6 @@ export default async function Page() {
         </Alert>
         <AddForm />
       </Box>
-    </VStack>
+    </div>
   );
 }
