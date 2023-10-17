@@ -1,7 +1,9 @@
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Monitor.Exceptions;
 using Monitor.Models.SyntheticData;
+using ValidationException = Monitor.Exceptions.ValidationException;
 
 namespace Monitor.Services.SyntheticData;
 
@@ -9,25 +11,44 @@ public class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
 
-    public bool Validate(IFormFile file)
+    /// <summary>
+    /// Validate the file looks like a data dictionary.
+    /// </summary>
+    /// <param name="file">File to validate.</param>
+    /// <exception cref="ValidationException">The spreadsheet failed to validate.</exception>
+    public void Validate(IFormFile file)
     {
-        using var stream = file.OpenReadStream();
-        return false;
+        try
+        {
+            using var stream = file.OpenReadStream();
+        }
+        catch (Exception e)
+        {
+            throw new ValidationException("Error validating spreadsheet", e);
+        }
     }
     
     /// <summary>
-    /// Generate synthetic data.
+    /// Generate synthetic data from a RedCap data dictionary
     /// </summary>
     /// <param name="file">RedCap data dictionary to generate data against.</param>
     /// <param name="eventName">RedCap event name to generate for.</param>
     /// <returns>A .csv bytes of Synthetic Data.</returns>
+    /// <exception cref="DataGenerationException">Data failed to generate.</exception>
     public byte[] Generate(IFormFile file, string eventName)
     {
-        using var stream = file.OpenReadStream();
-        var rows = ReadCsv(stream);
-        var syntheticData = GenerateRows(rows, eventName);
-        
-        return ExportCsv(syntheticData.headerRow, syntheticData.subjectColumns);
+        try
+        {
+            using var stream = file.OpenReadStream();
+            var rows = ReadCsv(stream);
+            var syntheticData = GenerateRows(rows, eventName);
+            
+            return ExportCsv(syntheticData.headerRow, syntheticData.subjectColumns);
+        }
+        catch (Exception e)
+        {
+            throw new DataGenerationException("Error generating data.", e);
+        }
     }
     
     /// <summary>
