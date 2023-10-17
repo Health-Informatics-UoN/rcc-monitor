@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
@@ -23,7 +24,6 @@ public class SyntheticDataController : ControllerBase
     }
     
     [HttpPost("generate")]
-    [AllowAnonymous]
     public async Task<ActionResult<string>> Generate([FromForm] IFormFile file, [FromForm] string eventName)
     {
         // TODO: Validation step.
@@ -37,7 +37,8 @@ public class SyntheticDataController : ControllerBase
                 using var stream = new MemoryStream(generatedCsv);
                 var filePath = $"{eventName}_{Guid.NewGuid()}.csv";
                 var blobName = await _azureStorageService.Upload(filePath, stream);
-                return Ok(Url.Action("Get", "SyntheticData", new { name = blobName }));
+                var url = Url.Action("Get", "SyntheticData", new { name = blobName }, Request.Scheme, Request.Host.ToString());
+                return Ok(new {url});
             }
             catch (Exception e)
             {
@@ -51,7 +52,6 @@ public class SyntheticDataController : ControllerBase
     }
 
     [HttpGet("file")]
-    [AllowAnonymous]
     public async Task<IActionResult> Get(string name)
     {
         var fileBytes = await _azureStorageService.Get(name);
