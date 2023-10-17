@@ -1,4 +1,4 @@
-namespace Functions.Models.SyntheticData;
+namespace Monitor.Models.SyntheticData;
 
 public class FieldRow
 {
