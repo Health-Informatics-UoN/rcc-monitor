@@ -2,6 +2,7 @@ using Francois.FunctionApp.Services;
 using Functions.Config;
 using Functions.Services;
 using Functions.Services.Contracts;
+using Functions.Services.SyntheticData;
 using IdentityModel.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,6 +47,7 @@ var host = new HostBuilder()
             
         s.AddTransient<SiteService>();
         s.AddTransient<IReportingService, ReportService>();
+        s.AddTransient<SyntheticDataService>();
         s.AddHttpClient();
         
         var useRedCapData = context.Configuration.GetValue<bool>("UseRedCapData");

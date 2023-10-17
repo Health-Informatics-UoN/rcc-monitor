@@ -15,7 +15,6 @@
 
     <ItemGroup>
         <PackageReference Include="ClacksMiddlware" Version="2.1.0" />
-        <PackageReference Include="CsvHelper" Version="30.0.1" />
         <PackageReference Include="Flurl" Version="3.0.7" />
         <PackageReference Include="Keycloak.AuthServices.Authentication" Version="1.5.2" />
         <PackageReference Include="Keycloak.AuthServices.Authorization" Version="1.5.2" />

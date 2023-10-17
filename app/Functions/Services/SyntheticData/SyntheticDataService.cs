@@ -1,9 +1,10 @@
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Monitor.Models.SyntheticData;
+using Functions.Models.SyntheticData;
+using Microsoft.AspNetCore.Http;
 
-namespace Monitor.Services.SyntheticData;
+namespace Functions.Services.SyntheticData;
 
 public class SyntheticDataService
 {

@@ -1,4 +1,4 @@
-using Monitor.Services.SyntheticData;
+using Functions.Services.SyntheticData;
 
 namespace Francois.Tests.Services;
 
