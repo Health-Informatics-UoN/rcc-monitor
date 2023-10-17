@@ -22,7 +22,7 @@ public class SyntheticDataService
     
         if (!csv.Read() || !csv.ReadHeader())
         {
-            throw new InvalidDataException("The file is empty or does not contain a header.");
+            throw new InvalidDataException("File is empty or doesn't have a header.");
         }
 
         var requiredColumns = new List<string>

@@ -1,19 +1,21 @@
 using Azure;
 using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Monitor.Services;
 
 public class AzureStorageService
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly IUrlHelper _urlHelper;
+    private readonly IHttpContextAccessor _accessor;
+    private readonly LinkGenerator _generator;
     private const string Container = "synthetic-data";
 
-    public AzureStorageService(BlobServiceClient blobServiceClient, IUrlHelper urlHelper)
+    public AzureStorageService(BlobServiceClient blobServiceClient, IHttpContextAccessor accessor,
+        LinkGenerator generator)
     {
         _blobServiceClient = blobServiceClient;
-        _urlHelper = urlHelper;
+        _accessor = accessor;
+        _generator = generator;
     }
     
     /// <summary>
@@ -61,7 +63,7 @@ public class AzureStorageService
             using var stream = new MemoryStream(data);
             var filePath = $"{Guid.NewGuid()}.csv";
             var blobName = await Upload(filePath, stream);
-            return _urlHelper.Action("Get", "SyntheticData", new { name = blobName }, requestScheme, requestHost);
+            return _generator.GetUriByAction(_accessor.HttpContext!, "Get", "SyntheticData", new { name = blobName });
         }
         catch (Exception ex)
         {
