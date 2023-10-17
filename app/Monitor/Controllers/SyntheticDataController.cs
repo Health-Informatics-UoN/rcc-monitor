@@ -37,4 +37,10 @@ public class SyntheticDataController : ControllerBase
 
         return Ok(blobName);
     }
+
+    [HttpGet("file")]
+    public async Task<byte[]> Get(string url)
+    {
+        return await _azureStorageService.Get(url);
+    }
 }

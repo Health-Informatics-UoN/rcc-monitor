@@ -12,6 +12,17 @@ public class AzureStorageService
         _blobServiceClient = blobServiceClient;
     }
     
+    public async Task<byte[]> Get(string filePath)
+    {
+        var containerClient = _blobServiceClient.GetBlobContainerClient(Container);
+        var blobClient = containerClient.GetBlobClient(filePath);
+        var downloadContent = await blobClient.DownloadAsync();
+
+        using var stream = new MemoryStream();
+        await downloadContent.Value.Content.CopyToAsync(stream);
+        return stream.ToArray();
+    }
+    
     /// <summary>
     /// Upload a file to storage.
     /// </summary>
