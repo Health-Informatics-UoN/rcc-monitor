@@ -1,9 +1,7 @@
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Monitor.Exceptions;
 using Monitor.Models.SyntheticData;
-using ValidationException = Monitor.Exceptions.ValidationException;
 
 namespace Monitor.Services.SyntheticData;
 
@@ -15,16 +13,31 @@ public class SyntheticDataService
     /// Validate the file looks like a data dictionary.
     /// </summary>
     /// <param name="file">File to validate.</param>
-    /// <exception cref="ValidationException">The spreadsheet failed to validate.</exception>
+    /// <exception cref="InvalidDataException">The spreadsheet failed to validate.</exception>
     public void Validate(IFormFile file)
     {
-        try
+        using var stream = file.OpenReadStream();
+        using var reader = new StreamReader(stream);
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+    
+        if (!csv.Read() || !csv.ReadHeader())
         {
-            using var stream = file.OpenReadStream();
+            throw new InvalidDataException("The file is empty or does not contain a header.");
         }
-        catch (Exception e)
+
+        var requiredColumns = new List<string>
         {
-            throw new ValidationException("Error validating spreadsheet", e);
+            "Variable / Field Name", "Field Type", "Form Name", "Choices, Calculations, OR Slider Labels",
+            "Text Validation Min", "Text Validation Max"
+        };
+
+        var headerRecord = csv.HeaderRecord;
+        foreach (var column in requiredColumns)
+        {
+            if (!headerRecord.Contains(column))
+            {
+                throw new InvalidDataException($"The column '{column}' is missing in the file.");
+            }
         }
     }
     
@@ -34,7 +47,7 @@ public class SyntheticDataService
     /// <param name="file">RedCap data dictionary to generate data against.</param>
     /// <param name="eventName">RedCap event name to generate for.</param>
     /// <returns>A .csv bytes of Synthetic Data.</returns>
-    /// <exception cref="DataGenerationException">Data failed to generate.</exception>
+    /// <exception cref="InvalidDataException">Data failed to generate.</exception>
     public byte[] Generate(IFormFile file, string eventName)
     {
         try
@@ -47,7 +60,7 @@ public class SyntheticDataService
         }
         catch (Exception e)
         {
-            throw new DataGenerationException("Error generating data.", e);
+            throw new  InvalidDataException("Error generating data.", e);
         }
     }
     

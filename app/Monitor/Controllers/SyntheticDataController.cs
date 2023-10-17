@@ -1,10 +1,10 @@
 using System.Text.Json;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
 using Monitor.Constants;
-using Monitor.Exceptions;
 using Monitor.Services;
 using Monitor.Services.SyntheticData;
 
@@ -34,21 +34,13 @@ public class SyntheticDataController : ControllerBase
             var url = await _azureStorageService.UploadSpreadsheet(syntheticData, Request.Scheme, Request.Host.ToString());
             return Ok(new { url });
         }
-        catch (ValidationException e)
+        catch (InvalidDataException e)
         {
             return BadRequest(e.Message);
         }
-        catch (DataGenerationException e)
-        {
-            return Problem(detail: e.Message, statusCode: 500);
-        }
-        catch (DataUploadException e)
-        {
-            return Problem(detail: e.Message, statusCode: 500);
-        }
         catch (Exception e)
         {
-            return Problem();
+            return Problem(e.Message, statusCode: 500);
         }
     }
 

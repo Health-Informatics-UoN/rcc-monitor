@@ -1,7 +1,6 @@
+using Azure;
 using Azure.Storage.Blobs;
-using Flurl;
 using Microsoft.AspNetCore.Mvc;
-using Monitor.Exceptions;
 
 namespace Monitor.Services;
 
@@ -34,7 +33,7 @@ public class AzureStorageService
     }
     
     /// <summary>
-    /// Upload a file to storage.
+    /// Upload a file to Azure blob storage.
     /// </summary>
     /// <param name="filePath">Filepath</param>
     /// <param name="dataStream">Data stream to upload</param>
@@ -48,13 +47,13 @@ public class AzureStorageService
     }
 
     /// <summary>
-    /// 
+    /// Uploads a spreadsheet to Azure blob storage.
     /// </summary>
-    /// <param name="data"></param>
+    /// <param name="data">Data to upload.</param>
     /// <param name="requestScheme"></param>
     /// <param name="requestHost"></param>
-    /// <returns></returns>
-    /// <exception cref="DataUploadException"></exception>
+    /// <returns>The url of the file.</returns>
+    /// <exception cref="RequestFailedException">Data failed to upload</exception>
     public async Task<string?> UploadSpreadsheet(byte[] data, string requestScheme, string requestHost)
     {
         try
@@ -66,7 +65,7 @@ public class AzureStorageService
         }
         catch (Exception ex)
         {
-            throw new DataUploadException("Error uploading to Azure Storage.", ex);
+            throw new RequestFailedException("Error uploading to Azure Storage.");
         }
     }
 }
