@@ -47,10 +47,7 @@ export default async function Page() {
           <li>Generate realistic synthetic data.</li>
           <li>Respect branching logic.</li>
           <li>Populate calculated fields (this is handled by RedCap).</li>
-          <li>
-            Understand fields beyond the field type (for example names and
-            addresses are treat the same as any other text).
-          </li>
+          <li>Understand fields beyond the field type.</li>
         </ol>
 
         <h2
