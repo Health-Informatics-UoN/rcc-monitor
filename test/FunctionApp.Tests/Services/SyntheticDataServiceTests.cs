@@ -12,18 +12,21 @@ public class SyntheticDataServiceTests
         // Arrange
         var headerRows = new List<string>();
         var subjectColumns = new List<List<string>>();
+        const string eventName = "Test Event Name";
         
         // Act
-        SyntheticDataService.GenerateParticipantId(headerRows, subjectColumns);
+        SyntheticDataService.GenerateParticipantId(headerRows, subjectColumns, eventName);
         
-        // Assert
+        // Assert Header Rows
         Assert.Equal(2, headerRows.Count);
         Assert.Contains("participant_id", headerRows);
         Assert.Contains("redcap_event_name", headerRows);
 
+        // Assert Subjects
         Assert.Equal(2, subjectColumns.Count);
         Assert.Equal(SubjectsToGenerate, subjectColumns[0].Count);
         Assert.Equal(SubjectsToGenerate, subjectColumns[1].Count);
+        Assert.Equal(eventName, subjectColumns[1][1]);
     }
     
     [Fact]
