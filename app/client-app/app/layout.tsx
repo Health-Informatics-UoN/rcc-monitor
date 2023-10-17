@@ -1,6 +1,8 @@
+import { Container } from "@/styled-system/jsx";
+import "@/styles/globals.css";
+
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toast/toaster";
-import "@/styles/globals.css";
 
 export default function RootLayout({
   children,
@@ -11,7 +13,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Navbar />
-        {children}
+        <Container>{children}</Container>
         <Toaster />
       </body>
     </html>
