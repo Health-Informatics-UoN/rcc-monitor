@@ -12,10 +12,10 @@ public class AzureStorageService
         _blobServiceClient = blobServiceClient;
     }
     
-    public async Task<byte[]> Get(string filePath)
+    public async Task<byte[]> Get(string name)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(Container);
-        var blobClient = containerClient.GetBlobClient(filePath);
+        var blobClient = containerClient.GetBlobClient(name);
         var downloadContent = await blobClient.DownloadAsync();
 
         using var stream = new MemoryStream();
@@ -29,11 +29,11 @@ public class AzureStorageService
     /// <param name="filePath">Filepath</param>
     /// <param name="dataStream">Data stream to upload</param>
     /// <returns>Uri to the uploaded file.</returns>
-    public async Task<Uri> Upload(string filePath, Stream dataStream)
+    public async Task<string> Upload(string filePath, Stream dataStream)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(Container);
         var blobClient = containerClient.GetBlobClient(filePath);
         await blobClient.UploadAsync(dataStream);
-        return blobClient.Uri;
+        return blobClient.Name;
     }
 }

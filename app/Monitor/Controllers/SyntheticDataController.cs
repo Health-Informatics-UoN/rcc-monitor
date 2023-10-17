@@ -23,24 +23,42 @@ public class SyntheticDataController : ControllerBase
     }
     
     [HttpPost("generate")]
+    [AllowAnonymous]
     public async Task<ActionResult<string>> Generate([FromForm] IFormFile file, [FromForm] string eventName)
     {
         // TODO: Validation step.
         
         // Generate data
-        var generatedCsv = _syntheticData.Generate(file, eventName);
-        
-        // Upload file
-        using var stream = new MemoryStream(generatedCsv);
-        var filePath = $"{eventName}_{Guid.NewGuid()}.csv";
-        var blobName = await _azureStorageService.Upload(filePath, stream);
-
-        return Ok(blobName);
+        try
+        {
+            var generatedCsv = _syntheticData.Generate(file, eventName);
+            try
+            {
+                using var stream = new MemoryStream(generatedCsv);
+                var filePath = $"{eventName}_{Guid.NewGuid()}.csv";
+                var blobName = await _azureStorageService.Upload(filePath, stream);
+                return Ok(Url.Action("Get", "SyntheticData", new { name = blobName }));
+            }
+            catch (Exception e)
+            {
+                return Problem();
+            }
+        }
+        catch (Exception e)
+        {
+            return Problem();
+        }
     }
 
     [HttpGet("file")]
-    public async Task<byte[]> Get(string url)
+    [AllowAnonymous]
+    public async Task<IActionResult> Get(string name)
     {
-        return await _azureStorageService.Get(url);
+        var fileBytes = await _azureStorageService.Get(name);
+        if (fileBytes == null)
+        {
+            return NotFound();
+        }
+        return File(fileBytes, "application/octet-stream", name);
     }
 }

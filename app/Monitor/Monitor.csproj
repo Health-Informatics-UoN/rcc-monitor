@@ -14,7 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Azure.Storage.Blobs" Version="12.19.0-beta.1" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
         <PackageReference Include="ClacksMiddlware" Version="2.1.0" />
         <PackageReference Include="CsvHelper" Version="30.0.1" />
         <PackageReference Include="Flurl" Version="3.0.7" />
