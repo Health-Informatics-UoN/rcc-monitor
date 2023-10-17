@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
 using Monitor.Constants;
+using Monitor.Exceptions;
 using Monitor.Services;
 using Monitor.Services.SyntheticData;
 
@@ -26,30 +27,31 @@ public class SyntheticDataController : ControllerBase
     [HttpPost("generate")]
     public async Task<ActionResult<string>> Generate([FromForm] IFormFile file, [FromForm] string eventName)
     {
-        // TODO: Validation step.
-        
-        // Generate data
         try
         {
-            var generatedCsv = _syntheticData.Generate(file, eventName);
-            try
-            {
-                using var stream = new MemoryStream(generatedCsv);
-                var filePath = $"{eventName}_{Guid.NewGuid()}.csv";
-                var blobName = await _azureStorageService.Upload(filePath, stream);
-                var url = Url.Action("Get", "SyntheticData", new { name = blobName }, Request.Scheme, Request.Host.ToString());
-                return Ok(new {url});
-            }
-            catch (Exception e)
-            {
-                return Problem();
-            }
+            _syntheticData.Validate(file);
+            var syntheticData = _syntheticData.Generate(file, eventName);
+            var url = await _azureStorageService.UploadSpreadsheet(syntheticData, Request.Scheme, Request.Host.ToString());
+            return Ok(new { url });
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (DataGenerationException e)
+        {
+            return Problem(detail: e.Message, statusCode: 500);
+        }
+        catch (DataUploadException e)
+        {
+            return Problem(detail: e.Message, statusCode: 500);
         }
         catch (Exception e)
         {
             return Problem();
         }
     }
+
 
     [HttpGet("file")]
     public async Task<IActionResult> Get(string name)

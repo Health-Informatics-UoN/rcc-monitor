@@ -9,6 +9,12 @@ public class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
 
+    public bool Validate(IFormFile file)
+    {
+        using var stream = file.OpenReadStream();
+        return false;
+    }
+    
     /// <summary>
     /// Generate synthetic data.
     /// </summary>
