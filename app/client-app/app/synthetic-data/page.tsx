@@ -43,13 +43,13 @@ export default async function Page() {
             listStyle: "disc",
           })}
         >
-          <li>test the data dictionary</li>
-          <li>generate realistic synthetic data</li>
-          <li>respect branching logic</li>
-          <li>populate calculated fields</li>
+          <li>Test the data dictionary.</li>
+          <li>Generate realistic synthetic data.</li>
+          <li>Respect branching logic.</li>
+          <li>Populate calculated fields (this is handled by RedCap).</li>
           <li>
-            understand fields beyond the field type - for example names and
-            addresses are treat the same as any other text.
+            Understand fields beyond the field type (for example names and
+            addresses are treat the same as any other text).
           </li>
         </ol>
 
@@ -60,7 +60,7 @@ export default async function Page() {
             m: "20px 0px",
           })}
         >
-          How to use
+          How to use it
         </h2>
         <ol
           className={css({
