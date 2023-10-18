@@ -1,10 +1,10 @@
-import { getSpreadsheet } from "@/lib/api/syntheticdata";
+import { getFile } from "@/lib/api/syntheticdata";
 
 export async function GET(
   request: Request,
   { params }: { params: { file: string } }
 ) {
-  const f = await getSpreadsheet(params.file);
+  const f = await getFile(params.file);
 
   const response = new Response(f);
 

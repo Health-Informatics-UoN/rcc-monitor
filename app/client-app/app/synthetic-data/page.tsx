@@ -1,10 +1,12 @@
 import { Metadata } from "next";
-import { UploadFile } from "./form";
+
 import { css } from "@/styled-system/css";
 import { Box, Flex } from "@/styled-system/jsx";
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { vstack, grid, flex } from "@/styled-system/patterns";
+import { grid } from "@/styled-system/patterns";
+
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { UploadFile } from "./form";
 
 export const metadata: Metadata = {
   title: "RedCap Synthetic Data",

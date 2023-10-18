@@ -4,9 +4,15 @@ import request from "./request";
 
 const fetchKeys = {
   generate: "syntheticdata/generate",
-  get: (filename: string) => `syntheticdata/file?name=${filename}`,
+  getFile: (filename: string) => `syntheticdata/file?name=${filename}`,
 };
 
+/**
+ * Upload the spreadsheet to the backend.
+ * @param prevState State of the form.
+ * @param formData Formdata to upload.
+ * @returns
+ */
 export async function postSpreadsheet(prevState: any, formData: FormData) {
   try {
     const response: { name: string } = await request(fetchKeys.generate, {
@@ -21,11 +27,14 @@ export async function postSpreadsheet(prevState: any, formData: FormData) {
   }
 }
 
-export async function getSpreadsheet(
-  filename: string
-): Promise<Blob | undefined> {
+/**
+ * Get file from the backend.
+ * @param filename name of the file to get
+ * @returns File Blob
+ */
+export async function getFile(filename: string): Promise<Blob | undefined> {
   try {
-    const response = await request<Blob>(fetchKeys.get(filename), {
+    const response = await request<Blob>(fetchKeys.getFile(filename), {
       method: "GET",
       download: true,
     });
