@@ -6,16 +6,11 @@ namespace Monitor.Services;
 public class AzureStorageService
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly IHttpContextAccessor _accessor;
-    private readonly LinkGenerator _generator;
     private const string Container = "synthetic-data";
 
-    public AzureStorageService(BlobServiceClient blobServiceClient, IHttpContextAccessor accessor,
-        LinkGenerator generator)
+    public AzureStorageService(BlobServiceClient blobServiceClient)
     {
         _blobServiceClient = blobServiceClient;
-        _accessor = accessor;
-        _generator = generator;
     }
     
     /// <summary>
@@ -56,14 +51,14 @@ public class AzureStorageService
     /// <param name="requestHost"></param>
     /// <returns>The url of the file.</returns>
     /// <exception cref="RequestFailedException">Data failed to upload</exception>
-    public async Task<string?> UploadSpreadsheet(byte[] data, string requestScheme, string requestHost)
+    public async Task<string?> UploadSpreadsheet(byte[] data)
     {
         try
         {
             using var stream = new MemoryStream(data);
             var filePath = $"{Guid.NewGuid()}.csv";
             var blobName = await Upload(filePath, stream);
-            return _generator.GetUriByAction(_accessor.HttpContext!, "Get", "SyntheticData", new { name = blobName });
+            return blobName;
         }
         catch (Exception ex)
         {

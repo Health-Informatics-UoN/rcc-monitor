@@ -1,5 +1,3 @@
-using System.Text.Json;
-using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
@@ -18,6 +16,7 @@ public class SyntheticDataController : ControllerBase
 {
     private readonly AzureStorageService _azureStorageService;
     private readonly SyntheticDataService _syntheticData;
+    
     public SyntheticDataController(AzureStorageService azureStorageService, SyntheticDataService syntheticData)
     {
         _azureStorageService = azureStorageService;
@@ -31,8 +30,9 @@ public class SyntheticDataController : ControllerBase
         {
             _syntheticData.Validate(file);
             var syntheticData = _syntheticData.Generate(file, eventName);
-            var url = await _azureStorageService.UploadSpreadsheet(syntheticData, Request.Scheme, Request.Host.ToString());
-            return Ok(new { url });
+            var name = await _azureStorageService.UploadSpreadsheet(syntheticData);
+            
+            return Ok(new { name });
         }
         catch (InvalidDataException e)
         {
@@ -49,10 +49,6 @@ public class SyntheticDataController : ControllerBase
     public async Task<IActionResult> Get(string name)
     {
         var fileBytes = await _azureStorageService.Get(name);
-        if (fileBytes == null)
-        {
-            return NotFound();
-        }
         return File(fileBytes, "application/octet-stream", name);
     }
 }
