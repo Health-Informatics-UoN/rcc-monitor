@@ -47,8 +47,10 @@ export default async function Page() {
         >
           <li>Test the data dictionary.</li>
           <li>Generate realistic synthetic data.</li>
-          <li>Respect branching logic.</li>
-          <li>Populate calculated fields (this is handled by RedCap).</li>
+          <li>Respect branching logic (this is handled by RedCap on import)</li>
+          <li>
+            Populate calculated fields (this is handled by RedCap on import).
+          </li>
           <li>Understand fields beyond the field type.</li>
         </ol>
 
