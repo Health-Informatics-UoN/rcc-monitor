@@ -55,7 +55,10 @@ b.Services
   .AddTransient<ReportService>()
   .AddTransient<SyntheticDataService>();
 
-b.Services.AddSwaggerGen();
+b.Services.AddSwaggerGen(c =>
+{
+  c.EnableAnnotations();
+});
 
 // Blob storage
 b.Services.AddAzureClients(builder =>

@@ -5,6 +5,7 @@ using Monitor.Auth;
 using Monitor.Constants;
 using Monitor.Services;
 using Monitor.Services.SyntheticData;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Monitor.Controllers;
 
@@ -24,7 +25,13 @@ public class SyntheticDataController : ControllerBase
     }
     
     [HttpPost("generate")]
-    public async Task<ActionResult<string>> Generate([FromForm] IFormFile file, [FromForm] string eventName)
+    [SwaggerOperation("Generate synthetic data from a data dictionary.")]
+    [SwaggerResponse(200, "Synthetic Data was generated", typeof(string))]
+    [SwaggerResponse(400, "File is not a valid data dictionary.")]
+    [SwaggerResponse(500, "Synthetic data failed to generate or upload.")]
+    public async Task<ActionResult<string>> Generate(
+        [SwaggerParameter("RedCap data dictionary file.")] [FromForm] IFormFile file, 
+        [SwaggerParameter("Event name to generate for.")] [FromForm] string eventName)
     {
         try
         {
@@ -43,10 +50,12 @@ public class SyntheticDataController : ControllerBase
             return Problem(e.Message, statusCode: 500);
         }
     }
-
-
+    
     [HttpGet("file")]
-    public async Task<IActionResult> Get(string name)
+    [SwaggerOperation("Download file.")]
+    [SwaggerResponse(200, "File download")]
+    [SwaggerResponse(404, "File not found.")]
+    public async Task<IActionResult> Get([SwaggerParameter("Name of the file to get.")] string name)
     {
         var fileBytes = await _azureStorageService.Get(name);
         return File(fileBytes, "application/octet-stream", name);
