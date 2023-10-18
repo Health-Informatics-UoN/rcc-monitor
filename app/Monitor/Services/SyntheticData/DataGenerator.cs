@@ -89,7 +89,7 @@ public class DecimalGenerator : DataGenerator
     {
         // Safely unwrap min/max and profile defaults if either, or both are empty strings.
         double minValue = string.IsNullOrWhiteSpace(min) ? 0 : double.TryParse(min, out minValue) ? minValue : 0;
-        double maxValue = string.IsNullOrWhiteSpace(max) ? (minValue + 2) : double.TryParse(max, out maxValue) ? maxValue : (minValue + 2);
+        double maxValue = string.IsNullOrWhiteSpace(max) ? (minValue + 1) : double.TryParse(max, out maxValue) ? maxValue : (minValue + 1);
         
         var random = new Random();
         var randomNumber = minValue + (maxValue - minValue) * random.NextDouble();
@@ -111,7 +111,7 @@ public class IntegerGenerator : DataGenerator
     {
         // Safely unwrap min/max and profile defaults if either, or both are empty strings.
         int minValue = string.IsNullOrWhiteSpace(min) ? 0 : int.TryParse(min, out minValue) ? minValue : 0;
-        int maxValue = string.IsNullOrWhiteSpace(max) ? (minValue + 2) : int.TryParse(max, out maxValue) ? maxValue : (minValue + 2);
+        int maxValue = string.IsNullOrWhiteSpace(max) ? (minValue + 1) : int.TryParse(max, out maxValue) ? maxValue : (minValue + 1);
     
         var random = new Random();
         var randomNumber = random.Next(minValue, maxValue + 1);
