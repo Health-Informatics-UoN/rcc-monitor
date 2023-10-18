@@ -338,8 +338,9 @@ public class SyntheticDataService
             }
 
             writer.WriteLine(string.Join(",", rowData));
+            writer.Flush();
         }
-
+        
         return memoryStream.ToArray();
     }
     
