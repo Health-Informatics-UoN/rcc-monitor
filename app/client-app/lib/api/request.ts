@@ -14,6 +14,7 @@ interface RequestOptions {
   method?: string;
   headers?: HeadersInit;
   body?: BodyInit;
+  download?: Boolean;
   cache?: RequestCache;
   next?: { revalidate: number };
 }
@@ -43,6 +44,10 @@ const request = async <T>(
     if (!response.ok) {
       const errorMessage = response.statusText;
       throw new APIError(errorMessage, response.status);
+    }
+
+    if (options.download) {
+      return response.blob() as unknown as T;
     }
 
     return response.json();
