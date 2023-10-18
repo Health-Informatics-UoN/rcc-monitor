@@ -21,9 +21,11 @@ export async function postSpreadsheet(prevState: any, formData: FormData) {
   }
 }
 
-export async function getSpreadsheet(filename: string) {
+export async function getSpreadsheet(
+  filename: string
+): Promise<Blob | undefined> {
   try {
-    const response = await request(fetchKeys.get(filename), {
+    const response = await request<Blob>(fetchKeys.get(filename), {
       method: "GET",
       download: true,
     });
@@ -31,6 +33,5 @@ export async function getSpreadsheet(filename: string) {
     return response;
   } catch (error) {
     console.error(error);
-    return { message: "Failed to get file." };
   }
 }

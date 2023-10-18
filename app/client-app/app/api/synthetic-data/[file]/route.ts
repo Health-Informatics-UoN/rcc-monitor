@@ -5,10 +5,9 @@ export async function GET(
   { params }: { params: { file: string } }
 ) {
   const f = await getSpreadsheet(params.file);
-  // Create a new response with the blob
+
   const response = new Response(f);
 
-  // Set the appropriate headers
   response.headers.set(
     "Content-Disposition",
     `attachment; filename="${params.file}"`
