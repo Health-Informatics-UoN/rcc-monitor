@@ -21,7 +21,7 @@ const initialState = {
 interface ValidatedButtonProps extends ButtonProps {
   state: {
     message: string;
-    url: string;
+    name: string;
   };
 }
 
@@ -38,7 +38,9 @@ function ValidatedButton({ state }: ValidatedButtonProps) {
     >
       {success ? <FileDown color="green" /> : <XCircle color="red" />}
       {success ? (
-        <Link href={state.url}>Download Spreadsheet</Link>
+        <Link href={`/api/synthetic-data/${state.name}`} download>
+          Download Spreadsheet
+        </Link>
       ) : (
         "Validation Failed"
       )}
