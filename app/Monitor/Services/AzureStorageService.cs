@@ -47,9 +47,7 @@ public class AzureStorageService
     /// Uploads a spreadsheet to Azure blob storage.
     /// </summary>
     /// <param name="data">Data to upload.</param>
-    /// <param name="requestScheme"></param>
-    /// <param name="requestHost"></param>
-    /// <returns>The url of the file.</returns>
+    /// <returns>The filename.</returns>
     /// <exception cref="RequestFailedException">Data failed to upload</exception>
     public async Task<string?> UploadSpreadsheet(byte[] data)
     {
