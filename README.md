@@ -40,6 +40,15 @@ We use Keycloak for authentication, and the service runs as part of the `docker-
 When setting up a new environment, you need to import the Keycloak realm, found in `keycloak/nuh-dev.json`. This realm contains the client applications for backend and frontend, and custom roles.
 
 In production, the Kecloak secret for the client and backend will need to be regenerated and replaced in the environment variable and appsettings respectively, as we do not want to use default or development values.
+
+## Storage Setup
+
+We use Azure Blob storage for storing files, so use the Azurite for local development, this service runs as part of the `docker-compose`.
+
+You will need to add a container for the files, using the Azure CLI:
+
+`az storage container create --name synthetic-data  --connection-string "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"`
+
 ## 📁 Repository contents
 
 Areas within this repo include:
@@ -83,19 +92,6 @@ OutboundEmail:
     credentials: 
       secret: ""
     RolesSource: "Realm"
-
-  UserAccounts:
-    SendEmail: # true or false. if true, sends an email to the user
-    GenerateLink: # true or false. if true, generates link to the client
-  # the above two options are appicable with account activation (user invite) including resending and changing password.
-
-  Registration":
-    UseAllowlist: # true or false. If true, checks if email is in the RegistrationAllowlist table.
-    UseRules: # true or false. If true, checks if email satisfies the registration rules.
-    # the above options are curently used in CanRegister method, which determines whether a given email can register or not.
-
-    AllowList: [] # String array containing email/domain that are allowed to register. Example ["@example.com", "allow@example1.com"]
-    BlockList: [] # String array containing email/domain that are blocked from registration. Example ["block@example.com", "@example1.com"]
 ```
 
 The frontend app can be configured in any standard way an Node application can. Typically from the Azure Portal (Environment variables) or an `.env.local`.

@@ -1,113 +1,27 @@
-"use client";
-import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
 import { css } from "@/styled-system/css";
 import { Box, Flex } from "@/styled-system/jsx";
-import { AlertCircle, FileDown, UploadCloud, XCircle } from "lucide-react";
-import { useToast } from "@/components/ui/toast/use-toast";
+import { AlertCircle } from "lucide-react";
+import { grid } from "@/styled-system/patterns";
+
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { postSpreadsheet } from "@/lib/api/actions";
-import Spinner from "@/components/ui/spinner";
+import { UploadFile } from "./form";
 
-interface ValidatedButtonProps {
-  variant: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-}
+export const metadata: Metadata = {
+  title: "RedCap Synthetic Data",
+};
 
-function ErrorText() {
+export default async function Page() {
   return (
-    <p className={css({ color: "red", m: "-16px 0px 10px" })}>
-      Please upload a valid spreadsheet
-    </p>
-  );
-}
-
-function ValidationText() {
-  return (
-    <Flex>
-      <Spinner />
-      <h1
-        className={css({
-          m: "auto",
-          fontSize: "xl",
-          fontStyle: "italic",
-        })}
-      >
-        Validating...
-      </h1>
-    </Flex>
-  );
-}
-
-function ValidatedButton({ variant, onClick }: ValidatedButtonProps) {
-  const type: boolean = variant === "success";
-
-  return (
-    <Button
-      type="button"
-      size="lg"
-      variant="outline"
-      color={type ? "green.600" : "red.600"}
-      m="10px 0px"
-      fontWeight="bold"
-      fontSize="lg"
-      h="55px"
-      border="2px solid"
-      borderColor={type ? "green.600" : "red.600"}
-      onClick={onClick}
+    <div
+      className={grid({
+        columns: { base: 1, md: 2 },
+        gap: "6",
+        lineHeight: "2rem",
+      })}
     >
-      {type ? <FileDown color="green" /> : <XCircle color="red" />}
-      {type ? "Download spreadsheet" : "Validation failed"}
-    </Button>
-  );
-}
-
-export default function SyntheticData() {
-  const { toast } = useToast();
-  const ref = useRef<HTMLFormElement>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [spreadsheet, setSpreadsheet] = useState<File | null>(null);
-  const [error, setError] = useState<boolean>(false);
-  const [uploaded, setUploaded] = useState<boolean>(false);
-  const [validated, setValidated] = useState<"success" | "fail" | "">("");
-
-  async function generateData(formdata: FormData) {
-    ref.current?.reset();
-
-    if (file !== null) {
-      setUploaded(true);
-      try {
-        const response = await postSpreadsheet(formdata);
-        if (response) {
-          setSpreadsheet(response);
-          setUploaded(false);
-          setValidated("success");
-          toast({
-            title: "Spreadsheet validation successful!",
-            description: "Click on the button to download the file",
-          });
-        }
-        setFile(null);
-      } catch (error: any) {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          title: "Spreadsheet validation failed!",
-          description: `${error.message}`,
-        });
-        setUploaded(false);
-        setValidated("fail");
-        setFile(null);
-      }
-    } else {
-      setError(true);
-      setValidated("");
-    }
-  }
-
-  return (
-    <Flex h="40vh">
-      <Box m="auto">
+      <Box>
         <h1
           className={css({
             fontSize: "2rem",
@@ -115,75 +29,88 @@ export default function SyntheticData() {
             m: "20px 0px",
           })}
         >
-          Upload a spreadsheet to generate data
+          Synthetic Data Generation
         </h1>
-        <Alert backgroundColor="blue.200" mb="10px">
+        <p>
+          A tool that will generate synthetic data if you upload a RedCap Cloud
+          data dictionary. This data is suitable for adding subjects to a study
+          to perform study changes and migrations.
+        </p>
+        <p>
+          The tool will generate data based on the type of field and the minimum
+          and maximum validation criteria. It will not:
+        </p>
+        <ol
+          className={css({
+            listStyle: "disc",
+          })}
+        >
+          <li>Test the data dictionary.</li>
+          <li>Generate realistic synthetic data.</li>
+          <li>Respect branching logic (this is handled by RedCap on import)</li>
+          <li>
+            Populate calculated fields (this is handled by RedCap on import).
+          </li>
+          <li>Understand fields beyond the field type.</li>
+        </ol>
+
+        <h2
+          className={css({
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            m: "20px 0px",
+          })}
+        >
+          How to use it
+        </h2>
+        <ol
+          className={css({
+            listStyleType: "decimal",
+            listStyle: "decimal",
+          })}
+        >
+          <li>
+            Download your RedCap data dictionary from RedCap cloud. Go to your
+            study, the Instruments tab, the Tools dropdown, and select Export
+            Data Dictionary.
+          </li>
+          <li>
+            Select the instruments you would like to generate the data for and
+            download them.
+          </li>
+          <li>
+            Upload the downloaded file to this tool, input the event name you
+            wish to generate data for, this should match the event name in
+            RedCap.
+          </li>
+          <li>When completed, download the file generated.</li>
+          <li>
+            Upload the synthetic data to RedCap: Go to your study, and select
+            Data in the left menu, select Data Import Tool in the tabs.
+          </li>
+          <li>
+            Complete the form as necessary (the date format is the default), and
+            choose the downloaded synthetic data file as your upload.
+          </li>
+          <li>
+            RedCap will process the data, and display the data it will import to
+            you, select through the options to import the data.
+          </li>
+          <li>
+            The synthetic data should now have populated your subjects data.
+          </li>
+        </ol>
+      </Box>
+
+      <Flex direction={"column"} justifyContent={"center"} gap={"6"}>
+        <UploadFile />
+        <Alert backgroundColor="blue.200">
           <AlertCircle />
           <AlertTitle>
             You can upload a spreadsheet in a supported format: .csv
           </AlertTitle>
         </Alert>
-        <form ref={ref} action={generateData}>
-          <input
-            type="file"
-            accept=".xlsx,.csv"
-            className={css({
-              m: "20px 0px",
-              p: "10px",
-              h: "50px",
-              w: "50%",
-              border: "2px solid",
-            })}
-            onChange={(e: React.FormEvent<HTMLInputElement>) => {
-              if (e.currentTarget.files && e.currentTarget.files[0]) {
-                setError(false);
-                setFile(e.currentTarget.files[0]);
-              }
-            }}
-          />
-          {error && <ErrorText />}
-
-          <Flex
-            w={uploaded ? "58%" : validated === "success" ? "85%" : "75%"}
-            justifyContent="space-between"
-          >
-            <Button
-              type="submit"
-              size="lg"
-              color="#fff"
-              backgroundColor="#0074d9"
-              m="10px 0px"
-              fontWeight="bold"
-              fontSize="lg"
-              h="55px"
-              _hover={{
-                backgroundColor: "#56a1d1",
-                borderColor: "#56a1d1",
-              }}
-            >
-              <UploadCloud />
-              Upload File
-            </Button>
-            {uploaded && <ValidationText />}
-            {validated !== "" &&
-              (validated === "success" ? (
-                spreadsheet && (
-                  <a
-                    href={URL.createObjectURL(spreadsheet)}
-                    download={`${spreadsheet.name}`}
-                  >
-                    <ValidatedButton variant={validated} />
-                  </a>
-                )
-              ) : (
-                <ValidatedButton
-                  variant={validated}
-                  onClick={() => setValidated("")}
-                />
-              ))}
-          </Flex>
-        </form>
-      </Box>
-    </Flex>
+      </Flex>
+    </div>
   );
 }
