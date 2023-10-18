@@ -34,12 +34,10 @@ export async function postSpreadsheet(prevState: any, formData: FormData) {
  */
 export async function getFile(filename: string): Promise<Blob | undefined> {
   try {
-    const response = await request<Blob>(fetchKeys.getFile(filename), {
+    return await request<Blob>(fetchKeys.getFile(filename), {
       method: "GET",
       download: true,
     });
-
-    return response;
   } catch (error) {
     console.error(error);
   }
