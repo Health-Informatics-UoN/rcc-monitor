@@ -110,7 +110,7 @@ module backend 'components/web-app-service.bicep' = {
   name: 'backend-${uniqueString(appName)}'
   params: {
     location: location
-    appName: appName
+    appName: '${appName}-backend'
     aspName: asp.outputs.name
     logAnalyticsWorkspaceName: la.outputs.name
     // appHostnames: backendHostnames
