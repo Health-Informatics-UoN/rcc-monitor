@@ -63,7 +63,7 @@ b.Services.AddSwaggerGen(c =>
 // Blob storage
 b.Services.AddAzureClients(builder =>
 {
-  builder.AddBlobServiceClient(b.Configuration.GetConnectionString("AzureBlobStorageConnectionString"));
+  builder.AddBlobServiceClient(b.Configuration.GetConnectionString("AzureStorage"));
 });
 b.Services.AddScoped<AzureStorageService>();
 
@@ -80,9 +80,9 @@ using (var scope = app.Services.CreateScope())
 {
   var db = scope.ServiceProvider
     .GetRequiredService<ApplicationDbContext>();
-  
+
   var seeder = new DataSeeder(db);
-  
+
   await seeder.SeedReportTypes();
   await seeder.SeedInstanceTypes();
   await seeder.SeedReportStatus();
