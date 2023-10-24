@@ -8,7 +8,8 @@
     "build": "next build",
     "localStart": "next start",
     "start": "./node_modules/next/dist/bin/next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --project tsconfig.json --pretty --noEmit && echo "
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.0.2",
