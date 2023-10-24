@@ -1,7 +1,6 @@
 import { css } from '@/styled-system/css';
 
 export default function Home() {
-  const x = '';
   return (
     <>
       <h2
