@@ -21,4 +21,11 @@
       "path": "../app/Monitor"
     },
   ],
+  "extensions": {
+    "recommendations": [
+      "ms-azuretools.vscode-bicep",
+      "davidanson.vscode-markdownlint",
+      "esbenp.prettier-vscode"
+    ]
+  }
 }
