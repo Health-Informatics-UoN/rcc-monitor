@@ -1,7 +1,7 @@
 import { css } from "@/styled-system/css";
 
 interface AlertProps {
-  css?: {};
+  css?: object;
   message: string;
 }
 
@@ -17,7 +17,7 @@ export default function Alert({ css: cssProp = {}, message }: AlertProps) {
           textAlign: "center",
           fontWeight: "bold",
           border: "1px solid #f5c6cb",
-          borderRadius: "4px"
+          borderRadius: "4px",
         },
         cssProp
       )}

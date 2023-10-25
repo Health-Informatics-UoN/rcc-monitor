@@ -9,7 +9,7 @@ import { flex } from "@/styled-system/patterns";
 import { getServerConfig } from "@/lib/api/config";
 
 interface NavButtonProps {
-  css?: {};
+  css?: object;
   to: string;
   children: React.ReactNode;
 }
@@ -62,6 +62,8 @@ export default async function Navbar() {
       <div
         className={flex({ color: "white", alignItems: "center", mr: "30px" })}
       >
+        {session && <NavButton to="/">Home</NavButton>}
+
         {hasPermission(session?.permissions, permissions.ViewSiteReports) &&
           siteMonitoringEnabled && <NavButton to="/reports">Reports</NavButton>}
 

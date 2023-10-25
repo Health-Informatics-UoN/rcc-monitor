@@ -1,18 +1,10 @@
-import { css } from '@/styled-system/css';
+import { options } from "@/auth/options";
+import ContentPage from "@/components/home/ContentPage";
+import UserHome from "@/components/home/UserHome";
+import { getServerSession } from "next-auth";
 
-export default function Home() {
-  return (
-    <>
-      <h2
-        className={css({
-          m: '10px',
-          p: '10px',
-          fontSize: '30px',
-          fontWeight: '500',
-        })}
-      >
-        Welcome.
-      </h2>
-    </>
-  );
+export default async function Home() {
+  const session = await getServerSession(options);
+
+  return <>{session ? <UserHome /> : <ContentPage />}</>;
 }

@@ -22,7 +22,7 @@ export const LoginButton = () => {
 export const LogoutButton = () => {
   return (
     <button
-      onClick={() => signOut()}
+      onClick={() => signOut({ callbackUrl: "/" })}
       className={css({
         p: "15px",
         fontSize: "17px",
