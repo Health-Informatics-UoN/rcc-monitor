@@ -1,5 +1,4 @@
 import { css } from "@/styled-system/css";
-import { Grid } from "@/styled-system/jsx";
 import ActionCard from "@/components/ActionCard";
 import {
   AlertOctagon,
@@ -10,6 +9,7 @@ import {
 import { hasPermission, permissions } from "@/auth/permissions";
 import { getServerSession } from "next-auth";
 import { options } from "@/auth/options";
+import { grid } from "@/styled-system/patterns";
 
 export default async function UserHome() {
   const session = await getServerSession(options);
@@ -26,7 +26,12 @@ export default async function UserHome() {
       >
         Welcome.
       </h2>
-      <Grid gridTemplateColumns="3" gridTemplateRows="3" gridGap="15px">
+      <div
+        className={grid({
+          columns: { base: 1, md: 2, lg: 3 },
+          gap: "15px",
+        })}
+      >
         {hasPermission(session?.permissions, permissions.ViewSiteReports) && (
           <ActionCard
             to="/reports"
@@ -64,7 +69,7 @@ export default async function UserHome() {
           icon={<AlertOctagon />}
           description="Manage randomisation alerts"
         />
-      </Grid>
+      </div>
     </>
   );
 }
