@@ -3,6 +3,7 @@ import request from "./request";
 interface ConfigModel {
   siteMonitoringEnabled: boolean;
   syntheticDataEnabled: boolean;
+  studyManagementEnabled: boolean;
 }
 
 const fetchKeys = {
@@ -17,6 +18,7 @@ export async function getServerConfig(): Promise<ConfigModel> {
     return {
       siteMonitoringEnabled: false,
       syntheticDataEnabled: false,
+      studyManagementEnabled: false,
     };
   }
 }
