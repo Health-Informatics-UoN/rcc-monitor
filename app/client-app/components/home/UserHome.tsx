@@ -48,20 +48,21 @@ export default async function UserHome() {
           />
         )}
 
+        {hasPermission(session?.permissions, permissions.ViewStudies) && (
+          <ActionCard
+            to="/studies"
+            title="Register Study"
+            icon={<FolderPlus />}
+            description="Register a study"
+          />
+        )}
+
         {/* Todo: Add condition to render on Pemission */}
         <ActionCard
           to="/randomization-alerts"
           title="Randomization Alerts"
           icon={<AlertOctagon />}
           description="Manage randomisation alerts"
-        />
-
-        {/* Todo: Add condition to render on Pemission */}
-        <ActionCard
-          to="/study"
-          title="Register Study"
-          icon={<FolderPlus />}
-          description="Register a study"
         />
       </Grid>
     </>
