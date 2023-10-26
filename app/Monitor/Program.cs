@@ -53,7 +53,8 @@ b.Services
   .AddApplicationInsightsTelemetry()
   .AddEmailSender(b.Configuration)
   .AddTransient<ReportService>()
-  .AddTransient<SyntheticDataService>();
+  .AddTransient<SyntheticDataService>()
+  .AddTransient<StudyService>();
 
 b.Services.AddSwaggerGen(c =>
 {

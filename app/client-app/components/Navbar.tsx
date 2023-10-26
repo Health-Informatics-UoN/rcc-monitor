@@ -9,7 +9,7 @@ import { flex } from "@/styled-system/patterns";
 import { getServerConfig } from "@/lib/api/config";
 
 interface NavButtonProps {
-  css?: {};
+  css?: object;
   to: string;
   children: React.ReactNode;
 }
@@ -36,8 +36,11 @@ const NavButton = ({ css: cssProp = {}, children, to }: NavButtonProps) => {
 
 export default async function Navbar() {
   const session = await getServerSession(options);
-  const { siteMonitoringEnabled, syntheticDataEnabled } =
-    await getServerConfig();
+  const {
+    siteMonitoringEnabled,
+    syntheticDataEnabled,
+    studyManagementEnabled,
+  } = await getServerConfig();
 
   return (
     <nav
@@ -62,6 +65,11 @@ export default async function Navbar() {
       <div
         className={flex({ color: "white", alignItems: "center", mr: "30px" })}
       >
+        {hasPermission(session?.permissions, permissions.ViewStudies) &&
+          studyManagementEnabled && (
+            <NavButton to="/studies">Studies</NavButton>
+          )}
+
         {hasPermission(session?.permissions, permissions.ViewSiteReports) &&
           siteMonitoringEnabled && <NavButton to="/reports">Reports</NavButton>}
 

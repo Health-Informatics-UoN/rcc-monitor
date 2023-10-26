@@ -27,6 +27,28 @@ public static class AuthPolicies
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
       .RequireRealmRoles(SitePermissionClaims.GenerateSyntheticData)
+      .Build();  
+  
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can view studies.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
+  public static AuthorizationPolicy CanViewStudies
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.ViewStudies)
+      .Build();
+
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can view all studies.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
+  public static AuthorizationPolicy CanViewAllStudies
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.ViewAllStudies)
       .Build();
 
 }

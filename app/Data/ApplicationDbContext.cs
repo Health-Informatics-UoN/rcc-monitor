@@ -14,10 +14,14 @@ public class ApplicationDbContext : DbContext
     public DbSet<Instance> Instances => Set<Instance>();
     public DbSet<ReportStatus> ReportStatus  => Set<ReportStatus>();
     public DbSet<Site> Sites  => Set<Site>();
+    public DbSet<Study> Studies => Set<Study>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        builder.Entity<StudyUser>()
+            .HasKey(su => new { su.StudyId, su.UserId });
     }
 
 }

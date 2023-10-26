@@ -7,11 +7,13 @@ import { permissions } from "@/auth/permissions";
 const permissionPathMapping = {
   [permissions.ViewSiteReports]: ["/reports"],
   [permissions.GenerateSyntheticData]: ["/synthetic-data"],
+  [permissions.ViewStudies]: ["/studies"],
 };
 
 export default withAuth({
   callbacks: {
     authorized: ({ req, token }: { req: NextRequest; token: JWT | null }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userPermissions: any = token?.permissions;
       if (!userPermissions) {
         return false; // Not authorized if no permissions exist.
