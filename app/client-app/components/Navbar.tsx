@@ -65,6 +65,8 @@ export default async function Navbar() {
       <div
         className={flex({ color: "white", alignItems: "center", mr: "30px" })}
       >
+        {session && <NavButton to="/">Home</NavButton>}
+
         {hasPermission(session?.permissions, permissions.ViewStudies) &&
           studyManagementEnabled && (
             <NavButton to="/studies">Studies</NavButton>
