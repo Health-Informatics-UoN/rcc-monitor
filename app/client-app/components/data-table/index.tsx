@@ -19,8 +19,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTableViewOptions } from "./column-toggle";
+import { Flex } from "@/styled-system/jsx";
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue>
+  extends React.HTMLAttributes<HTMLDivElement> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
@@ -28,6 +30,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  children,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -44,7 +47,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <DataTableViewOptions table={table} />
+      <Flex justifyContent={"flex-end"} gap={"4"}>
+        {children}
+        <DataTableViewOptions table={table} />
+      </Flex>
       <div>
         <Table>
           <TableHeader>

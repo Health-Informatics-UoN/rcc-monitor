@@ -23,16 +23,9 @@ export function DataTableViewOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          ml="auto"
-          display="none"
-          h="8"
-          lg={{ display: "flex" }}
-        >
-          <SlidersHorizontalIcon className={icon({ right: "sm" })} />
+        <Button variant="outline" display="none" lg={{ display: "flex" }}>
           View
+          <SlidersHorizontalIcon className={icon({ right: "sm" })} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" w="150px">

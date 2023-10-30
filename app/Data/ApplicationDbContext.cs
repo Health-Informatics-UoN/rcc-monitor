@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<ReportStatus> ReportStatus  => Set<ReportStatus>();
     public DbSet<Site> Sites  => Set<Site>();
     public DbSet<Study> Studies => Set<Study>();
+    public DbSet<StudyUser> StudyUsers => Set<StudyUser>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

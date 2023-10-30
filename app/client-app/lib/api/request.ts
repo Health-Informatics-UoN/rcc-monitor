@@ -1,20 +1,13 @@
 import { url as apiUrl } from "@/constants";
 import { getServerSession } from "next-auth";
 import { options as authOptions } from "@/auth/options";
-
-// Error class for API errors
-class APIError extends Error {
-  constructor(message: string, status: number) {
-    super(message);
-    this.name = "APIError";
-  }
-}
+import { ApiError } from "./error";
 
 interface RequestOptions {
   method?: string;
   headers?: HeadersInit;
   body?: BodyInit;
-  download?: Boolean;
+  download?: boolean;
   cache?: RequestCache;
   next?: { revalidate: number };
 }
@@ -23,38 +16,33 @@ const request = async <T>(
   url: string,
   options: RequestOptions = {}
 ): Promise<T> => {
-  try {
-    // Get the KeyCloak id_token
-    const session = await getServerSession(authOptions);
-    const token = session?.id_token;
+  // Get the KeyCloak id_token
+  const session = await getServerSession(authOptions);
+  const token = session?.id_token;
 
-    const headers: HeadersInit = {
-      Authorization: `Bearer ${token}`,
-      ...(options.headers || {}),
-    };
+  const headers: HeadersInit = {
+    Authorization: `Bearer ${token}`,
+    ...(options.headers || {}),
+  };
 
-    const response = await fetch(`${apiUrl}/api/${url}`, {
-      method: options.method || "GET",
-      headers: headers,
-      body: options.body,
-      cache: options.cache,
-      next: options.next,
-    });
+  const response = await fetch(`${apiUrl}/api/${url}`, {
+    method: options.method || "GET",
+    headers: headers,
+    body: options.body,
+    cache: options.cache,
+    next: options.next,
+  });
 
-    if (!response.ok) {
-      const errorMessage = response.statusText;
-      throw new APIError(errorMessage, response.status);
-    }
-
-    if (options.download) {
-      return response.blob() as unknown as T;
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error(error);
-    throw new APIError("Failed to fetch data", 500);
+  if (!response.ok) {
+    const errorMessage = await response.text();
+    throw new ApiError(errorMessage, response.status);
   }
+
+  if (options.download) {
+    return response.blob() as unknown as T;
+  }
+
+  return response.json();
 };
 
 export default request;

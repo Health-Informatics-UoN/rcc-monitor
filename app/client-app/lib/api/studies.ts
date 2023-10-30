@@ -1,8 +1,14 @@
-import { StudyPartial } from "@/types/studies";
+"use server";
+
+import { Study, StudyPartial } from "@/types/studies";
 import request from "./request";
+import { ApiError } from "./error";
+import { revalidatePath } from "next/cache";
 
 const fetchKeys = {
   list: "studies",
+  validate: "studies/validate",
+  create: "studies",
 };
 
 export async function getStudies(): Promise<StudyPartial[]> {
@@ -11,5 +17,51 @@ export async function getStudies(): Promise<StudyPartial[]> {
   } catch (error) {
     console.warn("Failed to fetch data.");
     return [];
+  }
+}
+
+/**
+ * Form action to validate a study.
+ * @param prevState previous form state.
+ * @param formData form data to POST.
+ */
+export async function validateStudy(prevState: unknown, formData: FormData) {
+  try {
+    const response = await request<Study>(fetchKeys.validate, {
+      method: "POST",
+      body: formData,
+    });
+
+    return { success: true, study: response };
+  } catch (error) {
+    console.warn(error);
+    let message;
+    if (error instanceof ApiError) message = error.message;
+    else message = String(error);
+    return { success: false, message: message };
+  }
+}
+
+/**
+ * Form action to add a study.
+ * @param prevState previous form state
+ * @param formData form data to POST.
+ */
+export async function addStudy(prevState: unknown, formData: FormData) {
+  try {
+    const response = await request<Study>(fetchKeys.create, {
+      method: "POST",
+      body: formData,
+    });
+
+    revalidatePath("/studies");
+
+    return { success: true, study: response };
+  } catch (error) {
+    console.warn(error);
+    let message;
+    if (error instanceof ApiError) message = error.message;
+    else message = String(error);
+    return { success: false, message: message };
   }
 }
