@@ -7,4 +7,5 @@ public static class SitePermissionClaims
     public const string GenerateSyntheticData = "GenerateSyntheticData";
     public const string ViewStudies = "ViewStudies";
     public const string ViewAllStudies = "ViewAllStudies";
+    public const string DeleteStudies = "DeleteStudies";
 }

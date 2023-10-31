@@ -94,4 +94,23 @@ public class StudiesController : ControllerBase
             return StatusCode(401, ex.Message);
         }
     }
+    
+    [HttpDelete("{redCapId}")]
+    [Authorize(nameof(AuthPolicies.CanDeleteStudies))]
+    [SwaggerOperation("Delete a Study by RedCapId.")]
+    [SwaggerResponse(204, "Study deleted successfully.")]
+    [SwaggerResponse(404, "Study not found.")]
+    [SwaggerResponse(403, "User is not authorized.")]
+    public async Task<ActionResult> Delete(int redCapId)
+    {
+        try
+        {
+            await _studyService.DeleteStudy(redCapId);
+            return NoContent();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+    }
 }

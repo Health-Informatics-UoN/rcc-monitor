@@ -11,18 +11,33 @@ public static class AuthPolicies
         .RequireAuthenticatedUser()
         .Build();
 
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can generate view site reports.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
   public static AuthorizationPolicy CanViewSiteReports
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
       .RequireRealmRoles(SitePermissionClaims.ViewSiteReports)
       .Build();
 
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can send summary email.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
   public static AuthorizationPolicy CanSendSummary
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
       .RequireRealmRoles(SitePermissionClaims.SendSummaryEmail)
       .Build();
   
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can generate synthetic data.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
   public static AuthorizationPolicy CanGenerateSyntheticData
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
@@ -49,6 +64,17 @@ public static class AuthPolicies
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
       .RequireRealmRoles(SitePermissionClaims.ViewAllStudies)
+      .Build();
+  
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can delete studies.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
+  public static AuthorizationPolicy CanDeleteStudies
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.DeleteStudies)
       .Build();
 
 }

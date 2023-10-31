@@ -12,7 +12,7 @@ const { withProvider, withContext } = createStyleContext(dialog);
 
 const DialogPortal = withContext(styled(DialogPrimitive.Portal), "portal");
 const DialogOverlay = withContext(styled(DialogPrimitive.Overlay), "overlay");
-const DialogClose = withContext(styled(DialogPrimitive.Close), "close");
+export const DialogClose = withContext(styled(DialogPrimitive.Close), "close");
 
 const Content = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,

@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 
 const fetchKeys = {
   list: "studies",
+  delete: (id: number) => `studies/${id}`,
   validate: "studies/validate",
   create: "studies",
 };
@@ -17,6 +18,27 @@ export async function getStudies(): Promise<StudyPartial[]> {
   } catch (error) {
     console.warn("Failed to fetch data.");
     return [];
+  }
+}
+
+/**
+ * Form action to delete a study.
+ * @param id id of study to DELETE.
+ */
+export async function deleteStudy(id: number) {
+  try {
+    const response: { name: string } = await request(fetchKeys.delete(id), {
+      method: "DELETE",
+    });
+    revalidatePath("/studies");
+
+    return { success: true, name: response.name };
+  } catch (error) {
+    console.error(error);
+    let message: string;
+    if (error instanceof ApiError) message = error.message;
+    else message = String(error);
+    return { success: false, message: message };
   }
 }
 

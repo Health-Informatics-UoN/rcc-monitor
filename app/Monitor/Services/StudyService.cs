@@ -34,11 +34,25 @@ public class StudyService
         
         var result = list.Select(x => new StudyPartialModel
         {
-            RedCapId = x.RedCapId,
+            Id = x.RedCapId,
             Name = x.Name
         });
         
         return result;
+    }
+    
+    /// <summary>
+    /// Delete a study by RedCapId.
+    /// </summary>
+    /// <param name="redCapId">The RedCapId of the study to delete.</param>
+    /// <returns></returns>
+    public async Task DeleteStudy(int redCapId)
+    {
+        var study = await _db.Studies.FindAsync(redCapId) 
+                    ?? throw new KeyNotFoundException($"No study with the RedCap ID: \"{redCapId}\" was found.");
+
+        _db.Studies.Remove(study);
+        await _db.SaveChangesAsync();
     }
 
     /// <summary>

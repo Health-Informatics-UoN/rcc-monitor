@@ -14,10 +14,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { visuallyHidden } from "@/styled-system/patterns";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { useRef } from "react";
+import { deleteStudy } from "@/lib/api/studies";
+import { toast } from "@/components/ui/toast/use-toast";
 
 export const columns: ColumnDef<StudyPartial>[] = [
   {
-    accessorKey: "redCapId",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Red Cap ID" />
     ),
@@ -32,7 +36,24 @@ export const columns: ColumnDef<StudyPartial>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      // TODO: Add editing / deleting actions here.
+      const study = row.original;
+      // TODO: Add editing actions here.
+      const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
+
+      const handleDelete = async (id: number) => {
+        const response = await deleteStudy(id);
+        if (!response.success) {
+          toast({
+            variant: "destructive",
+            title: "Failed to delete study!",
+            description: response.message,
+          });
+          return;
+        }
+        toast({
+          title: "Study successfully deleted!",
+        });
+      };
 
       return (
         <DropdownMenu>
@@ -46,7 +67,25 @@ export const columns: ColumnDef<StudyPartial>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e: React.MouseEvent<HTMLElement>) => {
+                e.preventDefault();
+                deleteButtonRef.current?.click();
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+            <div className={visuallyHidden()}>
+              <ConfirmationDialog
+                title="Are you sure you want to delete this study?"
+                description="This action cannot be undone"
+                leftButtonName="Cancel"
+                rightButtonName="Delete"
+                refProp={deleteButtonRef}
+                handleClick={() => handleDelete(study.id)}
+                css={{ backgroundColor: "red" }}
+              />
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       );
