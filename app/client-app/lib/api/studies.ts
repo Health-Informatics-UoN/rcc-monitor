@@ -27,12 +27,12 @@ export async function getStudies(): Promise<StudyPartial[]> {
  */
 export async function deleteStudy(id: number) {
   try {
-    const response: { name: string } = await request(fetchKeys.delete(id), {
+    await request(fetchKeys.delete(id), {
       method: "DELETE",
     });
     revalidatePath("/studies");
 
-    return { success: true, name: response.name };
+    return { success: true };
   } catch (error) {
     console.error(error);
     let message: string;

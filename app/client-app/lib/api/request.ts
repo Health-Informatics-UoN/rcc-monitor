@@ -42,6 +42,10 @@ const request = async <T>(
     return response.blob() as unknown as T;
   }
 
+  if (response.status === 204) {
+    return {} as T;
+  }
+
   return response.json();
 };
 
