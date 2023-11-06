@@ -89,7 +89,8 @@ public class SyntheticDataService
                 csv.GetField("Form Name") ?? string.Empty,
                 csv.GetField("Choices, Calculations, OR Slider Labels") ?? string.Empty,
                 csv.GetField("Text Validation Min") ?? string.Empty,
-                csv.GetField("Text Validation Max") ?? string.Empty
+                csv.GetField("Text Validation Max") ?? string.Empty,
+                csv.GetField("Measurement Unit") ?? string.Empty
             );
             records.Add(record);
         }
