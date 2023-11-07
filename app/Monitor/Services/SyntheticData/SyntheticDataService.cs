@@ -298,7 +298,7 @@ public class SyntheticDataService
 
         subjectColumns.AddRange(new List<List<string>>
         {
-            Enumerable.Repeat("1", SubjectsToGenerate).ToList(),
+            Enumerable.Repeat("Completed", SubjectsToGenerate).ToList(),
             Enumerable.Repeat("", SubjectsToGenerate).ToList(),
         });
     }
@@ -319,7 +319,7 @@ public class SyntheticDataService
 
         subjectColumns.AddRange(new List<List<string>>
         {
-            Enumerable.Repeat("1", SubjectsToGenerate).ToList(),
+            Enumerable.Repeat("Completed", SubjectsToGenerate).ToList(),
             Enumerable.Repeat("", SubjectsToGenerate).ToList(),
         });
     }
