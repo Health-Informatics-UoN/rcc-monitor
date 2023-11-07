@@ -100,7 +100,7 @@ public class SyntheticDataServiceTests
         Assert.Equal(SubjectsToGenerate, subjectColumns[0].Count);
         Assert.Equal(SubjectsToGenerate, subjectColumns[1].Count);
 
-        Assert.All(subjectColumns[0], val => Assert.Equal("1", val));
+        Assert.All(subjectColumns[0], val => Assert.Equal("Completed", val));
         Assert.All(subjectColumns[1], val => Assert.Equal("", val));
     }
     
@@ -125,7 +125,7 @@ public class SyntheticDataServiceTests
         Assert.Equal(SubjectsToGenerate, subjectColumns[0].Count);
         Assert.Equal(SubjectsToGenerate, subjectColumns[1].Count);
 
-        Assert.All(subjectColumns[0], val => Assert.Equal("1", val));
+        Assert.All(subjectColumns[0], val => Assert.Equal("Completed", val));
         Assert.All(subjectColumns[1], val => Assert.Equal("", val));
     }
 
