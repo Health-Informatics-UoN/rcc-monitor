@@ -34,7 +34,7 @@ export default async function Page() {
         <p>
           A tool that will generate synthetic data if you upload a RedCap Cloud
           data dictionary. This data is suitable for adding subjects to a study
-          to perform study changes and migrations.
+          event to perform study changes and migrations.
         </p>
         <p>
           The tool will generate data based on the type of field and the minimum
