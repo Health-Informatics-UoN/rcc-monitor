@@ -2,12 +2,14 @@ import { withAuth } from "next-auth/middleware";
 import { JWT } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 import { permissions } from "@/auth/permissions";
+import { pathToRegexp } from "path-to-regexp";
 
 // Map the permission that a path needs to be accessed.
 const permissionPathMapping = {
   [permissions.ViewSiteReports]: ["/reports"],
   [permissions.GenerateSyntheticData]: ["/synthetic-data"],
-  [permissions.ViewStudies]: ["/studies"],
+  [permissions.ViewStudies]: ["/studies", "/studies/:id/edit"],
+  [permissions.UpdateStudies]: ["/studies/:id/edit"],
 };
 
 export default withAuth({
@@ -22,11 +24,11 @@ export default withAuth({
       const currentPath = req.nextUrl.pathname;
 
       for (const permission in permissionPathMapping) {
-        if (
-          userPermissions.includes(permission) &&
-          permissionPathMapping[permission].includes(currentPath)
-        ) {
-          return true; // Authorized for this permission and path
+        for (const mappedPath of permissionPathMapping[permission]) {
+          const regex = pathToRegexp(mappedPath);
+          if (userPermissions.includes(permission) && regex.exec(currentPath)) {
+            return true; // Authorized for this permission and path
+          }
         }
       }
 

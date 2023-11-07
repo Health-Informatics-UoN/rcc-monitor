@@ -7,6 +7,8 @@ import { revalidatePath } from "next/cache";
 
 const fetchKeys = {
   list: "studies",
+  get: (id: number) => `studies/${id}`,
+  update: (id: number) => `studies/${id}`,
   delete: (id: number) => `studies/${id}`,
   validate: "studies/validate",
   create: "studies",
@@ -19,6 +21,39 @@ export async function getStudies(): Promise<StudyPartial[]> {
     console.warn("Failed to fetch data.");
     return [];
   }
+}
+
+/**
+ * Get a study with a given id.
+ * @param id Study to get
+ * @returns The study matching the given id
+ */
+export async function getStudy(id: number): Promise<StudyPartial> {
+  try {
+    return await request<StudyPartial>(fetchKeys.get(id));
+  } catch (error) {
+    console.warn("Failed to fetch study.");
+    return {
+      id: 0,
+      name: "",
+      users: [],
+    };
+  }
+}
+
+/**
+ * Form action to update a study.
+ * @param prevState previous form state
+ * @param formData form data to update.
+ */
+export async function updateStudy(model: StudyPartial) {
+  return request<StudyPartial>(fetchKeys.update(model.id), {
+    method: "PUT",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(model),
+  });
 }
 
 /**
@@ -49,9 +84,14 @@ export async function deleteStudy(id: number) {
  */
 export async function validateStudy(prevState: unknown, formData: FormData) {
   try {
+    const payload = JSON.stringify(Object.fromEntries(formData.entries()));
+
     const response = await request<Study>(fetchKeys.validate, {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: payload,
     });
 
     return { success: true, study: response };
@@ -71,9 +111,14 @@ export async function validateStudy(prevState: unknown, formData: FormData) {
  */
 export async function addStudy(prevState: unknown, formData: FormData) {
   try {
+    const payload = JSON.stringify(Object.fromEntries(formData.entries()));
+
     const response = await request<Study>(fetchKeys.create, {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: payload,
     });
 
     revalidatePath("/studies");

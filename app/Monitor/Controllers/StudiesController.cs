@@ -1,11 +1,12 @@
 using System.Security.Claims;
+using Keycloak.AuthServices.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
 using Monitor.Constants;
-using Monitor.Models;
+using Monitor.Models.Studies;
 using Monitor.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -18,10 +19,12 @@ namespace Monitor.Controllers;
 public class StudiesController : ControllerBase
 {
     private readonly StudyService _studyService;
+    private readonly IAuthorizationService _authorizationService;
 
-    public StudiesController(StudyService studyService)
+    public StudiesController(StudyService studyService, IAuthorizationService authorizationService)
     {
         _studyService = studyService;
+        _authorizationService = authorizationService;
     }
 
     [HttpGet]
@@ -38,6 +41,38 @@ public class StudiesController : ControllerBase
         }
 
         return userId is not null ? Ok(await _studyService.List(userId)) : Forbid();
+    }    
+    
+    [HttpGet("{id:int}")]
+    [SwaggerOperation("Get a study.")]
+    [SwaggerResponse(200, Type = typeof(StudyPartialModel))]
+    [SwaggerResponse(403, "User is not authorized.")]
+    [SwaggerResponse(404, "Study not found.")]
+    public async Task<ActionResult<StudyPartialModel>> Get(int id)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (User.HasClaim("role", SitePermissionClaims.ViewAllStudies))
+        {
+            try
+            {
+                var study = await _studyService.Get(id);
+                return Ok(study);
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound("Study not found.");
+            }
+        }
+
+        try
+        {
+            return userId is not null ? Ok(await _studyService.Get(id, userId)) : Forbid();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound("Study not found.");
+        }
     }
 
     [HttpPost]
@@ -47,7 +82,7 @@ public class StudiesController : ControllerBase
     [SwaggerResponse(400, "The user has already added the study.")]
     [SwaggerResponse(401, "User is not authorized.")]
     public async Task<ActionResult> Create(
-        [SwaggerParameter("RedCap Study model.")] [FromForm]
+        [SwaggerParameter("RedCap Study model.")]
         StudyModel model)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -80,18 +115,43 @@ public class StudiesController : ControllerBase
     [SwaggerResponse(401, "User is not authorized.")]
     [SwaggerResponse(401, "The Api Key is not authorized with RedCap.")]
     public async Task<ActionResult> Validate(
-        [SwaggerParameter("RedCap API Key.")] [FromForm]
-        string apiKey
+        [SwaggerParameter("RedCap API Key.")]
+        StudyToken model
     )
     {
         try
         {
-            var model = await _studyService.Validate(apiKey);
-            return Ok(model);
+            var response = await _studyService.Validate(model.ApiKey);
+            return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
         {
             return StatusCode(401, ex.Message);
+        }
+    }
+    
+    [HttpPut("{id:int}")]
+    [Authorize(nameof(AuthPolicies.CanUpdateStudies))]
+    [SwaggerOperation("Update a Study.")]
+    [SwaggerResponse(200, "Study updated successfully.")]
+    [SwaggerResponse(403, "User is not authorized.")]
+    [SwaggerResponse(404, "Study not found.")]
+    public async Task<ActionResult> Update(int id, StudyPartialModel model)
+    {
+        try
+        {
+            var response = await _studyService.AddUsers(id, model);
+            
+            // Remove users only if they have permission.
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, nameof(AuthPolicies.CanRemoveStudyUsers));
+
+            if (!authorizationResult.Succeeded) return Ok(response);
+            response = await _studyService.RemoveUsers(id, model);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
         }
     }
     

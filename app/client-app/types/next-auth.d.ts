@@ -9,6 +9,7 @@ declare module "next-auth" {
    */
   interface Session extends Session {
     id_token: string;
+    access_token: string;
     permissions: (keyof typeof permissions)[];
   }
   interface Profile extends KeycloakProfile {}
@@ -18,6 +19,7 @@ declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT {
     id_token: string;
+    access_token: string;
     permissions: (keyof typeof permissions)[];
   }
 }

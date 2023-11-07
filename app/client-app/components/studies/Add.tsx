@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { experimental_useFormState as useFormState } from "react-dom";
+import { useFormState } from "react-dom";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,8 @@ import { icon } from "@/styled-system/recipes";
 
 import { addStudy, validateStudy } from "@/lib/api/studies";
 
-import { CreateForm } from "./create";
-import { ValidateForm } from "./validate";
+import { CreateForm } from "./Create";
+import { ValidateForm } from "./Validate";
 
 export default function AddStudy() {
   const [validatedState, validate] = useFormState(validateStudy, null);

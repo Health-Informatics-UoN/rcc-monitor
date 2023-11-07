@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
-using Monitor.Models;
 using Flurl.Http;
 using Microsoft.Extensions.Options;
 using Monitor.Config;
 using Monitor.Data.Entities;
+using Monitor.Models.Studies;
+using StudyUser = Monitor.Data.Entities.StudyUser;
 
 namespace Monitor.Services;
 
@@ -12,12 +13,42 @@ public class StudyService
 {
     private readonly ApplicationDbContext _db;
     private readonly RedCapOptions _config;
+    private readonly UserService _userService;
     private const string StudiesUrl = "/rest/v2/studies";
     
-    public StudyService(ApplicationDbContext db, IOptions<RedCapOptions> config)
+    public StudyService(ApplicationDbContext db, IOptions<RedCapOptions> config, UserService userService)
     {
         _db = db;
+        _userService = userService;
         _config = config.Value;
+    }
+    
+    /// <summary>
+    /// Get a study with a given id.
+    /// </summary>
+    /// <param name="id">Id of the study to get.</param>
+    /// <param name="userId">User to filter by.</param>
+    /// <returns>Study with the given id.</returns>
+    public async Task<StudyPartialModel> Get(int id, string? userId = null)
+    {
+        var entity = await _db.Studies
+            .AsNoTracking()
+            .Include(x => x.Users)
+            .Where(x => x.RedCapId == id)
+            .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
+            .SingleOrDefaultAsync()
+            ?? throw new KeyNotFoundException();
+        
+        // get users from keycloak
+        var users = await _userService.GetStudyUsers(entity.Users);
+
+        var model = new StudyPartialModel
+        {
+            Id = entity.RedCapId,
+            Name = entity.Name,
+            Users = users
+        };
+        return model;
     }
     
     /// <summary>
@@ -95,6 +126,64 @@ public class StudyService
     }
     
     /// <summary>
+    /// Add users to a study.
+    /// </summary>
+    /// <param name="id">Id of the study to update.</param>
+    /// <param name="model">New model to update with.</param>
+    /// <returns>The updated study model.</returns>
+    /// <exception cref="KeyNotFoundException">Study not found.</exception>
+    public async Task<StudyPartialModel> AddUsers(int id, StudyPartialModel model)
+    {
+        var entity = await _db.Studies
+                         .Where(s => s.RedCapId == id)
+                         .Include(study => study.Users)
+                         .FirstOrDefaultAsync() ??
+                     throw new KeyNotFoundException();
+        
+        if (model.Users != null)
+        {
+            var usersToAdd = model.Users
+                .Where(newUser => entity.Users.All(existingUser => existingUser.UserId != newUser.Id));
+
+            foreach (var user in usersToAdd)
+            {
+                await AddUser(id, user.Id);
+            }
+        }
+        await _db.SaveChangesAsync();
+        
+        return model;
+    }    
+    
+    /// <summary>
+    /// Remove users from a study.
+    /// </summary>
+    /// <param name="id">Id of the study to update.</param>
+    /// <param name="model">New model to update with.</param>
+    /// <returns>The updated study model.</returns>
+    /// <exception cref="KeyNotFoundException">Study not found.</exception>
+    public async Task<StudyPartialModel> RemoveUsers(int id, StudyPartialModel model)
+    {
+        var entity = await _db.Studies
+                         .Where(s => s.RedCapId == id)
+                         .Include(study => study.Users)
+                         .FirstOrDefaultAsync() ??
+                     throw new KeyNotFoundException();
+        
+        var usersToRemove = entity.Users
+            .Where(existingUser => !model.Users.Any(newUser => newUser.Id == existingUser.UserId)).ToList();
+        
+        foreach (var user in usersToRemove)
+        {
+            entity.Users.Remove(user);
+        }
+    
+        await _db.SaveChangesAsync();
+        
+        return model;
+    }
+    
+    /// <summary>
     /// Add a User to an existing Study.
     /// </summary>
     /// <param name="studyId">Study ID to add to.</param>
@@ -143,5 +232,4 @@ public class StudyService
             }
         }
     }
-
 }

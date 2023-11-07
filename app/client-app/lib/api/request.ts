@@ -18,7 +18,7 @@ const request = async <T>(
 ): Promise<T> => {
   // Get the KeyCloak id_token
   const session = await getServerSession(authOptions);
-  const token = session?.id_token;
+  const token = session?.access_token;
 
   const headers: HeadersInit = {
     Authorization: `Bearer ${token}`,

@@ -1,8 +1,11 @@
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { experimental_useFormState as useFormState } from "react-dom";
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { FileDown, UploadCloud, XCircle } from "lucide-react";
 

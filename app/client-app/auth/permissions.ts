@@ -15,4 +15,8 @@ export const permissions = {
   ViewSiteReports: "ViewSiteReports",
   GenerateSyntheticData: "GenerateSyntheticData",
   ViewStudies: "ViewStudies",
+  DeleteStudies: "DeleteStudies",
+  UpdateStudies: "UpdateStudies",
+  RemoveStudyUsers: "RemoveStudyUsers",
+  ViewUsers: "ViewUsers",
 };

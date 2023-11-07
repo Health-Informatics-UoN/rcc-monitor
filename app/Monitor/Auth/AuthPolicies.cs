@@ -75,6 +75,38 @@ public static class AuthPolicies
     => new AuthorizationPolicyBuilder()
       .Combine(IsAuthenticatedUser)
       .RequireRealmRoles(SitePermissionClaims.DeleteStudies)
+      .Build();  
+  
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can update studies.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
+  public static AuthorizationPolicy CanUpdateStudies
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.UpdateStudies)
+      .Build();  
+  
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can remove a study users.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
+  public static AuthorizationPolicy CanRemoveStudyUsers
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.RemoveStudyUsers)
       .Build();
 
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can view users.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
+  public static AuthorizationPolicy CanViewUsers
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.ViewUsers)
+      .Build();
 }

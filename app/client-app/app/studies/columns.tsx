@@ -18,6 +18,7 @@ import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { useRef } from "react";
 import { deleteStudy } from "@/lib/api/studies";
 import { toast } from "@/components/ui/toast/use-toast";
+import Link from "next/link";
 
 export const columns: ColumnDef<StudyPartial>[] = [
   {
@@ -37,7 +38,6 @@ export const columns: ColumnDef<StudyPartial>[] = [
     id: "actions",
     cell: ({ row }) => {
       const study = row.original;
-      // TODO: Add editing actions here.
       const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
 
       const handleDelete = async (id: number) => {
@@ -66,7 +66,9 @@ export const columns: ColumnDef<StudyPartial>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={`/studies/${study.id}/edit`}>Edit</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={(e: React.MouseEvent<HTMLElement>) => {
                 e.preventDefault();
