@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using Monitor.Models.SyntheticData;
 using Monitor.Services.SyntheticData;
 
@@ -132,10 +133,18 @@ public class SyntheticDataServiceTests
     public void TestHandleCustomFields_SetValidationMinMax()
     {
         // Arrange
+        var options = Options.Create(new FieldMappings
+        {
+            Mappings = new List<FieldMapping>
+            {
+                new() { FieldName = "weight", MeasurementUnit = "Kg", MinValue = "50", MaxValue = "120" },
+            }
+        });
+        var service = new SyntheticDataService(options);
         var fieldRow = new FieldRow("weight_demo", "Number Box (Integer)", "testCRF", "", "", "", "Kg");
 
         // Act
-        SyntheticDataService.HandleCustomFields(fieldRow);
+        service.HandleCustomFields(fieldRow);
 
         // Assert
         Assert.Equal("50", fieldRow.ValidationMin);
@@ -146,11 +155,19 @@ public class SyntheticDataServiceTests
     public void TestHandleCustomFields_DontOverrideMinMax()
     {
         // Arrange
+        var options = Options.Create(new FieldMappings
+        {
+            Mappings = new List<FieldMapping>
+            {
+                new() { FieldName = "weight", MeasurementUnit = "Kg", MinValue = "50", MaxValue = "120" },
+            }
+        });
+        var service = new SyntheticDataService(options);
         var fieldRow = new FieldRow("weight_demo", "Number Box (Integer)", "testCRF", "", "5", "10", "Kg");
-
+    
         // Act
-        SyntheticDataService.HandleCustomFields(fieldRow);
-
+        service.HandleCustomFields(fieldRow);
+    
         // Assert
         Assert.Equal("5", fieldRow.ValidationMin);
         Assert.Equal("10", fieldRow.ValidationMax);
@@ -160,11 +177,19 @@ public class SyntheticDataServiceTests
     public void TestHandleCustomFields_NoUnitSetValidationMinMax()
     {
         // Arrange
+        var options = Options.Create(new FieldMappings
+        {
+            Mappings = new List<FieldMapping>
+            {
+                new() { FieldName = "age", MeasurementUnit = "", MinValue = "18", MaxValue = "65" },
+            }
+        });
+        var service = new SyntheticDataService(options);
         var fieldRow = new FieldRow("age", "Number Box (Integer)", "testCRF", "", "", "", "");
-
+    
         // Act
-        SyntheticDataService.HandleCustomFields(fieldRow);
-
+        service.HandleCustomFields(fieldRow);
+    
         // Assert
         Assert.Equal("18", fieldRow.ValidationMin);
         Assert.Equal("65", fieldRow.ValidationMax);

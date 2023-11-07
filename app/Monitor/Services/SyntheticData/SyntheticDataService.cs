@@ -1,6 +1,7 @@
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.Extensions.Options;
 using Monitor.Models.SyntheticData;
 
 namespace Monitor.Services.SyntheticData;
@@ -8,6 +9,12 @@ namespace Monitor.Services.SyntheticData;
 public class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
+    private readonly FieldMappings _fieldMappings;
+
+    public SyntheticDataService(IOptions<FieldMappings> fieldMappings)
+    {
+        _fieldMappings = fieldMappings.Value;
+    }
 
     /// <summary>
     /// Validate the file looks like a data dictionary.
@@ -107,7 +114,7 @@ public class SyntheticDataService
     /// <param name="rows">List of fields to generate data against.</param>
     /// <param name="eventName">RedCap event name to generate for.</param>
     /// <returns>A list of synthetic data.</returns>
-    private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows, string eventName)
+    private (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows, string eventName)
     {
         var headerRow = new List<string>();
         var subjectColumns = new List<List<string>>();
@@ -354,26 +361,10 @@ public class SyntheticDataService
     /// If a field already has range validation set, we do not override it.
     /// </remarks>
     /// <param name="row">The row to change.</param>
-    public static void HandleCustomFields(FieldRow row)
+    public void HandleCustomFields(FieldRow row)
     {
-        // Mappings to create custom range validation
-        var mappings = new List<FieldMapping>
-        {
-            new() { FieldName = "weight", MeasurementUnit = "", MinValue = "50", MaxValue = "120"},
-            new() { FieldName = "weight", MeasurementUnit = "Kg", MinValue = "50", MaxValue = "120"},
-            new() { FieldName = "weight", MeasurementUnit = "lbs", MinValue = "130", MaxValue = "300"},
-            new() { FieldName = "weight", MeasurementUnit = "stones", MinValue = "4", MaxValue = "20"},
-            new() { FieldName = "height", MeasurementUnit = "cm", MinValue = "150", MaxValue = "200"},
-            new() { FieldName = "height", MeasurementUnit = "Metres", MinValue = "1", MaxValue = "2"},
-            new() { FieldName = "height", MeasurementUnit = "m", MinValue = "1", MaxValue = "2"},
-            new() { FieldName = "height", MeasurementUnit = "feet", MinValue = "3", MaxValue = "8"},
-            new() { FieldName = "age", MeasurementUnit = "", MinValue = "18", MaxValue = "65"},
-            new() { FieldName = "age", MeasurementUnit = "years", MinValue = "18", MaxValue = "65"},
-            new() { FieldName = "dob", MeasurementUnit = "", MinValue = "01/01/1958", MaxValue = "31/12/2004" },
-        };
-
         // Match if contains field name & unit is equal, or not set.
-        var matchingField = mappings.FirstOrDefault(mapping =>
+        var matchingField = _fieldMappings.Mappings?.FirstOrDefault(mapping =>
             row.FieldName.ToLower().Contains(mapping.FieldName.ToLower())
             && (string.IsNullOrEmpty(mapping.MeasurementUnit) || string.Equals(row.MeasurementUnit,
                 mapping.MeasurementUnit, StringComparison.CurrentCultureIgnoreCase)));
