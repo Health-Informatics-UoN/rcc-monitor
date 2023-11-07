@@ -347,7 +347,14 @@ public class SyntheticDataService
         return memoryStream.ToArray();
     }
 
-    public static void HandleCustomFields(FieldRow fieldRow)
+    /// <summary>
+    /// Handles setting sensible defaults ranges for custom fields respecting their measurement units.
+    /// </summary>
+    /// <remarks>
+    /// If a field already has range validation set, we do not override it.
+    /// </remarks>
+    /// <param name="row">The row to change.</param>
+    public static void HandleCustomFields(FieldRow row)
     {
         // Mappings to create custom range validation
         var mappings = new List<FieldMapping>
@@ -367,21 +374,21 @@ public class SyntheticDataService
 
         // Match if contains field name & unit is equal, or not set.
         var matchingField = mappings.FirstOrDefault(mapping =>
-            fieldRow.FieldName.ToLower().Contains(mapping.FieldName.ToLower())
-            && (string.IsNullOrEmpty(mapping.MeasurementUnit) || string.Equals(fieldRow.MeasurementUnit,
+            row.FieldName.ToLower().Contains(mapping.FieldName.ToLower())
+            && (string.IsNullOrEmpty(mapping.MeasurementUnit) || string.Equals(row.MeasurementUnit,
                 mapping.MeasurementUnit, StringComparison.CurrentCultureIgnoreCase)));
         
         if (matchingField == null) return;
         
         // Only set validations if there were none, we don't override them.
-        if (string.IsNullOrEmpty(fieldRow.ValidationMin))
+        if (string.IsNullOrEmpty(row.ValidationMin))
         {
-            fieldRow.ValidationMin = matchingField.MinValue;
+            row.ValidationMin = matchingField.MinValue;
         }
 
-        if (string.IsNullOrEmpty(fieldRow.ValidationMax))
+        if (string.IsNullOrEmpty(row.ValidationMax))
         {
-            fieldRow.ValidationMax = matchingField.MaxValue;
+            row.ValidationMax = matchingField.MaxValue;
         }
     }
 
