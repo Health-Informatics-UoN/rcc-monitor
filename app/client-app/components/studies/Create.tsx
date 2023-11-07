@@ -12,7 +12,7 @@ import { Grid } from "@/styled-system/jsx";
 import { icon } from "@/styled-system/recipes";
 
 import { FormState, Study } from "@/types/studies";
-import { Submit } from "./submit";
+import { Submit } from "./Submit";
 
 export function CreateForm({
   action,

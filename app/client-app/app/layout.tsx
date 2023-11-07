@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toast/toaster";
+import { Providers } from "@/app/providers";
 
 export default function RootLayout({
   children,
@@ -12,9 +13,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Navbar />
-        <Container>{children}</Container>
-        <Toaster />
+        <Providers>
+          <Navbar />
+          <Container>{children}</Container>
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

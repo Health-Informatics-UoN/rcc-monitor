@@ -18,6 +18,9 @@ public static class AuthConfiguration
       b.AddPolicy(nameof(AuthPolicies.CanViewStudies), AuthPolicies.CanViewStudies);
       b.AddPolicy(nameof(AuthPolicies.CanViewAllStudies), AuthPolicies.CanViewAllStudies);
       b.AddPolicy(nameof(AuthPolicies.CanDeleteStudies), AuthPolicies.CanDeleteStudies);
+      b.AddPolicy(nameof(AuthPolicies.CanUpdateStudies), AuthPolicies.CanUpdateStudies);
+      b.AddPolicy(nameof(AuthPolicies.CanRemoveStudyUsers), AuthPolicies.CanRemoveStudyUsers);
+      b.AddPolicy(nameof(AuthPolicies.CanViewUsers), AuthPolicies.CanViewUsers);
     };
 
   public static Action<CorsOptions> CorsOptions(IConfiguration configuration)

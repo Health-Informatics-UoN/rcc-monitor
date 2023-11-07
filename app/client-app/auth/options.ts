@@ -19,6 +19,7 @@ export const options: NextAuthOptions = {
       if (account && profile) {
         token = Object.assign({}, token, {
           id_token: account.id_token,
+          access_token: account.access_token,
           permissions: profile.realm_access?.roles,
         });
       }
@@ -35,6 +36,7 @@ export const options: NextAuthOptions = {
       if (session) {
         session = Object.assign({}, session, {
           id_token: token.id_token,
+          access_token: token.access_token,
           permissions: token.permissions,
         });
       }

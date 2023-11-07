@@ -12,7 +12,7 @@ import { FormState } from "@/types/studies";
 import { Grid } from "@/styled-system/jsx";
 import { icon } from "@/styled-system/recipes";
 
-import { Submit } from "./submit";
+import { Submit } from "./Submit";
 
 export function ValidateForm({
   action,

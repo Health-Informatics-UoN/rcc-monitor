@@ -8,4 +8,7 @@ public static class SitePermissionClaims
     public const string ViewStudies = "ViewStudies";
     public const string ViewAllStudies = "ViewAllStudies";
     public const string DeleteStudies = "DeleteStudies";
+    public const string UpdateStudies = "UpdateStudies";
+    public const string RemoveStudyUsers = "RemoveStudyUsers";
+    public const string ViewUsers = "ViewUsers";
 }

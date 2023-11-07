@@ -1,6 +1,7 @@
 using ClacksMiddleware.Extensions;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
+using Keycloak.AuthServices.Sdk.Admin;
 using Monitor.Extensions;
 
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ var b = WebApplication.CreateBuilder(args);
 b.Services.AddKeycloakAuthentication(b.Configuration);
 b.Services.AddAuthorization(AuthConfiguration.AuthOptions)
   .AddKeycloakAuthorization(b.Configuration);
+b.Services.AddKeycloakAdminHttpClient(b.Configuration);
+b.Services.AddOptions().Configure<KeycloakOptions>(b.Configuration.GetSection("Keycloak"));
 
 // CORS
 b.Services.AddCors(AuthConfiguration.CorsOptions(b.Configuration));
@@ -55,7 +58,8 @@ b.Services
   .AddEmailSender(b.Configuration)
   .AddTransient<ReportService>()
   .AddTransient<SyntheticDataService>()
-  .AddTransient<StudyService>();
+  .AddTransient<StudyService>()
+  .AddTransient<UserService>();
 
 b.Services.AddSwaggerGen(c =>
 {

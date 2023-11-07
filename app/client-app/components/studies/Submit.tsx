@@ -1,4 +1,7 @@
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { useFormStatus } from "react-dom";
+
 import { type HTMLStyledProps } from "@/styled-system/jsx";
 import { Button } from "@/components/ui/button";
 

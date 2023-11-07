@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { DataTable } from "@/components/data-table";
 import { container, flex } from "@/styled-system/patterns";
 import { columns } from "./columns";
-import AddStudy from "@/components/studies/add";
+import AddStudy from "@/components/studies/Add";
 
 export const metadata: Metadata = {
   title: "RedCap Studies",

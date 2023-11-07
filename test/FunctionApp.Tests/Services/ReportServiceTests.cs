@@ -5,11 +5,11 @@ using Moq;
 
 namespace Francois.Tests.Services;
 
-public class ReportServiceTests : IClassFixture<DatabaseFixture>
+public class ReportServiceTests : IClassFixture<Fixtures>
 {
-    private readonly DatabaseFixture _fixture;
+    private readonly Fixtures _fixture;
 
-    public ReportServiceTests(DatabaseFixture fixture)
+    public ReportServiceTests(Fixtures fixture)
     {
         _fixture = fixture;
     }

@@ -21,6 +21,7 @@
         <PackageReference Include="Flurl.Http" Version="3.2.4" />
         <PackageReference Include="Keycloak.AuthServices.Authentication" Version="1.5.2" />
         <PackageReference Include="Keycloak.AuthServices.Authorization" Version="1.5.2" />
+        <PackageReference Include="Keycloak.AuthServices.Sdk" Version="1.6.0" />
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.9" />
         <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.10" />
