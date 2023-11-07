@@ -163,6 +163,8 @@ public class SyntheticDataService
             {
                 GenerateFieldHeader(headerRow, row.FieldName);
                 
+                HandleCustomFields(row);
+                
                 // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
                 {
@@ -344,5 +346,43 @@ public class SyntheticDataService
         
         return memoryStream.ToArray();
     }
-    
+
+    public static void HandleCustomFields(FieldRow fieldRow)
+    {
+        // Mappings to create custom range validation
+        var mappings = new List<FieldMapping>
+        {
+            new() { FieldName = "weight", MeasurementUnit = "", MinValue = "50", MaxValue = "120"},
+            new() { FieldName = "weight", MeasurementUnit = "Kg", MinValue = "50", MaxValue = "120"},
+            new() { FieldName = "weight", MeasurementUnit = "lbs", MinValue = "130", MaxValue = "300"},
+            new() { FieldName = "weight", MeasurementUnit = "stones", MinValue = "4", MaxValue = "20"},
+            new() { FieldName = "height", MeasurementUnit = "cm", MinValue = "150", MaxValue = "200"},
+            new() { FieldName = "height", MeasurementUnit = "Metres", MinValue = "1", MaxValue = "2"},
+            new() { FieldName = "height", MeasurementUnit = "m", MinValue = "1", MaxValue = "2"},
+            new() { FieldName = "height", MeasurementUnit = "feet", MinValue = "3", MaxValue = "8"},
+            new() { FieldName = "age", MeasurementUnit = "", MinValue = "18", MaxValue = "65"},
+            new() { FieldName = "age", MeasurementUnit = "years", MinValue = "18", MaxValue = "65"},
+            new() { FieldName = "dob", MeasurementUnit = "", MinValue = "01/01/1958", MaxValue = "31/12/2004" },
+        };
+
+        // Match if contains field name & unit is equal, or not set.
+        var matchingField = mappings.FirstOrDefault(mapping =>
+            fieldRow.FieldName.ToLower().Contains(mapping.FieldName.ToLower())
+            && (string.IsNullOrEmpty(mapping.MeasurementUnit) || string.Equals(fieldRow.MeasurementUnit,
+                mapping.MeasurementUnit, StringComparison.CurrentCultureIgnoreCase)));
+        
+        if (matchingField == null) return;
+        
+        // Only set validations if there were none, we don't override them.
+        if (string.IsNullOrEmpty(fieldRow.ValidationMin))
+        {
+            fieldRow.ValidationMin = matchingField.MinValue;
+        }
+
+        if (string.IsNullOrEmpty(fieldRow.ValidationMax))
+        {
+            fieldRow.ValidationMax = matchingField.MaxValue;
+        }
+    }
+
 }
