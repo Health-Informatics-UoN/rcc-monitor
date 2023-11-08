@@ -14,6 +14,7 @@ using Monitor.Constants;
 using UoN.AspNetCore.VersionMiddleware;
 using Monitor.Auth;
 using Monitor.Config;
+using Monitor.Models.SyntheticData;
 using Monitor.Services.SyntheticData;
 
 var b = WebApplication.CreateBuilder(args);
@@ -76,6 +77,7 @@ b.Services.AddScoped<AzureStorageService>();
 b.Services.AddFeatureManagement();
 
 b.Services.AddOptions().Configure<RedCapOptions>(b.Configuration.GetSection("RedCap"));
+b.Services.AddOptions().Configure<FieldMappings>(b.Configuration.GetSection("SyntheticDataMapping"));
 #endregion
 
 #region seeding

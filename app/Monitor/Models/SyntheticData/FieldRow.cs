@@ -2,7 +2,8 @@ namespace Monitor.Models.SyntheticData;
 
 public class FieldRow
 {
-    public FieldRow(string fieldName, string fieldType, string crfName, string choices, string validationMin, string validationMax)
+    public FieldRow(string fieldName, string fieldType, string crfName, string choices, string validationMin,
+        string validationMax, string measurementUnit)
     {
         FieldName = fieldName;
         FieldType = fieldType;
@@ -10,6 +11,7 @@ public class FieldRow
         Choices = choices;
         ValidationMin = validationMin;
         ValidationMax = validationMax;
+        MeasurementUnit = measurementUnit;
         CleanChoices();
     }
 
@@ -19,6 +21,7 @@ public class FieldRow
     public string Choices { get; set; } = string.Empty;
     public string ValidationMin { get; set; } = string.Empty;
     public string ValidationMax { get; set; } = string.Empty;
+    public string MeasurementUnit { get; set; } = string.Empty;
     public List<string> CleanedChoices { get; set; } = new List<string>();
 
     /// <summary>

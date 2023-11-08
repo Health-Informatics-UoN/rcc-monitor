@@ -91,7 +91,7 @@ export function UploadFile() {
       />
 
       <Label htmlFor="file">Select File</Label>
-      <Input name="file" type="file" required />
+      <Input name="file" id="file" type="file" required />
 
       <div className={hstack({ gap: "6" })}>
         <SubmitButton />

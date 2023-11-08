@@ -1,6 +1,7 @@
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.Extensions.Options;
 using Monitor.Models.SyntheticData;
 
 namespace Monitor.Services.SyntheticData;
@@ -8,6 +9,12 @@ namespace Monitor.Services.SyntheticData;
 public class SyntheticDataService
 {
     private const int SubjectsToGenerate = 100;
+    private readonly FieldMappings _fieldMappings;
+
+    public SyntheticDataService(IOptions<FieldMappings> fieldMappings)
+    {
+        _fieldMappings = fieldMappings.Value;
+    }
 
     /// <summary>
     /// Validate the file looks like a data dictionary.
@@ -89,7 +96,8 @@ public class SyntheticDataService
                 csv.GetField("Form Name") ?? string.Empty,
                 csv.GetField("Choices, Calculations, OR Slider Labels") ?? string.Empty,
                 csv.GetField("Text Validation Min") ?? string.Empty,
-                csv.GetField("Text Validation Max") ?? string.Empty
+                csv.GetField("Text Validation Max") ?? string.Empty,
+                csv.GetField("Measurement Unit") ?? string.Empty
             );
             records.Add(record);
         }
@@ -106,7 +114,7 @@ public class SyntheticDataService
     /// <param name="rows">List of fields to generate data against.</param>
     /// <param name="eventName">RedCap event name to generate for.</param>
     /// <returns>A list of synthetic data.</returns>
-    private static (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows, string eventName)
+    private (List<string> headerRow, List<List<string>> subjectColumns) GenerateRows(List<FieldRow> rows, string eventName)
     {
         var headerRow = new List<string>();
         var subjectColumns = new List<List<string>>();
@@ -161,6 +169,8 @@ public class SyntheticDataService
             else
             {
                 GenerateFieldHeader(headerRow, row.FieldName);
+                
+                HandleCustomFields(row);
                 
                 // Generate subjects
                 for (var i = 0; i < SubjectsToGenerate; i++)
@@ -288,7 +298,7 @@ public class SyntheticDataService
 
         subjectColumns.AddRange(new List<List<string>>
         {
-            Enumerable.Repeat("1", SubjectsToGenerate).ToList(),
+            Enumerable.Repeat("Completed", SubjectsToGenerate).ToList(),
             Enumerable.Repeat("", SubjectsToGenerate).ToList(),
         });
     }
@@ -309,7 +319,7 @@ public class SyntheticDataService
 
         subjectColumns.AddRange(new List<List<string>>
         {
-            Enumerable.Repeat("1", SubjectsToGenerate).ToList(),
+            Enumerable.Repeat("Completed", SubjectsToGenerate).ToList(),
             Enumerable.Repeat("", SubjectsToGenerate).ToList(),
         });
     }
@@ -343,5 +353,34 @@ public class SyntheticDataService
         
         return memoryStream.ToArray();
     }
-    
+
+    /// <summary>
+    /// Handles setting sensible defaults ranges for custom fields respecting their measurement units.
+    /// </summary>
+    /// <remarks>
+    /// If a field already has range validation set, we do not override it.
+    /// </remarks>
+    /// <param name="row">The row to change.</param>
+    public void HandleCustomFields(FieldRow row)
+    {
+        // Match if contains field name & unit is equal, or not set.
+        var matchingField = _fieldMappings.Mappings?.FirstOrDefault(mapping =>
+            row.FieldName.ToLower().Contains(mapping.FieldName.ToLower())
+            && (string.IsNullOrEmpty(mapping.MeasurementUnit) || string.Equals(row.MeasurementUnit,
+                mapping.MeasurementUnit, StringComparison.CurrentCultureIgnoreCase)));
+        
+        if (matchingField == null) return;
+        
+        // Only set validations if there were none, we don't override them.
+        if (string.IsNullOrEmpty(row.ValidationMin))
+        {
+            row.ValidationMin = matchingField.MinValue;
+        }
+
+        if (string.IsNullOrEmpty(row.ValidationMax))
+        {
+            row.ValidationMax = matchingField.MaxValue;
+        }
+    }
+
 }
