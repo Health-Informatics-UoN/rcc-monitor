@@ -1,11 +1,6 @@
 import { css } from "@/styled-system/css";
 import ActionCard from "@/components/ActionCard";
-import {
-  AlertOctagon,
-  FileSpreadsheet,
-  FolderPlus,
-  MonitorStop,
-} from "lucide-react";
+import { FileSpreadsheet, MonitorStop, Activity } from "lucide-react";
 import { hasPermission, permissions } from "@/auth/permissions";
 import { getServerSession } from "next-auth";
 import { options } from "@/auth/options";
@@ -56,19 +51,11 @@ export default async function UserHome() {
         {hasPermission(session?.permissions, permissions.ViewStudies) && (
           <ActionCard
             to="/studies"
-            title="Register Study"
-            icon={<FolderPlus />}
-            description="Register a study"
+            title="RedCap Studies"
+            icon={<Activity />}
+            description="View study information and alerts"
           />
         )}
-
-        {/* Todo: Add condition to render on Pemission */}
-        <ActionCard
-          to="/randomization-alerts"
-          title="Randomization Alerts"
-          icon={<AlertOctagon />}
-          description="Manage randomisation alerts"
-        />
       </div>
     </>
   );

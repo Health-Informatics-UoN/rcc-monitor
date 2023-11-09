@@ -107,7 +107,7 @@ export default async function Page() {
         <Alert backgroundColor="blue.200">
           <AlertCircle />
           <AlertTitle>
-            You can upload a spreadsheet in a supported format: .csv
+            You can upload a data dictionary in a supported format: .csv
           </AlertTitle>
         </Alert>
       </Flex>

@@ -82,26 +82,16 @@ export async function deleteStudy(id: number) {
  * @param prevState previous form state.
  * @param formData form data to POST.
  */
-export async function validateStudy(prevState: unknown, formData: FormData) {
-  try {
-    const payload = JSON.stringify(Object.fromEntries(formData.entries()));
-
-    const response = await request<Study>(fetchKeys.validate, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: payload,
-    });
-
-    return { success: true, study: response };
-  } catch (error) {
-    console.warn(error);
-    let message;
-    if (error instanceof ApiError) message = error.message;
-    else message = String(error);
-    return { success: false, message: message };
-  }
+export async function validateStudy(formData: {
+  apiKey: string;
+}): Promise<Study> {
+  return await request<Study>(fetchKeys.validate, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
 }
 
 /**
@@ -109,26 +99,14 @@ export async function validateStudy(prevState: unknown, formData: FormData) {
  * @param prevState previous form state
  * @param formData form data to POST.
  */
-export async function addStudy(prevState: unknown, formData: FormData) {
-  try {
-    const payload = JSON.stringify(Object.fromEntries(formData.entries()));
+export async function addStudy(formData: Study) {
+  const response = await request<Study>(fetchKeys.create, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
 
-    const response = await request<Study>(fetchKeys.create, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: payload,
-    });
-
-    revalidatePath("/studies");
-
-    return { success: true, study: response };
-  } catch (error) {
-    console.warn(error);
-    let message;
-    if (error instanceof ApiError) message = error.message;
-    else message = String(error);
-    return { success: false, message: message };
-  }
+  revalidatePath("/studies");
 }

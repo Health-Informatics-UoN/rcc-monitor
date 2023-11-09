@@ -1,86 +1,62 @@
 "use client";
 
 import React from "react";
+import { Formik, Form } from "formik";
+import { object, string, number } from "yup";
+import { AlertCircle, Plus } from "lucide-react";
+import { icon } from "@/styled-system/recipes";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormikInput } from "@/components/forms/FormikInput";
+import { Button } from "@/components/ui/button";
 
-import { AlertCircle, Plus } from "lucide-react";
-import { Grid } from "@/styled-system/jsx";
-import { icon } from "@/styled-system/recipes";
+import { Study } from "@/types/studies";
 
-import { FormState, Study } from "@/types/studies";
-import { Submit } from "./Submit";
+const validationSchema = object({
+  name: string().required(),
+  id: number().required(),
+  apiKey: string().required(),
+});
 
+// This is a readonly form for the user to check the values, not edit them.
 export function CreateForm({
-  action,
-  state,
+  handleSubmit,
+  feedback,
   model,
 }: {
-  action: (a: FormData) => void;
-  state: FormState;
+  handleSubmit: (values: { apiKey: string }) => Promise<void>;
+  feedback: string | undefined;
   model: Study;
 }) {
   return (
-    <form action={action}>
-      <Grid gap="4" py="4">
-        <Grid gridTemplateColumns="4" alignItems="center" gap="4">
-          <Label htmlFor="apiKey" textAlign="right">
-            Api Key
-          </Label>
-          <Input
-            name="apiKey"
-            id="apiKey"
-            value={model.apiKey}
-            gridColumn="3"
-            color={"gray.400"}
-            border={"gray.400"}
-            readOnly
-          />
+    <Formik
+      onSubmit={handleSubmit}
+      initialValues={model}
+      validationSchema={validationSchema}
+    >
+      {({ isSubmitting }) => (
+        <Form noValidate>
+          <FormikInput name="apiKey" id="apiKey" label="API Key" disabled />
+          <FormikInput name="id" id="id" label="Study Id" disabled />
+          <FormikInput name="name" id="name" label="Study Name" disabled />
 
-          <Label htmlFor="id" textAlign="right">
-            Study ID
-          </Label>
-          <Input
-            name="Id"
-            id="Id"
-            value={model.id}
-            gridColumn="3"
-            color={"gray.400"}
-            border={"gray.400"}
-            readOnly
-          />
+          <DialogFooter>
+            <Button type="submit" disabled={isSubmitting}>
+              Add
+              <Plus className={icon({ right: "sm" })} />
+            </Button>
+          </DialogFooter>
 
-          <Label htmlFor="Name" textAlign="right">
-            Study Name
-          </Label>
-          <Input
-            name="Name"
-            id="Name"
-            value={model.name}
-            gridColumn="3"
-            color={"gray.400"}
-            border={"gray.400"}
-            readOnly
-          />
-        </Grid>
-      </Grid>
-
-      <DialogFooter>
-        <Submit>
-          Add <Plus className={icon({ right: "sm" })} />
-        </Submit>
-      </DialogFooter>
-
-      {state?.message && (
-        <Alert variant="destructive" mt={"4"}>
-          <AlertCircle />
-          <AlertTitle>Adding study failed.</AlertTitle>
-          <AlertDescription>{state.message}</AlertDescription>
-        </Alert>
+          {feedback && (
+            <Alert variant="destructive" mt={"4"}>
+              <AlertCircle />
+              <AlertTitle>Adding study failed.</AlertTitle>
+              <AlertDescription>{feedback}</AlertDescription>
+            </Alert>
+          )}
+        </Form>
       )}
-    </form>
+    </Formik>
   );
 }

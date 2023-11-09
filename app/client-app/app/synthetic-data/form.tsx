@@ -1,102 +1,141 @@
 "use client";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { useFormState } from "react-dom";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { useFormStatus } from "react-dom";
+import React from "react";
 import Link from "next/link";
-import { FileDown, UploadCloud, XCircle } from "lucide-react";
+import { FileDown, UploadCloud, AlertCircle } from "lucide-react";
+import { Formik, Form } from "formik";
 
 import { postSpreadsheet } from "@/lib/api/syntheticdata";
+import { validationSchema } from "@/app/synthetic-data/validation";
 
 import { css } from "@/styled-system/css";
 import { hstack } from "@/styled-system/patterns";
-import { Button, ButtonProps } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { icon } from "@/styled-system/recipes";
 
-const initialState = {
-  message: null,
-};
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast/use-toast";
+import { ApiError } from "@/lib/api/error";
+import { FormikInput } from "@/components/forms/FormikInput";
 
-interface ValidatedButtonProps extends ButtonProps {
-  state: {
-    message: string;
-    name: string;
-  };
-}
-
-function ValidatedButton({ state }: ValidatedButtonProps) {
-  const success: boolean = state?.message === "success";
-
+function DownloadButton({ file }: { file: string }) {
   return (
     <Button
       variant="outline"
-      color={success ? "green.600" : "red.600"}
+      color="green.600"
       border="2px solid"
-      borderColor={success ? "green.600" : "red.600"}
-      h="55px"
+      borderColor="green.600"
     >
-      {success ? <FileDown color="green" /> : <XCircle color="red" />}
-      {success ? (
-        <Link href={`/api/synthetic-data/${state.name}`} download>
-          Download Spreadsheet
-        </Link>
-      ) : (
-        "Validation Failed"
-      )}
-    </Button>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      type="submit"
-      aria-disabled={pending}
-      backgroundColor="#0074d9"
-      h="55px"
-      _hover={{
-        backgroundColor: "#56a1d1",
-        borderColor: "#56a1d1",
-      }}
-    >
-      <UploadCloud />
-      Upload File
+      <Link href={`/api/synthetic-data/${file}`} download>
+        Download Subject Data
+      </Link>
+      <FileDown color="green" />
     </Button>
   );
 }
 
 export function UploadFile() {
-  const [state, formAction] = useFormState(postSpreadsheet, initialState);
+  // Formik needs the file to be set in state.
+  const [file, setFile] = React.useState<File>();
+  const [fileName, setFileName] = React.useState<string>();
+  const [feedback, setFeedback] = React.useState<string>();
+
+  async function handleSubmit(values: { eventName: string }) {
+    if (!file || !values.eventName) {
+      setFeedback("Select a .csv file.");
+      return;
+    } else {
+      if (file.type != "text/csv") {
+        setFeedback("File is not a .csv");
+        return;
+      }
+    }
+    const form = new FormData();
+    form.append("file", file);
+
+    for (const [k, v] of Object.entries(values)) {
+      if (Array.isArray(v) && v) {
+        for (let i = 0; i < v.length; i++) {
+          form.append(`${k}[]`, v[i]);
+        }
+      } else form.append(k, v);
+    }
+
+    try {
+      const response = await postSpreadsheet(form);
+      setFileName(response.name);
+      toast({
+        title: "Synthetic data generated.",
+      });
+    } catch (e) {
+      console.error(e);
+
+      let message;
+      if (e instanceof ApiError) message = e.message;
+      else message = String(e);
+
+      setFeedback(message);
+      toast({
+        variant: "destructive",
+        title: "Failed to generate data.",
+      });
+    }
+  }
+
+  const handleSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFile(event.target.files[0]);
+    }
+  };
 
   return (
-    <form
-      action={formAction}
-      className={css({
-        spaceY: "2",
-      })}
+    <Formik
+      onSubmit={handleSubmit}
+      initialValues={{ eventName: "", file: undefined }}
+      validationSchema={validationSchema}
     >
-      <Label htmlFor="event">RedCap Event Name</Label>
-      <Input
-        name="eventName"
-        type="text"
-        required
-        min={3}
-        placeholder="Event Name"
-      />
+      {({ isSubmitting }) => (
+        <Form
+          className={css({
+            spaceY: "2",
+          })}
+          noValidate
+        >
+          <FormikInput
+            name="eventName"
+            label="RedCap Event Name"
+            id="eventName"
+            placeholder="Event Name"
+            required
+          />
 
-      <Label htmlFor="file">Select File</Label>
-      <Input name="file" id="file" type="file" required />
+          <FormikInput
+            name="file"
+            label="Select File"
+            id="file"
+            type="file"
+            accept=".csv"
+            onChange={handleSelectFile}
+            required
+          />
 
-      <div className={hstack({ gap: "6" })}>
-        <SubmitButton />
-        {state.message && <ValidatedButton state={state} />}
-      </div>
-    </form>
+          <div className={hstack({ gap: "6" })}>
+            <Button type="submit" disabled={isSubmitting}>
+              Upload File
+              <UploadCloud className={icon({ right: "sm" })} />
+            </Button>
+            {fileName && <DownloadButton file={fileName} />}
+          </div>
+
+          {feedback && (
+            <Alert variant="destructive" mt={"4"}>
+              <AlertCircle />
+              <AlertTitle>Data generation failed.</AlertTitle>
+              <AlertDescription>{feedback}</AlertDescription>
+            </Alert>
+          )}
+        </Form>
+      )}
+    </Formik>
   );
 }

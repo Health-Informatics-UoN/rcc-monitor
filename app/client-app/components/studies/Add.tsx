@@ -1,9 +1,6 @@
 "use client";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { useFormState } from "react-dom";
-import React, { useEffect } from "react";
+import React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,23 +15,62 @@ import {
 import { Plus } from "lucide-react";
 
 import { icon } from "@/styled-system/recipes";
+import { toast } from "@/components/ui/toast/use-toast";
 
 import { addStudy, validateStudy } from "@/lib/api/studies";
 
 import { CreateForm } from "./Create";
 import { ValidateForm } from "./Validate";
+import { ApiError } from "@/lib/api/error";
+import { Study } from "@/types/studies";
 
 export default function AddStudy() {
-  const [validatedState, validate] = useFormState(validateStudy, null);
-  const [createdState, create] = useFormState(addStudy, { success: null });
+  const [validatedFeedback, setValidatedFeedback] = React.useState<string>();
+  const [createFeedback, setCreateFeedback] = React.useState<string>();
+  const [study, setStudy] = React.useState<Study>();
   const [open, setOpen] = React.useState(false);
 
-  const validated = validatedState?.success;
-  useEffect(() => {
-    if (createdState?.success) {
-      setOpen(false);
+  async function handleValidate(values: { apiKey: string }) {
+    try {
+      const model = await validateStudy(values);
+      setStudy(model);
+    } catch (error) {
+      console.error(error);
+
+      let message;
+      if (error instanceof ApiError) message = error.message;
+      else message = String(error);
+
+      setValidatedFeedback(message);
+      toast({
+        variant: "destructive",
+        title: "Failed to validate study.",
+      });
     }
-  }, [createdState]);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function handleCreate(values: any) {
+    try {
+      await addStudy(values);
+      setOpen(false);
+      toast({
+        title: "Added new study.",
+      });
+    } catch (error) {
+      console.error(error);
+
+      let message;
+      if (error instanceof ApiError) message = error.message;
+      else message = String(error);
+
+      setCreateFeedback(message);
+      toast({
+        variant: "destructive",
+        title: "Failed to add study.",
+      });
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -56,14 +92,17 @@ export default function AddStudy() {
           </DialogDescription>
         </DialogHeader>
 
-        {validated ? (
+        {study ? (
           <CreateForm
-            action={create}
-            state={createdState}
-            model={validatedState?.study}
+            handleSubmit={handleCreate}
+            feedback={createFeedback}
+            model={study}
           />
         ) : (
-          <ValidateForm action={validate} state={validatedState} />
+          <ValidateForm
+            handleSubmit={handleValidate}
+            feedback={validatedFeedback}
+          />
         )}
       </DialogContent>
     </Dialog>

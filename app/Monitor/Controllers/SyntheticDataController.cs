@@ -25,6 +25,7 @@ public class SyntheticDataController : ControllerBase
     }
     
     [HttpPost("generate")]
+    [Consumes("multipart/form-data")]
     [SwaggerOperation("Generate synthetic data from a data dictionary.")]
     [SwaggerResponse(200, "Synthetic Data was generated", typeof(string))]
     [SwaggerResponse(400, "File is not a valid data dictionary.")]

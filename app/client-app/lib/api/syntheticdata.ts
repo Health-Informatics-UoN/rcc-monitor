@@ -13,18 +13,15 @@ const fetchKeys = {
  * @param formData Formdata to upload.
  * @returns
  */
-export async function postSpreadsheet(prevState: any, formData: FormData) {
-  try {
-    const response: { name: string } = await request(fetchKeys.generate, {
-      method: "POST",
-      body: formData,
-    });
+export async function postSpreadsheet(
+  formData: FormData
+): Promise<{ name: string }> {
+  const response: { name: string } = await request(fetchKeys.generate, {
+    method: "POST",
+    body: formData,
+  });
 
-    return { message: "success", name: response.name };
-  } catch (error) {
-    console.error(error);
-    return { message: "Failed to upload file." };
-  }
+  return { name: response.name };
 }
 
 /**
