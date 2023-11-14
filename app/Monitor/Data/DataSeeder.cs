@@ -1,5 +1,6 @@
 using  Data.Constants;
 using Microsoft.EntityFrameworkCore;
+using Monitor.Config;
 using Monitor.Data.Entities;
 
 namespace Monitor.Data;
@@ -102,4 +103,33 @@ public class DataSeeder
 
     }
   }
+
+  public async Task SeedConfig()
+  {
+    if (!await _db.Config
+          .AsNoTracking()
+          .AnyAsync())
+    {
+      var seedConfig = new List<Entities.Config>
+      {
+        new()
+        {
+          Key = ConfigKey.RandomisationThreshold,
+          Name = "Randomisation Alert Threshold",
+          Value = "75",
+          Description = "Sets the occupancy threshold for randomisation groups in a study. Alerts will trigger for any studies that pass this threshold."
+        },
+        new()
+        {
+          Key = ConfigKey.RandomisationJobFrequency,
+          Name = "Randomisation Alert Frequency",
+          Value = "24:00",
+          Description = "How often we check the threshold of randomisation groups in the study"
+        }
+      };
+      _db.AddRange(seedConfig);
+      await _db.SaveChangesAsync();
+    }
+  }
+  
 }

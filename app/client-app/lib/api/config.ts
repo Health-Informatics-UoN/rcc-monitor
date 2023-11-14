@@ -7,7 +7,7 @@ interface ConfigModel {
 }
 
 const fetchKeys = {
-  list: "config",
+  list: "config/flags",
 };
 
 export async function getServerConfig(): Promise<ConfigModel> {

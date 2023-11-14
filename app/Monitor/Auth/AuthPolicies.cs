@@ -109,4 +109,15 @@ public static class AuthPolicies
       .Combine(IsAuthenticatedUser)
       .RequireRealmRoles(SitePermissionClaims.ViewUsers)
       .Build();
+  
+  /// <summary>
+  /// Requires a request <see cref="IsAuthenticatedUser"/>,
+  /// and can edit config.
+  /// </summary>
+  /// <returns>A new <see cref="AuthorizationPolicy"/> built from the requirements.</returns>
+  public static AuthorizationPolicy CanEditConfig
+    => new AuthorizationPolicyBuilder()
+      .Combine(IsAuthenticatedUser)
+      .RequireRealmRoles(SitePermissionClaims.EditConfig)
+      .Build();
 }

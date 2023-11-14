@@ -11,4 +11,5 @@ public static class SitePermissionClaims
     public const string UpdateStudies = "UpdateStudies";
     public const string RemoveStudyUsers = "RemoveStudyUsers";
     public const string ViewUsers = "ViewUsers";
+    public const string EditConfig = "EditConfig";
 }

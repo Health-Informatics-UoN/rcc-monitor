@@ -60,7 +60,8 @@ b.Services
   .AddTransient<ReportService>()
   .AddTransient<SyntheticDataService>()
   .AddTransient<StudyService>()
-  .AddTransient<UserService>();
+  .AddTransient<UserService>()
+  .AddTransient<ConfigService>();
 
 b.Services.AddSwaggerGen(c =>
 {
@@ -95,6 +96,7 @@ using (var scope = app.Services.CreateScope())
   await seeder.SeedReportTypes();
   await seeder.SeedInstanceTypes();
   await seeder.SeedReportStatus();
+  await seeder.SeedConfig();
 }
 
 #endregion

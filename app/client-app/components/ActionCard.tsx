@@ -18,7 +18,7 @@ export default function ActionCard({
   return (
     <Link href={to}>
       <Box
-        bg="gray.100"
+        bg="bg"
         borderColor="gray.300"
         borderWidth={2}
         borderRadius={5}
