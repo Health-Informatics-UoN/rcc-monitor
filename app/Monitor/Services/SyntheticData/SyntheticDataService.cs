@@ -41,7 +41,7 @@ public class SyntheticDataService
         var headerRecord = csv.HeaderRecord;
         foreach (var column in requiredColumns)
         {
-            if (!headerRecord.Contains(column))
+            if (!(headerRecord ?? throw new InvalidDataException("There is no header row.")).Contains(column))
             {
                 throw new InvalidDataException($"The column '{column}' is missing in the file.");
             }

@@ -46,13 +46,13 @@ public class UserService
         foreach (var user in userIds)
         {
             var keycloakUser = await _keycloakUserClient.GetUser(_keycloakOptions.Realm, user.UserId);
-            if (keycloakUser != null)
+            if (keycloakUser.Id != null)
             {
                 users.Add(new StudyUser
                 {
                     Id = keycloakUser.Id,
                     Name = $"{keycloakUser.FirstName} {keycloakUser.LastName}",
-                    Email = keycloakUser.Email
+                    Email = keycloakUser.Email ?? string.Empty
                 });
             }
         }
@@ -83,6 +83,7 @@ public class UserService
         var filteredUsers = new List<User>();
         foreach (var user in users)
         {
+            if (user.Id == null) continue;
             var userGroups = await _keycloakUserClient.GetUserGroups(_keycloakOptions.Realm, user.Id);
             var groups = userGroups as Group[] ?? userGroups.ToArray();
             
@@ -104,9 +105,9 @@ public class UserService
             .ExceptBy(study.Users.Select(su => su.UserId), u => u.Id)
             .Select(y => new StudyUser
             {
-                Id = y.Id,
+                Id = y.Id!,
                 Name = $"{y.FirstName} {y.LastName}",
-                Email = y.Email
+                Email = y.Email ?? string.Empty
             }).ToList();
         
     }

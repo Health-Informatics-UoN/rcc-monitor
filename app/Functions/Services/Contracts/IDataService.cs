@@ -10,6 +10,7 @@ public interface IDataService
     /// <param name="url">URL of the redCAP instance.</param>
     /// <param name="token">Tenant token to use.</param>
     /// <returns>A list of site view models.</returns>
+    /// <exception cref="HttpRequestException">Failed to get sites from RedCap.</exception>
     Task<List<SiteView>> List(string url, string token);
     
     /// <summary>
@@ -19,6 +20,7 @@ public interface IDataService
     /// <param name="id">Id of the site to retrieve.</param>
     /// <param name="token">Tenant token to use.</param>
     /// <returns>The relevant site model.</returns>
+    /// <exception cref="HttpRequestException">Failed to get sites from RedCap.</exception>
     Task<Site> Get(string url, string id, string token);
     
     /// <summary>
@@ -32,5 +34,5 @@ public interface IDataService
     /// <param name="url">URL of the redCAP instance</param>
     /// <param name="token">Tenant token to use.</param>
     /// <returns>List of site models.</returns>
-    Task<List<Site>> ListDetail(string url, string token);
+    Task<List<Site?>> ListDetail(string url, string token);
 }

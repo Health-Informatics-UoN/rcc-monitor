@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Functions.Models;
 using Functions.Services.Contracts;
 
@@ -9,15 +7,15 @@ public class DummyDataService : IDataService
 {
     public Task<List<SiteView>> List(string url, string token)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public Task<Site> Get(string url, string id, string token)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
-    public Task<List<Site>> ListDetail(string url, string token)
+    public Task<List<Site?>> ListDetail(string url, string token)
     {
         var sites = new List<Site>();
 

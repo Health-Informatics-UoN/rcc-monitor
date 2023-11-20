@@ -13,7 +13,6 @@ namespace Monitor.Services.Contracts
     /// <param name="toAddress">The email address to send to</param>
     /// <param name="viewName">a Razor View to compile to form the email content</param>
     /// <param name="model">a ViewModel instance for the specified View</param>
-    /// <param name="toName">Optional name of the target recipient</param>
     Task SendEmail<TModel>(
         EmailAddress toAddress,
         string viewName,
@@ -29,7 +28,6 @@ namespace Monitor.Services.Contracts
     /// <param name="toAddresses">The email addresses to send to</param>
     /// <param name="viewName">a Razor View to compile to form the email content</param>
     /// <param name="model">a ViewModel instance for the specified View</param>
-    /// <param name="toName">Optional name of the target recipient</param>
     Task SendEmail<TModel>(
         List<EmailAddress> toAddresses,
         string viewName,

@@ -8,6 +8,11 @@ param backendHostnames = []
 param backendAppSettings = union(
   loadYamlContent('base.appsettings.yaml'),
   {
+    FeatureManagement: {
+      SiteMonitoring: true
+      SyntheticData: true
+      StudyManagement: true
+    }
   }
 )
 

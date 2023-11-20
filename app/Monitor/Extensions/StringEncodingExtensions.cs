@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.WebUtilities;
-
-using Monitor.Constants;
-
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.WebUtilities;
+using Monitor.Constants;
 
-namespace Monitor.Auth;
+namespace Monitor.Extensions;
 
 public static class StringEncodingExtensions
 {

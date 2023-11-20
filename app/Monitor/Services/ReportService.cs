@@ -1,8 +1,8 @@
-using Data.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Monitor.Config;
 using Monitor.Data;
+using Monitor.Data.Constants;
 using Monitor.Models;
 using Monitor.Models.Emails;
 using Monitor.Services.Contracts;
@@ -56,7 +56,7 @@ public class ReportService
                 SiteId = y.SiteId,
                 SiteName = y.SiteName,
                 Instance = y.Instance.Name,  
-                ParentSiteId = y.ParentSiteId,
+                ParentSiteId = y.ParentSiteId ?? string.Empty,
             }).ToList()
         }).ToList();
 

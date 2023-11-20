@@ -1,10 +1,10 @@
-using Data.Constants;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Functions.Config;
 using Functions.Services;
 using Functions.Services.Contracts;
+using Monitor.Data.Constants;
 
 namespace Functions;
 
@@ -34,11 +34,11 @@ public class SiteDiffReportJob
         logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
 
         // Fetch data
-        var UATSites = await _redCapSitesService.ListDetail(_siteOptions.UATUrl, _siteOptions.UATKey);
+        var uatSites = await _redCapSitesService.ListDetail(_siteOptions.UatUrl, _siteOptions.UatKey);
         var prodSites = await _redCapSitesService.ListDetail(_siteOptions.ProductionUrl, _siteOptions.ProductionKey);
         
         // Sites with different names
-        var redCapConflictingNames = _siteService.GetConflictingNames(UATSites, prodSites);
+        var redCapConflictingNames = _siteService.GetConflictingNames(uatSites, prodSites);
         var newNameConflicts = _reportingService.ResolveConflicts(redCapConflictingNames, Reports.ConflictingSiteName);
         foreach (var report in newNameConflicts)
         {
@@ -46,7 +46,7 @@ public class SiteDiffReportJob
         }
 
         // Sites missing from production
-        var conflictingSites = _siteService.GetConflictingSites(UATSites, prodSites);
+        var conflictingSites = _siteService.GetConflictingSites(uatSites, prodSites);
         var newSiteConflicts = _reportingService.ResolveConflicts(conflictingSites, Reports.ConflictingSites);
         foreach (var report in newSiteConflicts)
         {
@@ -54,7 +54,7 @@ public class SiteDiffReportJob
         }
 
         // Sites with mismatched parents
-        var conflictingSiteParents = _siteService.GetConflictingParents(UATSites, prodSites);
+        var conflictingSiteParents = _siteService.GetConflictingParents(uatSites, prodSites);
         var newSiteParentConflicts =
             _reportingService.ResolveConflicts(conflictingSiteParents, Reports.ConflictingSiteParent);
         foreach (var report in newSiteParentConflicts)
@@ -66,7 +66,7 @@ public class SiteDiffReportJob
 
 public class MyInfo
 {
-    public MyScheduleStatus ScheduleStatus { get; set; }
+    public MyScheduleStatus ScheduleStatus { get; set; } = new MyScheduleStatus();
 
     public bool IsPastDue { get; set; }
 }

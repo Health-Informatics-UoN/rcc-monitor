@@ -1,6 +1,6 @@
-using  Data.Constants;
 using Microsoft.EntityFrameworkCore;
 using Monitor.Config;
+using Monitor.Data.Constants;
 using Monitor.Data.Entities;
 
 namespace Monitor.Data;

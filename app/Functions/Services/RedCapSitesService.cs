@@ -3,7 +3,7 @@ using Functions.Models;
 using Functions.Services.Contracts;
 using Newtonsoft.Json;
 
-namespace Francois.FunctionApp.Services;
+namespace Functions.Services;
 
 public class RedCapSitesService : IDataService
 {
@@ -23,18 +23,12 @@ public class RedCapSitesService : IDataService
         _client.DefaultRequestHeaders.Accept.Clear();
         _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         _client.DefaultRequestHeaders.Add("token", token);
-    
+        
         var response = await _client.GetAsync(url + SitesUrl);
-        if (response.IsSuccessStatusCode)
-        {
-            var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<SiteView>>(responseString);
-        }
-        else
-        {
-            Console.WriteLine("Failed to retrieve sites. Status code: " + response.StatusCode);
-            return new List<SiteView>();
-        }
+        response.EnsureSuccessStatusCode();
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<List<SiteView>>(responseString) ?? new List<SiteView>();
     }
     
     public async Task<Site> Get(string url, string id, string token)
@@ -43,32 +37,23 @@ public class RedCapSitesService : IDataService
         _client.DefaultRequestHeaders.Accept.Clear();
         _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         _client.DefaultRequestHeaders.Add("token", token);
-
+        
         var response = await _client.GetAsync(url + SitesUrl + "/" + id);
-        if (response.IsSuccessStatusCode)
-        {
-            var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Site>(responseString);
-        }
-        else
-        {
-            Console.WriteLine("Failed to retrieve site. Status code: " + response.StatusCode);
-            return new Site() { };
-        }
+        response.EnsureSuccessStatusCode();
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Site>(responseString) ?? new Site();
     }
     
-    public async Task<List<Site>> ListDetail(string url, string token)
+    public async Task<List<Site?>> ListDetail(string url, string token)
     {
         var sites = await List(url, token);
 
-        var siteDetails = new List<Site>();
-
-        var i = sites.GetRange(0, 100);
-
+        var siteDetails = new List<Site?>();
         foreach (var site in sites)
         {
             var detail = await Get(url, site.Id.ToString(), token);
-            siteDetails?.Add(detail);
+            siteDetails.Add(detail);
         }
 
         return siteDetails;

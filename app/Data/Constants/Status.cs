@@ -1,4 +1,4 @@
-namespace Data.Constants;
+namespace Monitor.Data.Constants;
 
 public class Status
 {

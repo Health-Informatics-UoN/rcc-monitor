@@ -58,7 +58,7 @@ public class AzureStorageService
             var blobName = await Upload(filePath, stream);
             return blobName;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw new RequestFailedException("Error uploading to Azure Storage.");
         }

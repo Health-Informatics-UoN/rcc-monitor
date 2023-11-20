@@ -171,7 +171,7 @@ public class StudyService
                      throw new KeyNotFoundException();
         
         var usersToRemove = entity.Users
-            .Where(existingUser => !model.Users.Any(newUser => newUser.Id == existingUser.UserId)).ToList();
+            .Where(existingUser => model.Users != null && model.Users.All(newUser => newUser.Id != existingUser.UserId)).ToList();
         
         foreach (var user in usersToRemove)
         {

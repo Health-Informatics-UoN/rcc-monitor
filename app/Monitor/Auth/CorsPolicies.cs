@@ -14,7 +14,7 @@ public static class CorsPolicies
         var frontendAppUrl = configuration["FrontendAppUrl"];
 
         return new CorsPolicyBuilder()
-            .WithOrigins(frontendAppUrl)
+            .WithOrigins(frontendAppUrl ?? string.Empty)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .Build();

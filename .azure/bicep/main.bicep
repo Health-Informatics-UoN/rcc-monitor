@@ -234,7 +234,7 @@ var baseBackendSettings = {
   Keycloak__publicClient: 'true'
   Keycloak__verifyTokenAudience: 'false'
   Keycloak__credentials__secret: referenceSecret(kv.name, 'backend-keycloak-secret')
-  RolesSource: 'Realm'
+  Keycloak__RolesSource: 'Realm'
   FrontendAppUrl: 'https://${frontend.outputs.name}.azurewebsites.net'
 }
 

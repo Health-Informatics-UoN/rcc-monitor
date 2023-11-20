@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Monitor.Config;
-using Monitor.Services;
 using Monitor.Services.Contracts;
 using Monitor.Services.EmailSender;
 using Monitor.Services.EmailServices;

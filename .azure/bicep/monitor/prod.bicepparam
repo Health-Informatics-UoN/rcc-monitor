@@ -10,5 +10,10 @@ param appServicePlanSku = 'P1v3'
 param backendAppSettings = union(
   loadYamlContent('base.appsettings.yaml'),
   {
+    FeatureManagement: {
+      SiteMonitoring: false
+      SyntheticData: true
+      StudyManagement: false
+    }
   }
 )

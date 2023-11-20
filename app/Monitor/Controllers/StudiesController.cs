@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Keycloak.AuthServices.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +58,7 @@ public class StudiesController : ControllerBase
                 var study = await _studyService.Get(id);
                 return Ok(study);
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             {
                 return NotFound("Study not found.");
             }
@@ -69,7 +68,7 @@ public class StudiesController : ControllerBase
         {
             return userId is not null ? Ok(await _studyService.Get(id, userId)) : Forbid();
         }
-        catch (KeyNotFoundException e)
+        catch (KeyNotFoundException)
         {
             return NotFound("Study not found.");
         }
@@ -103,7 +102,7 @@ public class StudiesController : ControllerBase
         {
             return Ok(await _studyService.Create(model, userId));
         }
-        catch (DbUpdateException e)
+        catch (DbUpdateException)
         {
             return BadRequest("You have already added this study.");
         }

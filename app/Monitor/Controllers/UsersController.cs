@@ -33,7 +33,7 @@ public class UsersController : ControllerBase
         {
             return Ok(await _userService.GetUnaffiliatedUsers(model));
         }
-        catch (KeyNotFoundException e)
+        catch (KeyNotFoundException)
         {
             return BadRequest("Study not found.");
         }

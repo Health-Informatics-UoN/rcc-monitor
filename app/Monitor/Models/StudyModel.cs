@@ -1,5 +1,3 @@
-using Monitor.Data.Entities;
-
 namespace Monitor.Models;
 
 public class StudyModel

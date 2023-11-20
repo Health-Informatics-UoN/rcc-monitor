@@ -1,4 +1,3 @@
-using Francois.FunctionApp.Services;
 using Functions.Config;
 using Functions.Services;
 using Functions.Services.Contracts;
@@ -19,9 +18,9 @@ var host = new HostBuilder()
         {
             options.Client.Clients.Add("identity", new ClientCredentialsTokenRequest
             {
-                Address = identityConfig.Address,
-                ClientId = identityConfig.ClientId,
-                ClientSecret = identityConfig.Secret
+                Address = identityConfig?.Address,
+                ClientId = identityConfig?.ClientId,
+                ClientSecret = identityConfig?.Secret
             });
         });
 

@@ -1,8 +1,8 @@
-using Data.Constants;
 using Functions.Models;
 using Functions.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
+using Monitor.Data.Constants;
 using Monitor.Data.Entities;
 using Site = Monitor.Data.Entities.Site;
 
@@ -70,7 +70,7 @@ public class ReportService : IReportingService
                 SiteId = site.SiteId,
                 SiteName = site.SiteName,
                 Instance = site.Instance.Name,
-                ParentSiteId = site.ParentSiteId,
+                ParentSiteId = site.ParentSiteId ?? string.Empty,
             }).ToList()
         }).ToList();
     
