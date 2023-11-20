@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
+using Monitor.Data.Entities;
 using Monitor.Models;
 
 namespace Monitor.Services;
@@ -26,7 +27,8 @@ public class ConfigService
             Key = x.Key,
             Value = x.Value,
             Name = x.Name,
-            Description = x.Description
+            Description = x.Description,
+            Type = x.Type
         });
 
         return result;
@@ -35,18 +37,36 @@ public class ConfigService
     /// <summary>
     /// Edits a Config.
     /// </summary>
-    /// <param name="key">Key of the config to update.</param>
     /// <param name="configModel">New model to update with.</param>
     /// <exception cref="KeyNotFoundException">Config not found.</exception>
-    public async Task Edit(string key, ConfigModel configModel)
+    /// <exception cref="ArgumentException">Value not valid.</exception>
+    public async Task Edit(UpdateConfigModel configModel)
     {
-        var entity = await _db.Config.FirstOrDefaultAsync(x => x.Key == key)
-                     ?? throw new KeyNotFoundException($"Config with key \"{key}\" not found");
+        var entity = await _db.Config.FirstOrDefaultAsync(x => x.Key == configModel.Key)
+                     ?? throw new KeyNotFoundException($"Config with key \"{configModel.Key}\" not found");
         
+        var configType = entity.Type;
+        
+        switch (configType)
+        {
+            case ConfigType.TimeSpan:
+                if (!TimeSpan.TryParse(configModel.Value, out _))
+                {
+                    throw new ArgumentException("The value provided is not valid");
+                }
+                break;
+            
+            case ConfigType.Double:
+                if (!double.TryParse(configModel.Value, out double value) || value < 0 || value > 100)
+                {
+                    throw new ArgumentException("The value provided is not valid");
+                }
+                break;
+            
+            default:
+                throw new ArgumentException($"The value provided is not valid");
+        }
         entity.Value = configModel.Value;
-        entity.Name = configModel.Name;
-        entity.Description = configModel.Description;
-        
         await _db.SaveChangesAsync();
     }
 }

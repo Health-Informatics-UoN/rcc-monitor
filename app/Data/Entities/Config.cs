@@ -11,4 +11,11 @@ public class Config
     public string Value { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public ConfigType Type { get; set; }
+}
+
+public enum ConfigType
+{
+    TimeSpan,
+    Double
 }

@@ -19,4 +19,5 @@ export const permissions = {
   UpdateStudies: "UpdateStudies",
   RemoveStudyUsers: "RemoveStudyUsers",
   ViewUsers: "ViewUsers",
+  EditConfig: "EditConfig",
 };

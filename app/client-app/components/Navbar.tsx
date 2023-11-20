@@ -6,7 +6,7 @@ import { options } from "@/auth/options";
 import { permissions, hasPermission } from "@/auth/permissions";
 import { css } from "@/styled-system/css";
 import { flex } from "@/styled-system/patterns";
-import { getServerConfig } from "@/lib/api/config";
+import { getFeatureFlags } from "@/lib/api/config";
 
 interface NavButtonProps {
   css?: object;
@@ -40,7 +40,7 @@ export default async function Navbar() {
     siteMonitoringEnabled,
     syntheticDataEnabled,
     studyManagementEnabled,
-  } = await getServerConfig();
+  } = await getFeatureFlags();
 
   return (
     <nav
@@ -82,6 +82,10 @@ export default async function Navbar() {
           syntheticDataEnabled && (
             <NavButton to="/synthetic-data">Synthetic Data</NavButton>
           )}
+
+        {hasPermission(session?.permissions, permissions.EditConfig) && (
+          <NavButton to="/settings">Settings</NavButton>
+        )}
 
         <div>{session ? <LogoutButton /> : <LoginButton />}</div>
       </div>

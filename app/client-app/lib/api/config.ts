@@ -1,18 +1,21 @@
+"use server";
+import {
+  ConfigModel,
+  FeatureFlagModel,
+  UpdateConfigModel,
+} from "@/types/config";
 import request from "./request";
-
-interface ConfigModel {
-  siteMonitoringEnabled: boolean;
-  syntheticDataEnabled: boolean;
-  studyManagementEnabled: boolean;
-}
+import { revalidatePath } from "next/cache";
 
 const fetchKeys = {
-  list: "config/flags",
+  list: "config",
+  getFlags: "config/flags",
+  update: (configKey: string) => `config/${configKey}`,
 };
 
-export async function getServerConfig(): Promise<ConfigModel> {
+export async function getFeatureFlags(): Promise<FeatureFlagModel> {
   try {
-    return await request<ConfigModel>(fetchKeys.list);
+    return await request<FeatureFlagModel>(fetchKeys.getFlags);
   } catch (error) {
     console.warn("Failed to fetch data.");
     return {
@@ -21,4 +24,24 @@ export async function getServerConfig(): Promise<ConfigModel> {
       studyManagementEnabled: false,
     };
   }
+}
+
+export async function getSiteConfig(): Promise<ConfigModel[]> {
+  try {
+    return await request<ConfigModel[]>(fetchKeys.list);
+  } catch (error) {
+    console.warn("Failed to fetch data.");
+    return [];
+  }
+}
+
+export async function updateSiteConfig(model: UpdateConfigModel) {
+  await request<UpdateConfigModel>(fetchKeys.update(model.key), {
+    method: "PUT",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(model),
+  });
+  revalidatePath("/settings");
 }

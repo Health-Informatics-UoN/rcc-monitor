@@ -10,6 +10,7 @@ const permissionPathMapping = {
   [permissions.GenerateSyntheticData]: ["/synthetic-data"],
   [permissions.ViewStudies]: ["/studies", "/studies/:id/edit"],
   [permissions.UpdateStudies]: ["/studies/:id/edit"],
+  [permissions.EditConfig]: ["/settings"],
 };
 
 export default withAuth({
