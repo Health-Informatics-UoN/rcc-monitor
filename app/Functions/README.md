@@ -1,14 +1,30 @@
 # NUH Function App
 
-This project contains the azure functions for the NUH application.
+This project contains the Azure functions for the NUH application.
 
-Currently, this is the `SiteDiffReportJob` function that runs once a day, to retrieve the RedCap Cloud tenant level Sites from two environments, and report warnings. This is necessary, as the sites need to be identical in the two environments to enable studies to be imported between them.
+Currently, these are:
+
+- `SiteDiffReportJob`
+- `StudyCapacityJob`
+- `SendSummaryEmail`
+
+## `SiteDiffReportJob`
+
+This function runs once a day, to retrieve the RedCap Cloud tenant level Sites from two environments, and report warnings. This is necessary, as the sites need to be identical in the two environments to enable studies to be imported between them.
 
 These warnings are:
 
 - If a site exists in one environment (UAT), but not the other (build).
 - If a site is named differently in the two environments, but has the same `Global Site ID`.
 - If a site has a different parent in the two environments.
+
+## `StudyCapacityJob`
+
+This function runs every hour, to check whether the RedCap Production studies have reach their capacity threshold, as set by the Study Groups. This is necessary, as a Study can reach its capacity without noticing.
+
+## `SendSummaryEmail`
+
+This function runs once a day, to tell an endpoint on the Webapp to send the Site Report summary emails.
 
 ## Development
 

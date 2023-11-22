@@ -1,3 +1,5 @@
+using Functions.Config;
+using Functions.Services;
 using Keycloak.AuthServices.Sdk.Admin;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -40,6 +42,17 @@ public class Fixtures
         var userService = new UserService(DbContext, mockKeycloakUserClient.Object, Options.Create(new KeycloakOptions()));
 
         return new StudyService(DbContext, options, userService);
+    }
+
+    /// <summary>
+    /// Fixture for the Study Capacity Service.
+    /// </summary>
+    /// <returns></returns>
+    public StudyCapacityService GetStudyCapacityService()
+    {
+        var redCapStudyService = new RedCapStudyService(Options.Create(new SiteOptions()));
+
+        return new StudyCapacityService(DbContext, redCapStudyService);
     }
     
 }

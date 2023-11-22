@@ -85,8 +85,8 @@ public class ReportServiceTests : IClassFixture<Fixtures>
                 Status = Status.Active,
                 Sites = new List<SiteModel>
                 {
-                    new() { SiteName = "SiteA", SiteId = "456", Instance = Instances.Uat },
-                    new() { SiteName = "SiteB", SiteId = "456", Instance = Instances.Production },
+                    new() { SiteName = "SiteA", SiteId = "456" },
+                    new() { SiteName = "SiteB", SiteId = "456" },
                 }
             }
         };
