@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/toast/toaster";
 import { Providers } from "@/app/providers";
+import { css } from "@/styled-system/css";
 
 export default function RootLayout({
   children,
@@ -15,7 +16,13 @@ export default function RootLayout({
       <body>
         <Providers>
           <Navbar />
-          <Container>{children}</Container>
+          <Container
+            className={css({
+              mt: 6,
+            })}
+          >
+            {children}
+          </Container>
           <Toaster />
         </Providers>
       </body>

@@ -40,8 +40,9 @@ public class Fixtures
         var options = Options.Create(new RedCapOptions());
         var mockKeycloakUserClient = new Mock<IKeycloakUserClient>();
         var userService = new UserService(DbContext, mockKeycloakUserClient.Object, Options.Create(new KeycloakOptions()));
+        var configService = new ConfigService(DbContext);
 
-        return new StudyService(DbContext, options, userService);
+        return new StudyService(DbContext, options, userService, configService);
     }
 
     /// <summary>

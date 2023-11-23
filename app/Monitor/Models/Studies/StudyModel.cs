@@ -6,6 +6,7 @@ public class StudyModel
     public string Name { get; set; } = string.Empty;
     public string ApiKey { get; set; } = string.Empty;
     public List<StudyUser>? Users { get; set; } = new List<StudyUser>();
+    public string Instance { get; set; } = string.Empty;
 
     public override bool Equals(object? obj)
     {

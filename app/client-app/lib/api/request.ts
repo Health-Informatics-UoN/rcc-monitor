@@ -1,4 +1,4 @@
-import { url as apiUrl } from "@/constants";
+import { apiUrl as apiUrl } from "@/constants";
 import { getServerSession } from "next-auth";
 import { options as authOptions } from "@/auth/options";
 import { ApiError } from "./error";

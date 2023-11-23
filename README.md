@@ -89,7 +89,7 @@ OutboundEmail:
     public-client: true,
     verify-token-audience: false,
     confidential-port: 0,
-    credentials: 
+    credentials:
       secret: ""
     RolesSource: "Realm"
 ```
@@ -104,4 +104,7 @@ KEYCLOAK_SECRET=changeme
 KEYCLOACK_ISSUER=http://localhost:9080/realms/nuh-dev
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=changeme
+NEXT_PUBLIC_REDCAP_BUILD_URL=https://eubuild.redcapcloud.com
+NEXT_PUBLIC_REDCAP_PROD_URL=https://nuh.eulogin.redcapcloud.com
+NEXT_PUBLIC_REDCAP_UAT_URL=https://uat.redcapcloud.com
 ```

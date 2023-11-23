@@ -3,9 +3,11 @@
 import * as React from "react";
 import {
   ColumnDef,
+  ColumnFiltersState,
   SortingState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -18,21 +20,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTableViewOptions } from "./column-toggle";
-import { Flex } from "@/styled-system/jsx";
+
+import { DataTableToolbar } from "@/components/data-table/DataTableToolbar";
+import { css } from "@/styled-system/css";
+import { FacetsFilter } from "@/components/Icons";
+
+export interface DataTableFacetedProps {
+  column: string;
+  title: string;
+  options: FacetsFilter[];
+}
 
 interface DataTableProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  facets?: DataTableFacetedProps[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  facets,
   children,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
 
   const table = useReactTable({
     data,
@@ -40,18 +55,26 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
+      columnFilters,
     },
   });
 
   return (
     <>
-      <Flex justifyContent={"flex-end"} gap={"4"}>
+      <DataTableToolbar table={table} facets={facets}>
         {children}
-        <DataTableViewOptions table={table} />
-      </Flex>
-      <div>
+      </DataTableToolbar>
+
+      <div
+        className={css({
+          rounded: "md",
+          border: "base",
+        })}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

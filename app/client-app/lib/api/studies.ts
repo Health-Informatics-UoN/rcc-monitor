@@ -37,6 +37,8 @@ export async function getStudy(id: number): Promise<StudyPartial> {
       id: 0,
       name: "",
       users: [],
+      studyCapacityAlert: false,
+      instance: "Build",
     };
   }
 }

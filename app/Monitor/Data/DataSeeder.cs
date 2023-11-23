@@ -116,7 +116,7 @@ public class DataSeeder
         {
           Key = ConfigKey.RandomisationThreshold,
           Name = "Randomisation Alert Threshold",
-          Value = "75",
+          Value = "0.75",
           Description = "Sets the occupancy threshold for randomisation groups in a study. Alerts will trigger for any studies that pass this threshold.",
           Type = ConfigType.Double
         },
@@ -124,7 +124,7 @@ public class DataSeeder
         {
           Key = ConfigKey.RandomisationJobFrequency,
           Name = "Randomisation Alert Frequency",
-          Value = "24:00",
+          Value = "23:00",
           Description = "How often we check the threshold of randomisation groups in the study",
           Type = ConfigType.TimeSpan
         }

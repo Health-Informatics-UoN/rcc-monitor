@@ -3,6 +3,8 @@ using Monitor.Data;
 using Flurl.Http;
 using Microsoft.Extensions.Options;
 using Monitor.Config;
+using Monitor.Constants;
+using Monitor.Data.Constants;
 using Monitor.Data.Entities;
 using Monitor.Models.Studies;
 using StudyUser = Monitor.Data.Entities.StudyUser;
@@ -14,12 +16,14 @@ public class StudyService
     private readonly ApplicationDbContext _db;
     private readonly RedCapOptions _config;
     private readonly UserService _userService;
-    private const string StudiesUrl = "/rest/v2/studies";
-    
-    public StudyService(ApplicationDbContext db, IOptions<RedCapOptions> config, UserService userService)
+    private readonly ConfigService _configService;
+
+    public StudyService(ApplicationDbContext db, IOptions<RedCapOptions> config, UserService userService,
+        ConfigService configService)
     {
         _db = db;
         _userService = userService;
+        _configService = configService;
         _config = config.Value;
     }
     
@@ -34,6 +38,7 @@ public class StudyService
         var entity = await _db.Studies
             .AsNoTracking()
             .Include(x => x.Users)
+            .Include(x => x.Instance)
             .Where(x => x.RedCapId == id)
             .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
             .SingleOrDefaultAsync()
@@ -46,7 +51,9 @@ public class StudyService
         {
             Id = entity.RedCapId,
             Name = entity.Name,
-            Users = users
+            Users = users,
+            Instance = entity.Instance.Name,
+            StudyCapacityAlert = entity.StudyCapacityAlert,
         };
         return model;
     }
@@ -60,13 +67,16 @@ public class StudyService
     {
         var list = await _db.Studies
             .Include(x => x.Users)
+            .Include(x => x.Instance)
             .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
             .ToListAsync();
         
         var result = list.Select(x => new StudyPartialModel
         {
             Id = x.RedCapId,
-            Name = x.Name
+            Name = x.Name,
+            Instance = x.Instance.Name,
+            StudyCapacityAlert = x.StudyCapacityAlert
         });
         
         return result;
@@ -104,11 +114,20 @@ public class StudyService
         }
         else
         {
+            var instance = _db.Instances.Single(x => x.Name == model.Instance) ?? throw new KeyNotFoundException();
+            
+            // Get the current config defaults
+            var defaultCapacityThreshold = await _configService.GetValue(ConfigKey.RandomisationThreshold, "0.70");
+            var defaultCapacityFrequency = await _configService.GetValue(ConfigKey.RandomisationJobFrequency, "23:00");
+            
             var entity = new Study
             {
                 ApiKey = model.ApiKey,
                 Name = model.Name,
                 RedCapId = model.Id,
+                Instance = instance,
+                StudyCapacityThreshold = double.Parse(defaultCapacityThreshold),
+                StudyCapacityJobFrequency = TimeSpan.Parse(defaultCapacityFrequency)
             };
             _db.Studies.Add(entity);
             
@@ -206,6 +225,7 @@ public class StudyService
     
     /// <summary>
     /// Validate the Study's APIKey against RedCap.
+    /// We try to validate against both environments.
     /// </summary>
     /// <param name="apiKey">APIKey to validate.</param>
     /// <returns>The study attached to the APIKey.</returns>
@@ -215,21 +235,34 @@ public class StudyService
     {
         try
         {
-            var url = _config.ApiUrl + StudiesUrl;
-            var result = await url.WithHeader("token", apiKey).GetJsonAsync<StudyModel>();
-            result.ApiKey = apiKey;
-            return result;
+            return await ValidateWithInstance(apiKey, Instances.Production);
         }
         catch (FlurlHttpException ex)
         {
             if (ex.Call.Response.StatusCode == 401)
             {
-                throw new UnauthorizedAccessException("API Key is unauthorized to access RedCap.");
+                return await ValidateWithInstance(apiKey, Instances.Build);
             }
-            else
-            {
-                throw new Exception("We could not reach RedCap to validate the API Key.");
-            }
+
+            throw new HttpRequestException("Unable to validate the API Key with RedCap.");
         }
+    }
+
+    /// <summary>
+    /// Validate the Study's APIKey against RedCap.
+    /// </summary>
+    /// <param name="apiKey">ApiKey to validate.</param>
+    /// <param name="instance">The RedCap instance to try.</param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedAccessException">The APIKey is not authorized with RedCap.</exception>
+    private async Task<StudyModel> ValidateWithInstance(string apiKey, string instance)
+    {
+        var url = instance == Instances.Production ? _config.ProductionUrl : _config.BuildUrl;
+        url += RedCapApiEndpoints.Studies;
+
+        var result = await url.WithHeader("token", apiKey).GetJsonAsync<StudyModel>();
+        result.ApiKey = apiKey;
+        result.Instance = instance;
+        return result;
     }
 }

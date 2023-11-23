@@ -267,6 +267,9 @@ var baseFrontendSettings = {
   KEYCLOAK_ISSUER: 'https://${keycloak.outputs.name}.azurewebsites.net/realms/nuh-${env}'
   NEXTAUTH_URL: 'https://${frontend.outputs.name}.azurewebsites.net'
   NEXTAUTH_SECRET: referenceSecret(kv.name, 'nextauth-secret')
+  NEXT_PUBLIC_REDCAP_BUILD_URL: 'https://eubuild.redcapcloud.com'
+  NEXT_PUBLIC_REDCAP_PROD_URL: 'https://nuh.eulogin.redcapcloud.com'
+  NEXT_PUBLIC_REDCAP_UAT_URL: 'https://uat.redcapcloud.com'
 }
 
 module frontendSiteConfig 'config/app-service-config.bicep' = {

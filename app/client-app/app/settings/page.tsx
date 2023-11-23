@@ -1,7 +1,7 @@
-import { css } from "@/styled-system/css";
 import { Box } from "@/styled-system/jsx";
 import Config from "./config";
 import { getSiteConfig } from "@/lib/api/config";
+import { h1 } from "@/styled-system/recipes";
 
 export default async function Page() {
   const config = await getSiteConfig();
@@ -9,15 +9,7 @@ export default async function Page() {
   return (
     <div>
       <Box>
-        <h1
-          className={css({
-            fontSize: "2rem",
-            fontWeight: "bold",
-            m: "20px 0px",
-          })}
-        >
-          Settings
-        </h1>
+        <h1 className={h1()}>Settings</h1>
       </Box>
       {config.map((config) => (
         <Config key={config.key} config={config} />

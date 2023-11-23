@@ -41,9 +41,8 @@ export default defineConfig({
       textStyles: {
         h1: {
           value: {
-            fontSize: "14.5rem",
+            fontSize: "3rem",
             lineHeight: "1",
-            letterSpacing: "tighter",
           },
         },
         h2: {
@@ -70,14 +69,14 @@ export default defineConfig({
       },
       keyframes: {
         fadein: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' }
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
         },
         fadeout: {
-          '0%': { opacity: '1' },
-          '100%': { opacity: '0' }
-        }
-      }
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+      },
     },
   },
 

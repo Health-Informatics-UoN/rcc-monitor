@@ -1,8 +1,8 @@
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  ArrowUpDownIcon,
   EyeOffIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ChevronsUpDownIcon,
 } from "lucide-react";
 import { Column } from "@tanstack/react-table";
 import { css } from "@/styled-system/css";
@@ -49,47 +49,26 @@ export function DataTableColumnHeader<TData, TValue>({
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className={icon({ left: "sm" })} />
+              <ChevronDownIcon className={icon({ left: "sm" })} />
             ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className={icon({ left: "sm" })} />
+              <ChevronUpIcon className={icon({ left: "sm" })} />
             ) : (
-              <ArrowUpDownIcon className={icon({ left: "sm" })} />
+              <ChevronsUpDownIcon className={icon({ left: "sm" })} />
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUpIcon
-              className={css({
-                mr: "2",
-                h: "3.5",
-                w: "3.5",
-                ca: "muted.foreground/70",
-              })}
-            />
+            <ChevronUpIcon className={icon({})} />
             Asc
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDownIcon
-              className={css({
-                mr: "2",
-                h: "3.5",
-                w: "3.5",
-                ca: "muted.foreground/70",
-              })}
-            />
+            <ChevronDownIcon className={icon({})} />
             Desc
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeOffIcon
-              className={css({
-                mr: "2",
-                h: "3.5",
-                w: "3.5",
-                ca: "muted.foreground/70",
-              })}
-            />
+            <EyeOffIcon className={icon({})} />
             Hide
           </DropdownMenuItem>
         </DropdownMenuContent>

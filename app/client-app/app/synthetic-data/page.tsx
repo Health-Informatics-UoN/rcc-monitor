@@ -7,6 +7,7 @@ import { grid } from "@/styled-system/patterns";
 
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { UploadFile } from "./form";
+import { h1 } from "@/styled-system/recipes";
 
 export const metadata: Metadata = {
   title: "RedCap Synthetic Data",
@@ -22,15 +23,7 @@ export default async function Page() {
       })}
     >
       <Box>
-        <h1
-          className={css({
-            fontSize: "2rem",
-            fontWeight: "bold",
-            m: "20px 0px",
-          })}
-        >
-          Synthetic Data Generation
-        </h1>
+        <h1 className={h1()}>Synthetic Data Generation</h1>
         <p>
           A tool that will generate synthetic data if you upload a RedCap Cloud
           data dictionary. This data is suitable for adding subjects to a study

@@ -13,6 +13,21 @@ public class ConfigService
     {
         _db = db;
     }
+    
+    /// <summary>
+    /// Get a config value with a given key.
+    /// </summary>
+    /// <param name="configKey">Key to get the value of.</param>
+    /// <param name="defaultValue">The default to set if we can't find it.</param>
+    /// <returns>The config value relative to the specified key.</returns>
+    public async Task<string> GetValue(string configKey,  string defaultValue = "")
+    {
+        var entity = await _db.Config
+            .AsNoTracking()
+            .Where(x => x.Key == configKey)
+            .FirstOrDefaultAsync();
+        return entity?.Value ?? defaultValue;
+    }
 
     /// <summary>
     /// Get the list of config.
