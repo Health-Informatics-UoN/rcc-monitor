@@ -1,12 +1,9 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
 import { icon } from "@/styled-system/recipes";
 import { css } from "@/styled-system/css";
-import { token } from "@/styled-system/tokens";
 import { center, visuallyHidden } from "@/styled-system/patterns";
-
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import {
   DropdownMenu,
@@ -20,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import {
   AlertCircle,
   ChevronRightIcon,
-  Edit2Icon,
+  Eye,
   MoreHorizontal,
   XIcon,
 } from "lucide-react";
@@ -28,20 +25,15 @@ import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { useRef } from "react";
 import { toast } from "@/components/ui/toast/use-toast";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Icons } from "@/components/Icons";
-
-import { environments } from "@/constants/environments";
 import { redCapBuildUrl, redCapProductionUrl, redCapUatUrl } from "@/constants";
-
 import { deleteStudy } from "@/lib/api/studies";
-
 import { StudyPartial } from "@/types/studies";
+import EnvironmentBadge from "@/components/EnvironmentBadge";
 
 export const columns: ColumnDef<StudyPartial>[] = [
   {
@@ -57,29 +49,7 @@ export const columns: ColumnDef<StudyPartial>[] = [
       <DataTableColumnHeader column={column} title="RedCap Environment" />
     ),
     cell: ({ row }) => {
-      const environment = environments.find(
-        (e) => e.value === row.getValue("instance")
-      );
-
-      if (!environment) {
-        return null;
-      }
-
-      const Icon = Icons[environment.icon];
-
-      return (
-        <Badge
-          style={{
-            background: token.var(`colors.${environment.color}`),
-          }}
-          className={css({
-            rounded: "sm",
-          })}
-        >
-          {environment.icon && <Icon className={icon({ right: "sm" })} />}
-          <span>{environment.label}</span>
-        </Badge>
-      );
+      return <EnvironmentBadge name={row.getValue("instance")} />;
     },
     enableColumnFilter: true,
     enableHiding: true,
@@ -180,10 +150,12 @@ export const columns: ColumnDef<StudyPartial>[] = [
               </a>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Edit2Icon className={icon({})} />
-              <Link href={`/studies/${study.id}/edit`}>Edit</Link>
-            </DropdownMenuItem>
+            <Link href={`/studies/${study.id}`}>
+              <DropdownMenuItem>
+                <Eye className={icon({})} />
+                View
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem
               onClick={(e: React.MouseEvent<HTMLElement>) => {
                 e.preventDefault();

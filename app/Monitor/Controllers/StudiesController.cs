@@ -133,24 +133,23 @@ public class StudiesController : ControllerBase
     [Authorize(nameof(AuthPolicies.CanUpdateStudies))]
     [SwaggerOperation("Update a Study.")]
     [SwaggerResponse(200, "Study updated successfully.")]
+    [SwaggerResponse(400, "Invalid input format")]
     [SwaggerResponse(403, "User is not authorized.")]
     [SwaggerResponse(404, "Study not found.")]
     public async Task<ActionResult> Update(int id, StudyPartialModel model)
     {
         try
         {
-            var response = await _studyService.AddUsers(id, model);
-            
-            // Remove users only if they have permission.
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, nameof(AuthPolicies.CanRemoveStudyUsers));
-
-            if (!authorizationResult.Succeeded) return Ok(response);
-            response = await _studyService.RemoveUsers(id, model);
+            var response = await _studyService.Update(id, model, User);
             return Ok(response);
         }
         catch (KeyNotFoundException e)
         {
             return NotFound(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
     

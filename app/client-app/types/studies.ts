@@ -5,7 +5,18 @@ export interface StudyPartial {
   name: string;
   instance: "Production" | "Build" | "UAT";
   users: User[];
+  studyGroup: StudyGroup[];
   studyCapacityAlert: boolean;
+  studyCapacityAlertsActivated: boolean;
+  studyCapacityThreshold: number;
+  studyCapacityJobFrequency: string;
+  studyCapacityLastChecked: string;
+}
+
+export interface StudyGroup {
+  id: number;
+  name: string;
+  plannedSize: string;
 }
 
 export interface Study extends StudyPartial {

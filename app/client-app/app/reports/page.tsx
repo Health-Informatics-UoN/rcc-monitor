@@ -5,7 +5,7 @@ import {
   TabsTrigger,
   triggerStyle,
 } from "@/components/ui/tabs";
-import Alert from "@/components/Alert";
+import { Alert } from "@/components/Alert";
 import { getReports } from "@/lib/api/reports";
 import { Metadata } from "next";
 import { vstack } from "@/styled-system/patterns";

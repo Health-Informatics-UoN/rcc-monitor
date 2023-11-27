@@ -5,7 +5,7 @@ interface AlertProps {
   message: string;
 }
 
-export default function Alert({ css: cssProp = {}, message }: AlertProps) {
+export function Alert({ css: cssProp = {}, message }: AlertProps) {
   return (
     <div
       className={css(

@@ -37,8 +37,13 @@ export async function getStudy(id: number): Promise<StudyPartial> {
       id: 0,
       name: "",
       users: [],
+      studyGroup: [],
       studyCapacityAlert: false,
       instance: "Build",
+      studyCapacityAlertsActivated: false,
+      studyCapacityThreshold: 0,
+      studyCapacityJobFrequency: "",
+      studyCapacityLastChecked: "",
     };
   }
 }

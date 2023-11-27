@@ -1,7 +1,10 @@
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
 using Flurl.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using Monitor.Auth;
 using Monitor.Config;
 using Monitor.Constants;
 using Monitor.Data.Constants;
@@ -17,14 +20,16 @@ public class StudyService
     private readonly RedCapOptions _config;
     private readonly UserService _userService;
     private readonly ConfigService _configService;
+    private readonly IAuthorizationService _authorizationService;
 
     public StudyService(ApplicationDbContext db, IOptions<RedCapOptions> config, UserService userService,
-        ConfigService configService)
+        ConfigService configService, IAuthorizationService authorizationService)
     {
         _db = db;
         _userService = userService;
         _configService = configService;
         _config = config.Value;
+        _authorizationService = authorizationService;
     }
     
     /// <summary>
@@ -39,6 +44,7 @@ public class StudyService
             .AsNoTracking()
             .Include(x => x.Users)
             .Include(x => x.Instance)
+            .Include(x => x.StudyGroups)
             .Where(x => x.RedCapId == id)
             .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
             .SingleOrDefaultAsync()
@@ -52,8 +58,18 @@ public class StudyService
             Id = entity.RedCapId,
             Name = entity.Name,
             Users = users,
+            StudyGroup = entity.StudyGroups.Select(x => new StudyGroupModel
+            { 
+                Id = x.Id,
+                Name = x.Name,
+                PlannedSize = x.PlannedSize
+            }).ToList(),
             Instance = entity.Instance.Name,
             StudyCapacityAlert = entity.StudyCapacityAlert,
+            StudyCapacityAlertsActivated = entity.StudyCapacityAlertsActivated,
+            StudyCapacityThreshold = entity.StudyCapacityThreshold,
+            StudyCapacityJobFrequency = entity.StudyCapacityJobFrequency.ToString(@"hh\:mm\:ss"),
+            StudyCapacityLastChecked = entity.StudyCapacityLastChecked.ToString("G")
         };
         return model;
     }
@@ -201,6 +217,64 @@ public class StudyService
         
         return model;
     }
+
+    /// <summary>
+    /// Update the study capacity configuration for a study.
+    /// </summary>
+    /// <param name="id">Id of the study to update.</param>
+    /// <param name="model">New model to update with.</param>
+    /// <exception cref="KeyNotFoundException">Study not found</exception>
+    /// <exception cref="ArgumentException">Frequency format invalid.</exception>
+    public async Task UpdateStudyCapacityConfig(int id, StudyPartialModel model)
+    {
+        var entity = await _db.Studies
+                         .Where(s => s.RedCapId == id)
+                         .Include(study => study.Users)
+                         .FirstOrDefaultAsync() ??
+                     throw new KeyNotFoundException();
+        
+        entity.StudyCapacityAlertsActivated = model.StudyCapacityAlertsActivated;
+
+        if (model.StudyCapacityAlertsActivated)
+        {
+            entity.StudyCapacityThreshold = model.StudyCapacityThreshold;
+            if (TimeSpan.TryParse(model.StudyCapacityJobFrequency, out var jobFrequency))
+            {
+                entity.StudyCapacityJobFrequency = jobFrequency;
+            }
+            else
+            {
+                throw new ArgumentException("Invalid frequency format");
+            }
+        }
+        await _db.SaveChangesAsync();
+    }
+    
+    /// <summary>
+    /// Update a study
+    /// </summary>
+    /// <param name="id">Id of the study to update.</param>
+    /// <param name="model">New model to update with.</param>
+    /// <param name="user">The user</param>
+    /// <returns>The updated study partial model.</returns>
+    public async Task<StudyPartialModel> Update(int id, StudyPartialModel model, ClaimsPrincipal user)
+    {
+        await UpdateStudyCapacityConfig(id, model);
+
+        var response = await AddUsers(id, model);
+
+        // Remove users only if they have permission.
+        var authorizationResult = 
+            await _authorizationService.AuthorizeAsync(user, nameof(AuthPolicies.CanRemoveStudyUsers));
+
+        if (authorizationResult.Succeeded)
+        {
+            response = await RemoveUsers(id, model);
+        }
+
+        return response;
+    }
+
     
     /// <summary>
     /// Add a User to an existing Study.

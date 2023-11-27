@@ -1,6 +1,7 @@
 using Functions.Config;
 using Functions.Services;
 using Keycloak.AuthServices.Sdk.Admin;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Monitor.Config;
@@ -41,8 +42,9 @@ public class Fixtures
         var mockKeycloakUserClient = new Mock<IKeycloakUserClient>();
         var userService = new UserService(DbContext, mockKeycloakUserClient.Object, Options.Create(new KeycloakOptions()));
         var configService = new ConfigService(DbContext);
+        var authorizationService = new Mock<IAuthorizationService>().Object;
 
-        return new StudyService(DbContext, options, userService, configService);
+        return new StudyService(DbContext, options, userService, configService, authorizationService);
     }
 
     /// <summary>

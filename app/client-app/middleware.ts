@@ -8,7 +8,7 @@ import { pathToRegexp } from "path-to-regexp";
 const permissionPathMapping = {
   [permissions.ViewSiteReports]: ["/reports"],
   [permissions.GenerateSyntheticData]: ["/synthetic-data"],
-  [permissions.ViewStudies]: ["/studies", "/studies/:id/edit"],
+  [permissions.ViewStudies]: ["/studies", "/studies/:id"],
   [permissions.UpdateStudies]: ["/studies/:id/edit"],
   [permissions.EditConfig]: ["/settings"],
 };

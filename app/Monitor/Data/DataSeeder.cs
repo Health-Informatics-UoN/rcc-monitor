@@ -124,7 +124,7 @@ public class DataSeeder
         {
           Key = ConfigKey.RandomisationJobFrequency,
           Name = "Randomisation Alert Frequency",
-          Value = "23:00",
+          Value = "23:00:00",
           Description = "How often we check the threshold of randomisation groups in the study",
           Type = ConfigType.TimeSpan
         }

@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input";
 import { FileEdit } from "lucide-react";
 import { useState } from "react";
 import { ConfigModel, UpdateConfigModel } from "@/types/config";
-import { ConfigDescription } from "./description";
 import { Form, Formik } from "formik";
 import { Button } from "@/components/ui/button";
 import { FormikInput } from "@/components/forms/FormikInput";
 import { validationSchema } from "./validation";
 import { updateSiteConfig } from "@/lib/api/config";
 import { toast } from "@/components/ui/toast/use-toast";
+import { Description } from "@/components/Description";
 
 export default function Config({ config }: { config: ConfigModel }) {
   const [update, setUpdate] = useState<boolean>(false);
@@ -38,7 +38,7 @@ export default function Config({ config }: { config: ConfigModel }) {
   }
 
   return (
-    <ConfigDescription description={config.description}>
+    <Description text={config.description}>
       <Grid
         w={["100%", "100%", "100%", "50%"]}
         gridTemplateColumns="1fr 1fr"
@@ -106,6 +106,6 @@ export default function Config({ config }: { config: ConfigModel }) {
           </Box>
         )}
       </Grid>
-    </ConfigDescription>
+    </Description>
   );
 }

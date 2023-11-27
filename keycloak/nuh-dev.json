@@ -990,6 +990,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
+      "secret": "changeme",
       "redirectUris": [
         "http://localhost:3000/*"
       ],

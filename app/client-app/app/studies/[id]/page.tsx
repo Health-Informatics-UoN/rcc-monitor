@@ -1,7 +1,8 @@
 import { getStudy } from "@/lib/api/studies";
-import { UpdateForm } from "@/components/studies/Update";
+import { DetailsPage } from "@/components/studies/Details";
 import { Metadata } from "next";
 import { container } from "@/styled-system/patterns";
+import { getSiteConfig } from "@/lib/api/config";
 
 export async function generateMetadata({
   params,
@@ -12,7 +13,7 @@ export async function generateMetadata({
   const study = await getStudy(id);
 
   return {
-    title: `Edit Study: ${study.name}`,
+    title: `${study.name}`,
   };
 }
 
@@ -22,6 +23,7 @@ export default async function EditPage({
   params: { id: number };
 }) {
   const study = await getStudy(id);
+  const config = await getSiteConfig();
 
   return (
     <div
@@ -30,7 +32,7 @@ export default async function EditPage({
         marginTop: "12",
       })}
     >
-      <UpdateForm model={study} />
+      <DetailsPage model={study} config={config} />
     </div>
   );
 }
