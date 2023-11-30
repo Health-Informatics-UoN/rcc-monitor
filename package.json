@@ -20,7 +20,7 @@
   },
   "scripts": {
     "lint-staged": "lint-staged",
-    "type-check": "tsc --project app/client-app/tsconfig.json --pretty --noEmit && echo ",
+    "type-check": "tsc --project app/frontend-webapp/tsconfig.json --pretty --noEmit && echo ",
     "prepare": "husky install"
   }
 }

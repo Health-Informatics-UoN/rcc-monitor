@@ -5,8 +5,8 @@
       "path": "../"
     },
     {
-      "name": "app/client-app",
-      "path": "../app/client-app"
+      "name": "app/frontend-webapp",
+      "path": "../app/frontend-webapp"
     },
     {
       "name": "src/Data",

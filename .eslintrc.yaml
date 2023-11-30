@@ -25,4 +25,4 @@ rules:
   '@typescript-eslint/no-unused-vars': warn
 settings:
   next:
-    rootDir: app/client-app/
+    rootDir: app/frontend-webapp/

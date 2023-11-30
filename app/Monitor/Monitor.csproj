@@ -10,7 +10,7 @@
         <!-- Append GitHash to Version if provided -->
         <Version Condition="'$(GitHash)' != ''">$(Version)+$(GitHash)</Version>
         <SpaProxyServerUrl>http://localhost:3000</SpaProxyServerUrl>
-        <SpaProxyLaunchCommand>npm run dev --prefix ../client-app</SpaProxyLaunchCommand>
+        <SpaProxyLaunchCommand>npm run dev --prefix ../frontend-webapp</SpaProxyLaunchCommand>
     </PropertyGroup>
 
     <ItemGroup>
@@ -45,7 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Data\Data.csproj" />
+      <ProjectReference Include="..\..\lib\Data\Data.csproj" />
     </ItemGroup>
     
 </Project>
