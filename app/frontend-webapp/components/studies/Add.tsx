@@ -30,7 +30,10 @@ export default function AddStudy() {
   const [study, setStudy] = React.useState<Study>();
   const [open, setOpen] = React.useState(false);
 
-  async function handleValidate(values: { apiKey: string }) {
+  async function handleValidate(
+    values: { apiKey: string },
+    { resetForm }: { resetForm: () => void }
+  ) {
     try {
       const model = await validateStudy(values);
       setStudy(model);
@@ -47,10 +50,14 @@ export default function AddStudy() {
         title: "Failed to validate study.",
       });
     }
+    resetForm();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function handleCreate(values: any) {
+  async function handleCreate(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    values: any,
+    { resetForm }: { resetForm: () => void }
+  ) {
     try {
       await addStudy(values);
       setOpen(false);
@@ -70,10 +77,18 @@ export default function AddStudy() {
         title: "Failed to add study.",
       });
     }
+    resetForm();
+  }
+
+  function handleOpenChange() {
+    setOpen(!open);
+    setValidatedFeedback(undefined);
+    setCreateFeedback(undefined);
+    setStudy(undefined);
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button>
           Add Study

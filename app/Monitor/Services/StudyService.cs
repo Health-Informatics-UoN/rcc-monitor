@@ -311,14 +311,16 @@ public class StudyService
         {
             return await ValidateWithInstance(apiKey, Instances.Production);
         }
-        catch (FlurlHttpException ex)
+        catch (FlurlHttpException productionEx) when (productionEx.Call.Response.StatusCode == 401)
         {
-            if (ex.Call.Response.StatusCode == 401)
+            try
             {
                 return await ValidateWithInstance(apiKey, Instances.Build);
             }
-
-            throw new HttpRequestException("Unable to validate the API Key with RedCap.");
+            catch (FlurlHttpException buildEx) when (buildEx.Call.Response.StatusCode == 401)
+            {
+                throw new UnauthorizedAccessException("The API Key is not authorized with RedCap on both environments.", buildEx);
+            }
         }
     }
 

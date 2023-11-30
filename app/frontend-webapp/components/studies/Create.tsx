@@ -30,7 +30,10 @@ export function CreateForm({
   feedback,
   model,
 }: {
-  handleSubmit: (values: { apiKey: string }) => Promise<void>;
+  handleSubmit: (
+    values: { apiKey: string },
+    helpers: { resetForm: () => void }
+  ) => Promise<void>;
   feedback: string | undefined;
   model: Study;
 }) {
