@@ -24,11 +24,17 @@ public static class ConfigureWebServices
         b.Services.AddOptions().Configure<RedCapOptions>(b.Configuration.GetSection("RedCap"));
         b.Services.AddOptions().Configure<FieldMappings>(b.Configuration.GetSection("SyntheticDataMapping"));
 
+        // Map the Admin Client options private properties. 
+        var adminClientOptions = b
+            .Configuration
+            .GetSection(KeycloakAdminClientOptions.Section)
+            .Get<KeycloakAdminClientOptions>(opt => opt.BindNonPublicProperties = true);
+
         // KeyCloak Identity
         b.Services.AddKeycloakAuthentication(b.Configuration);
         b.Services.AddAuthorization(AuthConfiguration.AuthOptions)
             .AddKeycloakAuthorization(b.Configuration);
-        b.Services.AddKeycloakAdminHttpClient(b.Configuration);
+        b.Services.AddKeycloakAdminHttpClient(adminClientOptions ?? throw new InvalidOperationException());
 
         // CORS
         b.Services.AddCors(AuthConfiguration.CorsOptions(b.Configuration));

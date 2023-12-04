@@ -10,7 +10,7 @@
     },
     {
       "name": "src/Data",
-      "path": "../app/Data"
+      "path": "../lib/Data"
     },
     {
       "name": "src/Functions",
