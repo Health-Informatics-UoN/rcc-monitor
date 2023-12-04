@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/shadow-ui/Table";
 import { Alert as CustomAlert } from "@/components/Alert";
+import { formatDistanceToNow } from "date-fns";
 
 const validationSchema = object({
   studyCapacityThreshold: number()
@@ -166,7 +167,12 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
               <p className={css({ fontWeight: "bold" })}>
                 Last Checked:{" "}
                 <span className={css({ fontWeight: "normal" })}>
-                  {model.studyCapacityLastChecked}
+                  {formatDistanceToNow(
+                    new Date(model.studyCapacityLastChecked),
+                    {
+                      addSuffix: true,
+                    }
+                  )}
                 </span>
               </p>
             </Box>

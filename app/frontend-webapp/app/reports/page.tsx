@@ -59,7 +59,7 @@ export default async function Reports() {
       const key = `${row.dateTime}_${row.status.name}_${site.siteId}`;
       if (!mergedRows[key]) {
         mergedRows[key] = {
-          dateTime: format(new Date(row.dateTime), "yyyy-MM-dd HH:mm:ss"),
+          dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
           status: row.status.name,
           siteId: site.siteId,
           siteNameInBuild: "N/A",
@@ -90,7 +90,7 @@ export default async function Reports() {
         const key = `${row.dateTime}_${row.status.name}`;
         if (!mergedRows[key]) {
           mergedRows[key] = {
-            dateTime: format(new Date(row.dateTime), "yyyy-MM-dd HH:mm:ss"),
+            dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
             status: row.status.name,
             parentSiteIdInBuild: "N/A",
             parentSiteIdInProd: "N/A",
@@ -121,7 +121,7 @@ export default async function Reports() {
         columns: ["Time Occured", "Status", "Site Id", "Site Name"],
         rows: siteConflictsReports.map((row) =>
           row.sites.map((site) => ({
-            dateTime: format(new Date(row.dateTime), "yyyy-MM-dd HH:mm:ss"),
+            dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
             status: row.status.name,
             siteId: site.siteId,
             siteName: site.siteName,
