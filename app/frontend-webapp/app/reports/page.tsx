@@ -20,7 +20,6 @@ export const metadata: Metadata = {
 
 interface SiteNameConflictsReportsRow {
   dateTime: string;
-  status: string;
   siteId: string;
   siteName?: string;
   siteNameInBuild: string;
@@ -30,7 +29,6 @@ interface SiteNameConflictsReportsRow {
 
 interface SiteParentConflictsReportsRow {
   dateTime: string;
-  status: string;
   siteId?: string;
   parentSiteIdInBuild: string;
   parentSiteIdInProd: string;
@@ -60,7 +58,6 @@ export default async function Reports() {
       if (!mergedRows[key]) {
         mergedRows[key] = {
           dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
-          status: row.status.name,
           siteId: site.siteId,
           siteNameInBuild: "N/A",
           siteNameInProd: "N/A",
@@ -91,7 +88,6 @@ export default async function Reports() {
         if (!mergedRows[key]) {
           mergedRows[key] = {
             dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
-            status: row.status.name,
             parentSiteIdInBuild: "N/A",
             parentSiteIdInProd: "N/A",
             parentSiteIdInUAT: "N/A",
@@ -118,11 +114,10 @@ export default async function Reports() {
       description:
         "These sites are missing in Production, as they are present in Build. If they are attached to a study in Build, you will not be able to deploy that study to Production.",
       report: {
-        columns: ["Time Occured", "Status", "Site Id", "Site Name"],
+        columns: ["Time Occured", "Site Id", "Site Name"],
         rows: siteConflictsReports.map((row) =>
           row.sites.map((site) => ({
             dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
-            status: row.status.name,
             siteId: site.siteId,
             siteName: site.siteName,
           }))
@@ -136,7 +131,6 @@ export default async function Reports() {
       report: {
         columns: [
           "Time Occured",
-          "Status",
           "Site Id",
           "Site Name - Build",
           "Site Name - Production",
@@ -152,7 +146,6 @@ export default async function Reports() {
       report: {
         columns: [
           "Time Occured",
-          "Status",
           "Parent Site Id - Build",
           "Parent Site Id - Production",
           "Parent Site Id - UAT",

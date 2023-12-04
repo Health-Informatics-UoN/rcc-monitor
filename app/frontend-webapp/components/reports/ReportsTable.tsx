@@ -14,7 +14,6 @@ import { useSortingAndFiltering } from "@/hooks/useSortingAndFiltering";
 
 interface ReportRow {
   dateTime: string;
-  status: string;
   instance?: string;
   parentId?: string;
   siteId?: string;
