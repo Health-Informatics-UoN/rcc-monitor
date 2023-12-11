@@ -7,6 +7,12 @@ import { permissions, hasPermission } from "@/auth/permissions";
 import { css } from "@/styled-system/css";
 import { flex } from "@/styled-system/patterns";
 import { getFeatureFlags } from "@/api/config";
+import { Flex } from "@/styled-system/jsx";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/shadow-ui/HoverCard";
 
 interface NavButtonProps {
   css?: object;
@@ -73,7 +79,24 @@ export default async function Navbar() {
           )}
 
         {hasPermission(session?.permissions, permissions.ViewSiteReports) &&
-          siteMonitoringEnabled && <NavButton to="/reports">Reports</NavButton>}
+          siteMonitoringEnabled && (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <NavButton to="">Reports</NavButton>
+              </HoverCardTrigger>
+              <HoverCardContent w="100%">
+                <Flex direction="column">
+                  <NavButton
+                    css={{ w: "100%", textAlign: "left" }}
+                    to="/reports"
+                  >
+                    Active
+                  </NavButton>
+                  <NavButton to="/reports/resolved">Resolved</NavButton>
+                </Flex>
+              </HoverCardContent>
+            </HoverCard>
+          )}
 
         {hasPermission(
           session?.permissions,

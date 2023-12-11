@@ -39,6 +39,7 @@ public class ReportService
         {
             Id = x.Id,
             DateTime = x.DateTime,
+            LastChecked = x.LastChecked,
             Description = x.Description,
             ReportType = new ReportTypeModel
             {

@@ -6,7 +6,7 @@ import { pathToRegexp } from "path-to-regexp";
 
 // Map the permission that a path needs to be accessed.
 const permissionPathMapping = {
-  [permissions.ViewSiteReports]: ["/reports"],
+  [permissions.ViewSiteReports]: ["/reports", "/reports/resolved"],
   [permissions.GenerateSyntheticData]: ["/synthetic-data"],
   [permissions.ViewStudies]: ["/studies", "/studies/:id"],
   [permissions.UpdateStudies]: ["/studies/:id/edit"],

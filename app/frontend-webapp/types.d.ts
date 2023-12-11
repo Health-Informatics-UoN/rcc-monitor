@@ -23,6 +23,7 @@ type Site = {
 type ReportModel = {
   id: number;
   dateTime: Date;
+  lastChecked: Date;
   description: string;
   reportType: ReportType;
   status: Status;
