@@ -8,8 +8,10 @@ public class StudyPartialModel
     public bool StudyCapacityAlert { get; set; } = false;
     public List<StudyUser>? Users { get; set; } = new List<StudyUser>();
     public ICollection<StudyGroupModel> StudyGroup { get; set; } = new List<StudyGroupModel>();
+    public int SubjectsEnrolled { get; set; }
     public bool StudyCapacityAlertsActivated { get; set; } = false;
     public double StudyCapacityThreshold { get; set; }
+    public int SubjectsEnrolledThreshold { get; set; }
     public string StudyCapacityJobFrequency { get; set; } = string.Empty;
     public string StudyCapacityLastChecked { get; set; } = string.Empty;
     

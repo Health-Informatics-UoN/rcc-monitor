@@ -17,5 +17,6 @@ public class Config
 public enum ConfigType
 {
     TimeSpan,
-    Double
+    Double,
+    Int
 }

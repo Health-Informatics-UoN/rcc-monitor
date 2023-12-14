@@ -78,6 +78,13 @@ public class ConfigService
                 }
                 break;
             
+            case ConfigType.Int:
+                if (!int.TryParse(configModel.Value, out int val))
+                {
+                    throw new ArgumentException("The value provided is not valid");
+                }
+                break;
+            
             default:
                 throw new ArgumentException($"The value provided is not valid");
         }

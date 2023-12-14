@@ -8,160 +8,117 @@ import {
 import { Alert } from "@/components/Alert";
 import { getReports } from "@/api/reports";
 import { Metadata } from "next";
-import { vstack } from "@/styled-system/patterns";
+import { flex, vstack } from "@/styled-system/patterns";
 import { css } from "@/styled-system/css";
-import ReportsTable from "@/components/reports/ReportsTable";
 import { format } from "date-fns";
 import { h1 } from "@/styled-system/recipes";
+import { DataTable } from "@/components/data-table";
+import {
+  siteConflictsColumns,
+  siteNameConflictsColumns,
+  siteParentIdConflictsColumns,
+} from "./columns";
 
 export const metadata: Metadata = {
   title: "RedCap Site Reports",
 };
 
-interface SiteNameConflictsReportsRow {
-  dateTime: string;
-  lastChecked: string;
-  siteId: string;
-  siteName?: string;
-  siteNameInBuild: string;
-  siteNameInProd: string;
-  siteNameInUAT: string;
-}
-
-interface SiteParentConflictsReportsRow {
-  dateTime: string;
-  lastChecked: string;
-  siteId?: string;
-  parentSiteIdInBuild: string;
-  parentSiteIdInProd: string;
-  parentSiteIdInUAT: string;
-  siteName: string;
-}
-
 export default async function Reports() {
   const reports = await getReports();
 
-  const siteConflictsReports = reports.filter(
-    (v) => v.reportType.name == "ConflictingSite"
-  );
-  const siteNameConflictsReports = reports.filter(
-    (v) => v.reportType.name == "ConflictingSiteName"
-  );
-  const siteParentConflictsReports = reports.filter(
-    (v) => v.reportType.name == "ConflictingSiteParent"
-  );
+  const siteConflictsReports: SiteReport[] = reports
+    .filter((v) => v.reportType.name == "ConflictingSite")
+    .flatMap((report) =>
+      report.sites.map((site) => ({
+        dateOccured: format(new Date(report.dateTime), "dd-MM-yyyy"),
+        lastChecked: format(new Date(report.lastChecked), "dd-MM-yyyy hh:mm"),
+        siteId: site.siteId,
+        siteName: site.siteName,
+      }))
+    );
 
-  const siteNameConflictsReportsRow = siteNameConflictsReports.map((row) => {
-    const mergedRows: { [key: string]: SiteNameConflictsReportsRow } = {};
-
-    // Loop through the sites and merge rows with the same dateTime, status, and siteId
-    row.sites.forEach((site) => {
-      const key = `${row.dateTime}_${row.status.name}_${site.siteId}`;
-      if (!mergedRows[key]) {
-        mergedRows[key] = {
-          dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
-          lastChecked: format(new Date(row.lastChecked), "dd-MM-yyyy hh:mm"),
+  const siteNameConflictsReports: SiteReport[] = reports
+    .filter((v) => v.reportType.name == "ConflictingSiteName")
+    .flatMap((report) =>
+      report.sites.map((site) => {
+        return {
+          dateOccured: format(new Date(report.dateTime), "dd-MM-yyyy"),
+          lastChecked: format(new Date(report.lastChecked), "dd-MM-yyyy hh:mm"),
           siteId: site.siteId,
-          siteNameInBuild: "N/A",
-          siteNameInProd: "N/A",
-          siteNameInUAT: "N/A",
+          siteNameInBuild: site.instance === "Build" ? site.siteName : "",
+          siteNameInProd: site.instance === "Production" ? site.siteName : "",
+          siteNameInUAT: site.instance === "UAT" ? site.siteName : "",
         };
-      }
+      })
+    );
 
-      // Update site names based on the instance
-      if (site.instance === "Build") {
-        mergedRows[key].siteNameInBuild = site.siteName;
-      } else if (site.instance === "Production") {
-        mergedRows[key].siteNameInProd = site.siteName;
-      } else if (site.instance === "UAT") {
-        mergedRows[key].siteNameInUAT = site.siteName;
-      }
-    });
+  const siteParentIdConflictsReports: SiteReport[] = reports
+    .filter((v) => v.reportType.name == "ConflictingSiteParent")
+    .flatMap((report) =>
+      report.sites.map((site) => ({
+        dateOccured: format(new Date(report.dateTime), "dd-MM-yyyy"),
+        lastChecked: format(new Date(report.lastChecked), "dd-MM-yyyy hh:mm"),
+        parentSiteIdInBuild: site.instance === "Build" ? site.parentSiteId : "",
+        parentSiteIdInProd:
+          site.instance === "Production" ? site.parentSiteId : "",
+        parentSiteIdInUAT: site.instance === "UAT" ? site.parentSiteId : "",
+        siteName: site.siteName,
+      }))
+    );
 
-    // Convert the mergedRows object into an array of values
-    return Object.values(mergedRows);
-  });
+  function mergeReports(obj: SiteReport[], name: string): SiteReport[] {
+    const arr: SiteReport[] = [];
 
-  const siteParentConflictsReportsRow = siteParentConflictsReports.map(
-    (row) => {
-      const mergedRows: { [key: string]: SiteParentConflictsReportsRow } = {};
-
-      row.sites.forEach((site) => {
-        const key = `${row.dateTime}_${row.status.name}`;
-        if (!mergedRows[key]) {
-          mergedRows[key] = {
-            dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
-            lastChecked: format(new Date(row.lastChecked), "dd-MM-yyyy hh:mm"),
-            parentSiteIdInBuild: "N/A",
-            parentSiteIdInProd: "N/A",
-            parentSiteIdInUAT: "N/A",
-            siteName: site.siteName,
-          };
+    if (name === "SiteNameConflicts") {
+      for (let i = 0; i < obj.length - 1; i++) {
+        if (obj[i].siteId === obj[i + 1].siteId) {
+          arr.push({
+            ...obj[i],
+            siteNameInBuild: "N/A",
+            siteNameInProd: obj[i + 1].siteNameInProd,
+            siteNameInUAT: obj[i].siteNameInUAT,
+          });
         }
-
-        if (site.instance === "Build") {
-          mergedRows[key].parentSiteIdInBuild = site.parentSiteId;
-        } else if (site.instance === "Production") {
-          mergedRows[key].parentSiteIdInProd = site.parentSiteId;
-        } else if (site.instance === "UAT") {
-          mergedRows[key].parentSiteIdInUAT = site.parentSiteId;
-        }
-      });
-
-      return Object.values(mergedRows);
+      }
+      return arr;
     }
-  );
+    for (let i = 0; i < obj.length - 1; i++) {
+      if (obj[i].siteName === obj[i + 1].siteName) {
+        arr.push({
+          ...obj[i],
+          parentSiteIdInBuild: "N/A",
+          parentSiteIdInProd: obj[i + 1].parentSiteIdInProd,
+          parentSiteIdInUAT: obj[i].parentSiteIdInUAT,
+        });
+      }
+    }
 
-  const reportsObj = {
-    siteConflicts: {
+    return arr;
+  }
+
+  const reportsData = [
+    {
       title: "Site Conflicts",
       description:
         "These sites are missing in Production, as they are present in Build. If they are attached to a study in Build, you will not be able to deploy that study to Production.",
-      report: {
-        columns: ["Date Occured", "Last Checked", "Site Id", "Site Name"],
-        rows: siteConflictsReports.map((row) =>
-          row.sites.map((site) => ({
-            dateTime: format(new Date(row.dateTime), "dd-MM-yyyy"),
-            lastChecked: format(new Date(row.lastChecked), "dd-MM-yyyy hh:mm"),
-            siteId: site.siteId,
-            siteName: site.siteName,
-          }))
-        ),
-      },
+      columns: siteConflictsReports,
     },
-    siteNameConflicts: {
+    {
       title: "Site Name Conflicts",
       description:
         "These sites have different names in each instance, but the same Global Site Id. This could result in studies being deployed to incorrect sites.",
-      report: {
-        columns: [
-          "Date Occured",
-          "Last Checked",
-          "Site Id",
-          "Site Name - Build",
-          "Site Name - Production",
-          "Site Name - UAT",
-        ],
-        rows: siteNameConflictsReportsRow,
-      },
+      columns: mergeReports(siteNameConflictsReports, "SiteNameConflicts"),
     },
-    siteConflictsParents: {
+    {
       title: "Site Parent Id Conflicts",
       description:
         "These sites have different Parents in each instance. If they are attached to a study in Build, you will not be able to deploy that study to Production.",
-      report: {
-        columns: [
-          "Date Occured",
-          "Last Checked",
-          "Parent Site Id - Build",
-          "Parent Site Id - Production",
-          "Parent Site Id - UAT",
-          "Site Name",
-        ],
-        rows: siteParentConflictsReportsRow,
-      },
+      columns: mergeReports(
+        siteParentIdConflictsReports,
+        "SiteParentIdConflicts"
+      ),
     },
-  };
+  ];
 
   return (
     <>
@@ -180,26 +137,38 @@ export default async function Reports() {
           bg="transparent"
           p="0"
         >
-          {Object.values(reportsObj).map((obj, idx) => (
-            <TabsTrigger key={idx} className={triggerStyle} value={obj.title}>
-              {obj.title}
+          {reportsData.map((report, index) => (
+            <TabsTrigger
+              key={index}
+              className={triggerStyle}
+              value={report.title}
+            >
+              {report.title}
             </TabsTrigger>
           ))}
         </TabsList>
-        {Object.values(reportsObj).map((obj, idx) => (
-          <TabsContent key={idx} value={obj.title}>
-            {obj.report.rows.length <= 0 ? (
+        {reportsData.map((report, index) => (
+          <TabsContent key={index} value={report.title}>
+            {report.columns.length <= 0 ? (
               <Alert
                 css={{ m: "50px auto" }}
                 message="There are currently no reports."
               />
             ) : (
               <div className={vstack({ gap: "6" })}>
-                <p className={css({ m: "30px 0px" })}>{obj.description}</p>
-                <ReportsTable
-                  columns={obj.report.columns}
-                  rows={obj.report.rows.flat()}
-                />
+                <p className={css({ m: "30px 0px" })}>{report.description}</p>
+                <div className={flex({ gap: "6", direction: "column" })}>
+                  <DataTable
+                    columns={
+                      report.title === "Site Name Conflicts"
+                        ? siteNameConflictsColumns
+                        : report.title === "Site Parent Id Conflicts"
+                        ? siteParentIdConflictsColumns
+                        : siteConflictsColumns
+                    }
+                    data={report.columns}
+                  />
+                </div>
               </div>
             )}
           </TabsContent>

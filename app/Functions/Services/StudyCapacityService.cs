@@ -53,6 +53,7 @@ public class StudyCapacityService
         }
         
         entity.StudyCapacityLastChecked = DateTimeOffset.Now;
+        entity.SubjectsEnrolled = subjects;
         await _db.SaveChangesAsync();
     }
 

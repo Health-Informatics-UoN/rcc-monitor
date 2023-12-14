@@ -65,9 +65,11 @@ public class StudyService
                 PlannedSize = x.PlannedSize
             }).ToList(),
             Instance = entity.Instance.Name,
+            SubjectsEnrolled = entity.SubjectsEnrolled,
             StudyCapacityAlert = entity.StudyCapacityAlert,
             StudyCapacityAlertsActivated = entity.StudyCapacityAlertsActivated,
             StudyCapacityThreshold = entity.StudyCapacityThreshold,
+            SubjectsEnrolledThreshold = entity.SubjectsEnrolledThreshold,
             StudyCapacityJobFrequency = entity.StudyCapacityJobFrequency.ToString(@"hh\:mm\:ss"),
             StudyCapacityLastChecked = entity.StudyCapacityLastChecked.ToString("G")
         };
@@ -135,6 +137,7 @@ public class StudyService
             // Get the current config defaults
             var defaultCapacityThreshold = await _configService.GetValue(ConfigKey.RandomisationThreshold, "0.70");
             var defaultCapacityFrequency = await _configService.GetValue(ConfigKey.RandomisationJobFrequency, "23:00");
+            var defaultSubjectsEnrolledThreshold = await _configService.GetValue(ConfigKey.SubjectsEnrolledThreshold, "10");
             
             var entity = new Study
             {
@@ -143,7 +146,8 @@ public class StudyService
                 RedCapId = model.Id,
                 Instance = instance,
                 StudyCapacityThreshold = double.Parse(defaultCapacityThreshold),
-                StudyCapacityJobFrequency = TimeSpan.Parse(defaultCapacityFrequency)
+                StudyCapacityJobFrequency = TimeSpan.Parse(defaultCapacityFrequency),
+                SubjectsEnrolledThreshold = int.Parse(defaultSubjectsEnrolledThreshold)
             };
             _db.Studies.Add(entity);
             

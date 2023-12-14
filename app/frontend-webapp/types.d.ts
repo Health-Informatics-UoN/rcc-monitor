@@ -29,3 +29,16 @@ type ReportModel = {
   status: Status;
   sites: Site[];
 };
+
+type SiteReport = {
+  dateOccured: string;
+  lastChecked: string;
+  siteId?: string;
+  siteName?: string;
+  siteNameInBuild?: string;
+  siteNameInProd?: string;
+  siteNameInUAT?: string;
+  parentSiteIdInBuild?: string;
+  parentSiteIdInProd?: string;
+  parentSiteIdInUAT?: string;
+};

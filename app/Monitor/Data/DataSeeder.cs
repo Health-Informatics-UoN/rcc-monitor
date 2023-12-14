@@ -127,6 +127,14 @@ public class DataSeeder
           Value = "23:00:00",
           Description = "How often we check the threshold of randomisation groups in the study",
           Type = ConfigType.TimeSpan
+        },
+        new()
+        {
+          Key = ConfigKey.SubjectsEnrolledThreshold,
+          Name = "Subjects Enrolled Threshold",
+          Value = "10",
+          Description = "The threshold for any enrolled patients on a study",
+          Type = ConfigType.Int
         }
       };
       _db.AddRange(seedConfig);
