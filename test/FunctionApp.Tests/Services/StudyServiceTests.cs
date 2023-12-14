@@ -41,8 +41,8 @@ public class StudyServiceTests : IClassFixture<Fixtures>
 
         // Assert that the user was added
         Assert.NotNull(addedUser);
-        Assert.Equal(userId, addedUser.UserId);
-        Assert.Equal(study.RedCapId, addedUser.Study.RedCapId);
+        Assert.Equal(userId, addedUser?.UserId);
+        Assert.Equal(study.RedCapId, addedUser?.Study.RedCapId);
     }
     
     [Fact]
@@ -128,8 +128,8 @@ public class StudyServiceTests : IClassFixture<Fixtures>
             .FirstOrDefaultAsync();
 
         // Check that the users were added
-        Assert.NotNull(updatedStudy.Users.FirstOrDefault(u => u.UserId == "user3"));
-        Assert.NotNull(updatedStudy.Users.FirstOrDefault(u => u.UserId == "user4"));
+        Assert.NotNull(updatedStudy?.Users.FirstOrDefault(u => u.UserId == "user3"));
+        Assert.NotNull(updatedStudy?.Users.FirstOrDefault(u => u.UserId == "user4"));
     }
 
 

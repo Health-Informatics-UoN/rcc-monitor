@@ -92,8 +92,9 @@ public class StudiesController : ControllerBase
         }
 
         // Validate the study again with RedCap and compare them
+        // It's necessary to double check this to be certain this is the study we want.
         var redCapStudy = await _studyService.Validate(model.ApiKey);
-        if (!redCapStudy.Equals(model))
+        if (redCapStudy.Id != model.Id || redCapStudy.Name != model.Name || redCapStudy.ApiKey != model.ApiKey)
         {
             return BadRequest("We could not revalidate the study with RedCap.");
         }

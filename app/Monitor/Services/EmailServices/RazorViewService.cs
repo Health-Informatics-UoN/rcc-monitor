@@ -57,7 +57,7 @@ namespace Monitor.Services.EmailServices
               metadataProvider: new EmptyModelMetadataProvider(),
               modelState: new ModelStateDictionary())
           {
-            Model = model
+            Model = model!
           },
           new TempDataDictionary(
               _actionContext.HttpContext,

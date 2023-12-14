@@ -8,7 +8,7 @@ public class StudyGroup
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
-    public Study Study { get; set; }
+    public Study Study { get; set; } = null!;
     public string Name { get; set; } = string.Empty;
     public int PlannedSize { get; set; }
 }

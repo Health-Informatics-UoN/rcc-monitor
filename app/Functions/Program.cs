@@ -28,7 +28,7 @@ var host = new HostBuilder()
         var apiConfig = context.Configuration.GetSection("RedCap").Get<SiteOptions>();
         s.AddClientAccessTokenHttpClient("client", configureClient: client =>
         {
-            client.BaseAddress = new Uri(apiConfig.ApiUrl);
+            client.BaseAddress = new Uri(apiConfig?.ApiUrl ?? throw new InvalidOperationException());
         });
         
         s.AddDbContext<ApplicationDbContext>(o =>
@@ -51,7 +51,7 @@ var host = new HostBuilder()
         
         var useRedCapData = context.Configuration.GetValue<bool>("UseRedCapData");
         if (useRedCapData) s.AddTransient<IDataService, RedCapSitesService>();
-        else s.AddTransient<IDataService, DummyDataService>();
+        else s.AddTransient<IDataService, PlaceholderDataService>();
     })
     .Build();
     

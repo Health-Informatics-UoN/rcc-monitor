@@ -7,18 +7,5 @@ public class StudyModel
     public string ApiKey { get; set; } = string.Empty;
     public List<StudyUser>? Users { get; set; } = new List<StudyUser>();
     public string Instance { get; set; } = string.Empty;
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is not StudyModel other)
-            return false;
-
-        return Id == other.Id && Name == other.Name && ApiKey == other.ApiKey;
-    }
-
-    protected bool Equals(StudyModel other)
-    {
-        return Id == other.Id && Name == other.Name && ApiKey == other.ApiKey;
-    }
     
 }

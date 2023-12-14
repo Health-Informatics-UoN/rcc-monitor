@@ -34,5 +34,5 @@ public interface IDataService
     /// <param name="url">URL of the redCAP instance</param>
     /// <param name="token">Tenant token to use.</param>
     /// <returns>List of site models.</returns>
-    Task<List<Site?>> ListDetail(string url, string token);
+    Task<List<Site>> ListDetail(string url, string token);
 }

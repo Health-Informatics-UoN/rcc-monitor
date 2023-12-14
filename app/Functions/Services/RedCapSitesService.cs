@@ -45,11 +45,11 @@ public class RedCapSitesService : IDataService
         return JsonConvert.DeserializeObject<Site>(responseString) ?? new Site();
     }
     
-    public async Task<List<Site?>> ListDetail(string url, string token)
+    public async Task<List<Site>> ListDetail(string url, string token)
     {
         var sites = await List(url, token);
 
-        var siteDetails = new List<Site?>();
+        var siteDetails = new List<Site>();
         foreach (var site in sites)
         {
             var detail = await Get(url, site.Id.ToString(), token);

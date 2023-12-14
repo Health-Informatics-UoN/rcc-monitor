@@ -4,7 +4,7 @@ using Functions.Services;
 
 namespace Francois.Tests.Services;
 
-public class DummyDataServiceTests
+public class PlaceholderDataServiceTests
 {
     [Fact]
     public async Task ListDetail_ReturnsListOfSites()
@@ -12,7 +12,7 @@ public class DummyDataServiceTests
         // Arrange
         var url = "sampleUrl";
         var token = "sampleToken";
-        IDataService service = new DummyDataService();
+        IDataService service = new PlaceholderDataService();
 
         // Act
         var result = await service.ListDetail(url, token);
