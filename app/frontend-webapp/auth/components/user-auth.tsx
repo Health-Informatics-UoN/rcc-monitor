@@ -2,34 +2,19 @@
 
 import { signIn, signOut } from "next-auth/react";
 import { css } from "@/styled-system/css";
+import { Button } from "@/components/shadow-ui/Button";
 
 export const LoginButton = () => {
   return (
-    <button
-      onClick={() => signIn("keycloak")}
-      className={css({
-        p: "15px",
-        fontSize: "17px",
-        fontWeight: "bold",
-        _hover: { bg: "#50a7de" },
-      })}
-    >
+    <Button variant={"ghost"} onClick={() => signIn("keycloak")}>
       Sign in
-    </button>
+    </Button>
   );
 };
 
 export const LogoutButton = () => {
   return (
-    <button
-      onClick={() => signOut({ callbackUrl: "/" })}
-      className={css({
-        p: "15px",
-        fontSize: "17px",
-        fontWeight: "bold",
-        _hover: { bg: "#50a7de" },
-      })}
-    >
+    <button onClick={() => signOut({ callbackUrl: "/" })} className={css({})}>
       Sign Out
     </button>
   );

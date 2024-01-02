@@ -9,6 +9,7 @@ extends:
 plugins:
   - prettier
   - '@typescript-eslint'
+  - 'simple-import-sort'
 parserOptions:
   ecmaVersion: 2021
   sourceType: module
@@ -19,6 +20,8 @@ rules:
   react/jsx-uses-react: 0
   react/prop-types: 0
   eslint/no-unused-vars: 0
+  simple-import-sort/imports: warn
+  simple-import-sort/exports: warn
   prettier/prettier:
     - warn
     - endOfLine: auto

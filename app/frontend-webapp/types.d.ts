@@ -1,3 +1,7 @@
+import { permissions } from "@/auth/permissions";
+import { Icons } from "@/components/Icons";
+import { FeatureFlagModel } from "@/types/config";
+
 type ReportType = {
   id: number;
   name: "ConflictingSite" | "ConflictingSiteName" | "ConflictingSiteParent";
@@ -42,3 +46,15 @@ type SiteReport = {
   parentSiteIdInProd?: string;
   parentSiteIdInUAT?: string;
 };
+
+interface SidebarLink {
+  name: string;
+  path?: string;
+  icon?: keyof typeof Icons;
+}
+
+interface SidebarItem extends SidebarLink {
+  permission?: keyof typeof permissions;
+  featureFlag?: keyof FeatureFlagModel;
+  children?: SideBarLink[];
+}

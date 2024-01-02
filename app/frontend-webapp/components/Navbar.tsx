@@ -1,117 +1,25 @@
-/* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
-import { LoginButton, LogoutButton } from "@/auth/components/user-auth";
-import { getServerSession } from "next-auth";
-import { options } from "@/auth/options";
-import { permissions, hasPermission } from "@/auth/permissions";
+import { UserMenu } from "@/components/UserMenu";
 import { css } from "@/styled-system/css";
-import { flex } from "@/styled-system/patterns";
-import { getFeatureFlags } from "@/api/config";
-import { Flex } from "@/styled-system/jsx";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/shadow-ui/HoverCard";
 
-interface NavButtonProps {
-  css?: object;
-  to: string;
-  children: React.ReactNode;
-}
+import React from "react";
 
-const NavButton = ({ css: cssProp = {}, children, to }: NavButtonProps) => {
-  return (
-    <Link href={to}>
-      <button
-        className={css(
-          {
-            p: "15px",
-            fontSize: "17px",
-            fontWeight: "bold",
-            _hover: { bg: "#50a7de" },
-          },
-          cssProp
-        )}
-      >
-        {children}
-      </button>
-    </Link>
-  );
-};
-
-export default async function Navbar() {
-  const session = await getServerSession(options);
-  const {
-    siteMonitoringEnabled,
-    syntheticDataEnabled,
-    studyManagementEnabled,
-  } = await getFeatureFlags();
-
+export const Navbar = () => {
   return (
     <nav
-      className={flex({
-        h: "60px",
-        position: "relative",
+      className={css({
+        hideBelow: "sm",
+        display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        bg: "linear-gradient(to right, #56a1d1, #0074d9)",
+        w: "full",
+        pos: "fixed",
+        pl: "4",
+        pr: "4",
+        h: "16",
       })}
     >
-      <div
-        className={css({
-          color: "white",
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-          ml: "25px",
-        })}
-      >
-        <Link href="/">RedCap Monitor</Link>
-      </div>
-      <div
-        className={flex({ color: "white", alignItems: "center", mr: "30px" })}
-      >
-        {session && <NavButton to="/">Home</NavButton>}
-
-        {hasPermission(session?.permissions, permissions.ViewStudies) &&
-          studyManagementEnabled && (
-            <NavButton to="/studies">Studies</NavButton>
-          )}
-
-        {hasPermission(session?.permissions, permissions.ViewSiteReports) &&
-          siteMonitoringEnabled && (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <NavButton to="">Reports</NavButton>
-              </HoverCardTrigger>
-              <HoverCardContent w="100%">
-                <Flex direction="column">
-                  <NavButton
-                    css={{ w: "100%", textAlign: "left" }}
-                    to="/reports"
-                  >
-                    Active
-                  </NavButton>
-                  <NavButton to="/reports/resolved">Resolved</NavButton>
-                </Flex>
-              </HoverCardContent>
-            </HoverCard>
-          )}
-
-        {hasPermission(
-          session?.permissions,
-          permissions.GenerateSyntheticData
-        ) &&
-          syntheticDataEnabled && (
-            <NavButton to="/synthetic-data">Synthetic Data</NavButton>
-          )}
-
-        {hasPermission(session?.permissions, permissions.EditConfig) && (
-          <NavButton to="/settings">Settings</NavButton>
-        )}
-
-        <div>{session ? <LogoutButton /> : <LoginButton />}</div>
-      </div>
+      <div className={css({ flexGrow: "1" })}></div>
+      <UserMenu />
     </nav>
   );
-}
+};
+export default Navbar;
