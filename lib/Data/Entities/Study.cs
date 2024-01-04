@@ -21,6 +21,7 @@ public class Study
     /// <summary>
     /// API key required to gain access to the study.
     /// </summary>
+    [Encrypted]
     public string ApiKey { get; set; } = string.Empty;
     /// <summary>
     /// Users associated with the study.
