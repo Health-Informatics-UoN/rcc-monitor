@@ -39,11 +39,7 @@ export default function Config({ config }: { config: ConfigModel }) {
 
   return (
     <Description text={config.description}>
-      <Grid
-        w={["100%", "100%", "100%", "50%"]}
-        gridTemplateColumns="1fr 1fr"
-        m="35px 0px"
-      >
+      <Grid gridTemplateColumns="1fr 1fr" m="25px 0px">
         <p
           className={css({
             fontSize: "18px",

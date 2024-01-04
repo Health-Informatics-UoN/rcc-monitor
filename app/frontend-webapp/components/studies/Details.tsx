@@ -2,7 +2,13 @@
 
 import React from "react";
 import { Formik, Form } from "formik";
-import { AlertCircle, BellOff, BellRing, Plus } from "lucide-react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  BellOff,
+  BellRing,
+  Plus,
+} from "lucide-react";
 import { css } from "@/styled-system/css";
 import { Box, Flex, Grid } from "@/styled-system/jsx";
 import { h1, h4, icon } from "@/styled-system/recipes";
@@ -34,7 +40,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/shadow-ui/Table";
-import { Alert as CustomAlert } from "@/components/Alert";
 import { formatDistanceToNow } from "date-fns";
 
 const validationSchema = object({
@@ -127,9 +132,9 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
             <UserManagement users={values.users} />
           </Grid>
 
-          <Box m="20px 0">
-            <h4 className={h4()}>Study Groups</h4>
-            {model.studyGroup?.length > 0 ? (
+          {model.studyGroup?.length > 0 && (
+            <Box m="20px 0">
+              <h4 className={h4()}>Study Groups</h4>
               <Table>
                 <TableHeader>
                   <TableHead>Name</TableHead>
@@ -144,14 +149,38 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
                   ))}
                 </TableBody>
               </Table>
-            ) : (
-              <Box m="10px 0">
-                <CustomAlert message="There are no study groups" />
-              </Box>
-            )}
-          </Box>
-
+            </Box>
+          )}
           <Separator />
+
+          <Grid gap="4" py="4">
+            <h4 className={h4()}>Subjects Enrolled</h4>
+            {model.instance === "Build" &&
+              model.subjectsEnrolled > model.subjectsEnrolledThreshold && (
+                <Box w="80%">
+                  <Alert variant="destructive">
+                    <AlertTriangle className={icon()} />
+                    <AlertTitle>Subjects enrolled capacity exceeded</AlertTitle>
+                    <AlertDescription>
+                      The capacity is {model.subjectsEnrolledThreshold} and you
+                      currently have {model.subjectsEnrolled} subjects enrolled
+                    </AlertDescription>
+                  </Alert>
+                </Box>
+              )}
+            <Flex gap={5}>
+              <Box>
+                <p className={css({ fontWeight: "bold" })}>
+                  Capacity: <span>{model.subjectsEnrolledThreshold}</span>
+                </p>
+              </Box>
+              <Box>
+                <p className={css({ fontWeight: "bold" })}>
+                  Subjects Enrolled: <span>{model.subjectsEnrolled}</span>
+                </p>
+              </Box>
+            </Flex>
+          </Grid>
 
           <div className={css({ m: "50px 0px" })}>
             <Flex gap={3} alignItems="center">

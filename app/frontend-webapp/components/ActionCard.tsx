@@ -23,7 +23,7 @@ export default function ActionCard({
         borderWidth={2}
         borderRadius={5}
         h="100%"
-        w={["450px", "350px", "450px"]}
+        w="100%"
         p={4}
         _hover={{
           borderColor: "blue.500",

@@ -11,9 +11,11 @@ export default async function Page() {
       <Box>
         <h1 className={h1()}>Settings</h1>
       </Box>
-      {config.map((config) => (
-        <Config key={config.key} config={config} />
-      ))}
+      <Box w={{ lg: "60%" }}>
+        {config.map((config) => (
+          <Config key={config.key} config={config} />
+        ))}
+      </Box>
     </div>
   );
 }

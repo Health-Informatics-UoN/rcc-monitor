@@ -1,11 +1,13 @@
 "use server";
+import { revalidatePath } from "next/cache";
+
 import {
   ConfigModel,
   FeatureFlagModel,
   UpdateConfigModel,
 } from "@/types/config";
+
 import request from "./request";
-import { revalidatePath } from "next/cache";
 
 const fetchKeys = {
   list: "config",

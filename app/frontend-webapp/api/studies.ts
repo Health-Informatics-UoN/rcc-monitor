@@ -44,6 +44,8 @@ export async function getStudy(id: number): Promise<StudyPartial> {
       studyCapacityThreshold: 0,
       studyCapacityJobFrequency: "",
       studyCapacityLastChecked: "",
+      subjectsEnrolled: 0,
+      subjectsEnrolledThreshold: 0,
     };
   }
 }

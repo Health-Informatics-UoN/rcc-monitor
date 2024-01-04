@@ -21,6 +21,7 @@ export default function RootLayout({
           <Navbar />
           <Sidebar sidebarItems={SidebarItems}>
             <Container
+              w="100%"
               className={css({
                 mt: 20,
               })}

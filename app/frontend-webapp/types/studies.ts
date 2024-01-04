@@ -11,6 +11,8 @@ export interface StudyPartial {
   studyCapacityThreshold: number;
   studyCapacityJobFrequency: string;
   studyCapacityLastChecked: string;
+  subjectsEnrolled: number;
+  subjectsEnrolledThreshold: number;
 }
 
 export interface StudyGroup {

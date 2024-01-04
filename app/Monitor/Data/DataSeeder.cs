@@ -135,6 +135,14 @@ public class DataSeeder
           Value = "10",
           Description = "The threshold for any enrolled patients on a study",
           Type = ConfigType.Int
+        },
+        new()
+        {
+          Key = ConfigKey.SubjectsEnrolledInBuildThreshold,
+          Name = "Subjects Enrolled Threshold (Build)",
+          Value = "10",
+          Description = "The threshold for any enrolled patients on a study in build instance",
+          Type = ConfigType.Int
         }
       };
       _db.AddRange(seedConfig);
