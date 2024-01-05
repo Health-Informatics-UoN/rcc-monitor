@@ -4,16 +4,16 @@ using Monitor.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.DataEncryption;
 using Microsoft.EntityFrameworkCore.DataEncryption.Providers;
+using Microsoft.Extensions.Configuration;
 
 namespace Monitor.Data;
 
 public class ApplicationDbContext : DbContext
 
 {
-    private readonly byte[] _encryptionKey = Encoding.Unicode.GetBytes("Fk0bI2pC"); // TODO: Read this from config
     private readonly IEncryptionProvider _provider;
     
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration config)
         : base(options)
     {
         // TODO: We should be generating a different IV everytime we encrypt.
@@ -24,8 +24,11 @@ public class ApplicationDbContext : DbContext
         aes.KeySize = 256;
         aes.BlockSize = 128;
         aes.GenerateIV();
+        
+        var encryptionKey = Encoding.UTF8.GetBytes(config["EncryptionKey"] ?? string.Empty);
+        var encryptionIv = Encoding.UTF8.GetBytes(config["EncryptionIV"] ?? string.Empty);
 
-        _provider = new AesProvider(Encoding.Unicode.GetBytes("Fk0bI2pCVdppFhEj"), Encoding.Unicode.GetBytes("Fk0bI2pC"));
+        _provider = new AesProvider(encryptionKey, encryptionIv);
     }
     
     public DbSet<Report> Reports => Set<Report>();
