@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Monitor.Config;
 using Monitor.Data;
+using Monitor.Data.Config;
 using Monitor.Services;
 using Moq;
 
@@ -15,13 +16,17 @@ public class Fixtures
 {
     public readonly ApplicationDbContext DbContext;
     
-    public Fixtures()
+    public Fixtures() 
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
-
-        DbContext = new ApplicationDbContext(options);
+        var encryptionOptions = Options.Create(new EncryptionOptions()
+        {
+            EncryptionKey = "test-key-example"
+        });
+        
+        DbContext = new ApplicationDbContext(options, encryptionOptions);
     }
 
     public async Task SeedTestData()
