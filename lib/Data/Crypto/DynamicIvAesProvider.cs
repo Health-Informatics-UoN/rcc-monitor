@@ -1,9 +1,8 @@
-namespace Monitor.Data;
-
-using System.IO;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore.DataEncryption;
 using Microsoft.EntityFrameworkCore.DataEncryption.Providers;
+
+namespace Monitor.Data.Crypto;
 
 /// <summary>
 /// We need a custom AesProvider that supports dynamic IV, as the base library does not do it.
