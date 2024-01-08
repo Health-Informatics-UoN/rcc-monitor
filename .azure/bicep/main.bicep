@@ -236,6 +236,7 @@ var baseBackendSettings = {
   Keycloak__credentials__secret: referenceSecret(kv.name, 'backend-keycloak-secret')
   Keycloak__RolesSource: 'Realm'
   FrontendAppUrl: 'https://${frontend.outputs.name}.azurewebsites.net'
+  DatabaseEncryption__EncryptionKey: referenceSecret(kv.name, 'database-encryption-key')
 }
 
 module backendSiteConfig 'config/app-service-config.bicep' = {
@@ -318,6 +319,7 @@ var baseWorkerSettings = {
   Identity__Issuer: 'https://${keycloak.outputs.name}.azurewebsites.net/realms/nuh-${env}/protocol/openid-connect/token'
   Identity__ClientId: 'functions'
   Identity__Secret: referenceSecret(kv.name, 'worker-identity-secret')
+  DatabaseEncryption__EncryptionKey: referenceSecret(kv.name, 'database-encryption-key')
 }
 
 // Add settings
