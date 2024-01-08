@@ -8,8 +8,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDataDbContext(this IServiceCollection s, IConfiguration c)
     {
-        var x = c.GetSection("DatabaseEncryption");
-        s.Configure<EncryptionOptions>(x);
+        s.Configure<EncryptionOptions>(options =>
+        {
+            c.GetSection("DatabaseEncryption").Bind(options);
+        });
         
         s.AddDbContext<ApplicationDbContext>(o =>
         {
