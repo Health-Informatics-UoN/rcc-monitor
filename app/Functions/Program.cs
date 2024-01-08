@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Monitor.Data;
+using Monitor.Data.Config;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -31,15 +32,8 @@ var host = new HostBuilder()
             client.BaseAddress = new Uri(apiConfig?.ApiUrl ?? throw new InvalidOperationException());
         });
         
-        s.AddDbContext<ApplicationDbContext>(o =>
-        {
-            var connectionString = context.Configuration.GetConnectionString("Default");
-            if (string.IsNullOrWhiteSpace(connectionString))
-                o.UseNpgsql();
-            else
-                o.UseNpgsql(connectionString,
-                    o => o.EnableRetryOnFailure());
-        });
+
+        s.AddDataDbContext(context.Configuration);
         s.AddOptions()
             .Configure<SiteOptions>(context.Configuration.GetSection("RedCap"));
             

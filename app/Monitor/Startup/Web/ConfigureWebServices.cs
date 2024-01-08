@@ -8,6 +8,7 @@ using Monitor.Auth;
 using Monitor.Config;
 using Monitor.Constants;
 using Monitor.Data;
+using Monitor.Data.Config;
 using Monitor.Extensions;
 using Monitor.Models.SyntheticData;
 using Monitor.Services;
@@ -61,13 +62,7 @@ public static class ConfigureWebServices
         b.Services.AddFeatureManagement();
 
         // EF
-        b.Services
-            .AddDbContext<ApplicationDbContext>(o =>
-            {
-                var connectionString = b.Configuration.GetConnectionString("Default");
-                o.UseNpgsql(connectionString,
-                    pgo => pgo.EnableRetryOnFailure());
-            });
+        b.Services.AddDataDbContext(b.Configuration);
 
         // App specific services 
         b.Services
