@@ -15,7 +15,8 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration config)
         : base(options)
     {
-        var encryptionKey = Encoding.UTF8.GetBytes(config["EncryptionKey"] ?? string.Empty);
+        var encryptionKey =
+            Encoding.UTF8.GetBytes(config["EncryptionKey"] ?? throw new ArgumentException("EncryptionKey is missing."));
 
         _provider = new DynamicIvAesProvider(encryptionKey);
     }
