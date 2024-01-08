@@ -24,6 +24,7 @@ public class StudyServiceTests : IClassFixture<Fixtures>
         var study = new Study
         {
             RedCapId = 1, 
+            ApiKey = "test"
         };
         context.Studies.Add(study);
         await context.SaveChangesAsync();
@@ -55,6 +56,7 @@ public class StudyServiceTests : IClassFixture<Fixtures>
         var study = new Study
         {
             RedCapId = 2,
+            ApiKey = "test",
             Users = new List<StudyUser>
             {
                 new() { UserId = "user1" },
@@ -99,6 +101,7 @@ public class StudyServiceTests : IClassFixture<Fixtures>
         var study = new Study
         {
             RedCapId = 3,
+            ApiKey = "test",
             Users = new List<StudyUser>
             {
                 new() { UserId = "user1" },
