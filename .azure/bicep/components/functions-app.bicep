@@ -4,7 +4,7 @@ param logAnalyticsWorkspaceName string
 param tags object = {}
 
 // required for linux
-param runtimeStack string = 'DOTNET-ISOLATED|7.0'
+param runtimeStack string = 'DOTNET-ISOLATED|8.0'
 
 param connectionStrings array = []
 
