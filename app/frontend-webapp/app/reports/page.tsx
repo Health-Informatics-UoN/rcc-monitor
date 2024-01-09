@@ -1,3 +1,9 @@
+import { format } from "date-fns";
+import { Metadata } from "next";
+
+import { getReports } from "@/api/reports";
+import { Alert } from "@/components/Alert";
+import { DataTable } from "@/components/data-table";
 import {
   Tabs,
   TabsContent,
@@ -5,14 +11,11 @@ import {
   TabsTrigger,
   triggerStyle,
 } from "@/components/shadow-ui/Tabs";
-import { Alert } from "@/components/Alert";
-import { getReports } from "@/api/reports";
-import { Metadata } from "next";
-import { flex, vstack } from "@/styled-system/patterns";
 import { css } from "@/styled-system/css";
-import { format } from "date-fns";
+import { flex, vstack } from "@/styled-system/patterns";
 import { h1 } from "@/styled-system/recipes";
-import { DataTable } from "@/components/data-table";
+import { SiteReport } from "@/types";
+
 import {
   siteConflictsColumns,
   siteNameConflictsColumns,

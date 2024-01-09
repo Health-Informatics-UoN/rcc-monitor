@@ -1,8 +1,10 @@
 "use client";
 
-import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+
+import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
+import { ReportModel } from "@/types";
 
 export const columns: ColumnDef<ReportModel>[] = [
   {

@@ -8,8 +8,8 @@ This currently consists of an web application backend, and Azure Functions app, 
 
 ## Prerequisites
 
-1. **.NET SDK** `7.x`
-   - The backend API is .NET7
+1. **.NET SDK** `8.x`
+   - The backend API is .NET8
 1. Docker
 
 ## Database setup
@@ -54,7 +54,7 @@ You will need to add a container for the files, using the Azure CLI:
 Areas within this repo include:
 
 - Application Source Code
-  - .NET7 backend API
+  - .NET8 backend API
   - Azure Functions App
   - Shared Data class library
 
