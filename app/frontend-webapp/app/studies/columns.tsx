@@ -1,10 +1,21 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { icon } from "@/styled-system/recipes";
-import { css } from "@/styled-system/css";
-import { center, visuallyHidden } from "@/styled-system/patterns";
+import {
+  AlertCircle,
+  ChevronRightIcon,
+  Eye,
+  MoreHorizontal,
+  XIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { useRef } from "react";
+
+import { deleteStudy } from "@/api/studies";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
+import EnvironmentBadge from "@/components/EnvironmentBadge";
+import { Button } from "@/components/shadow-ui/Button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,27 +24,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/shadow-ui/DropdownMenu";
-import { Button } from "@/components/shadow-ui/Button";
-import {
-  AlertCircle,
-  ChevronRightIcon,
-  Eye,
-  MoreHorizontal,
-  XIcon,
-} from "lucide-react";
-import { ConfirmationDialog } from "@/components/ConfirmationDialog";
-import { useRef } from "react";
-import { toast } from "@/components/shadow-ui/Toast/use-toast";
-import Link from "next/link";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/shadow-ui/HoverCard";
+import { toast } from "@/components/shadow-ui/Toast/use-toast";
 import { redCapBuildUrl, redCapProductionUrl, redCapUatUrl } from "@/constants";
-import { deleteStudy } from "@/api/studies";
+import { css } from "@/styled-system/css";
+import { center, visuallyHidden } from "@/styled-system/patterns";
+import { icon } from "@/styled-system/recipes";
 import { StudyPartial } from "@/types/studies";
-import EnvironmentBadge from "@/components/EnvironmentBadge";
 
 export const columns: ColumnDef<StudyPartial>[] = [
   {
@@ -64,35 +65,47 @@ export const columns: ColumnDef<StudyPartial>[] = [
     ),
   },
   {
-    accessorKey: "studyCapacityAlert",
+    id: "status",
     enableHiding: true,
     enableSorting: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const alert = row.getValue("studyCapacityAlert");
+      const alerts = [
+        {
+          isActive: row.original.studyCapacityAlert,
+          message: "Study has reached its capacity threshold.",
+        },
+        {
+          isActive: row.original.productionSubjectsEnteredAlert,
+          message:
+            "Production Subjects check has reached the data threshold, real data might be entered on a Build study.",
+        },
+      ];
 
-      if (!alert) {
+      const activeAlerts = alerts.filter((alert) => alert.isActive);
+
+      if (activeAlerts.length === 0) {
         return null;
       }
 
       return (
         <div className={center()}>
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <AlertCircle
-                className={css({
-                  h: 5,
-                  w: 5,
-                  color: "red",
-                })}
-              />
-            </HoverCardTrigger>
-            <HoverCardContent>
-              The Study has reached its capacity threshold.
-            </HoverCardContent>
-          </HoverCard>
+          {activeAlerts.map((alert, index) => (
+            <HoverCard key={index}>
+              <HoverCardTrigger asChild>
+                <AlertCircle
+                  className={css({
+                    h: 5,
+                    w: 5,
+                    color: "red",
+                  })}
+                />
+              </HoverCardTrigger>
+              <HoverCardContent>{alert.message}</HoverCardContent>
+            </HoverCard>
+          ))}
         </div>
       );
     },
