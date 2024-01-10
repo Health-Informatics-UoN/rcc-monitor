@@ -349,12 +349,12 @@ module backendApiCert 'components/managed-cert.bicep' = [for hostname in backend
 // Add SSL certificates
 // this needs to be done as a separate stage to creating the app with a bound hostname
 @batchSize(1) // also needs to be done serially to avoid concurrent updates to the app service
-module frontendApiCert 'components/managed-cert.bicep' = [for hostname in frontendHostnames: {
+module frontendWebAppCert 'components/managed-cert.bicep' = [for hostname in frontendHostnames: {
   name: 'api-cert-${uniqueString(hostname)}'
   params: {
     location: location
     hostname: hostname
-    appName: backend.outputs.name
-    aspId: backend.outputs.aspId
+    appName: frontend.outputs.name
+    aspId: frontend.outputs.aspId
   }
 }]
