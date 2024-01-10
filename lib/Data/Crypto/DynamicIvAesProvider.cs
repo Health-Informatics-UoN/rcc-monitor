@@ -31,7 +31,7 @@ public class DynamicIvAesProvider : IEncryptionProvider
   /// <param name="key">AES key used for the symmetric encryption.</param>
   /// <param name="mode">Mode for operation used in the symmetric encryption.</param>
   /// <param name="padding">Padding mode used in the symmetric encryption.</param>
-  public DynamicIvAesProvider(byte[] key, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+  public DynamicIvAesProvider(byte[] key, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.ISO10126)
   {
     _key = key;
     _mode = mode;
