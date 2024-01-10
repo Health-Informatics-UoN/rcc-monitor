@@ -12,13 +12,26 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     private readonly SiteOptions _siteOptions = siteOptions.Value;
 
     /// <summary>
+    /// Get Api Url for an instance of RedCap.
+    /// </summary>
+    /// <param name="instance">Instance of RedCap to get.</param>
+    /// <returns>RedCap Api Url</returns>
+    private string GetApiUrl(string instance)
+    {
+        return instance == Instances.Production
+            ? _siteOptions.ProductionUrl
+            : _siteOptions.UatUrl;
+    }
+
+    /// <summary>
     /// Get a list of study groups for a given study.
     /// </summary>
     /// <param name="token">Study access token. Used to get current study ID parameter.</param>
+    /// <param name="instance">RedCap instance to access.</param>
     /// <returns>List of StudyGroups for the Study.</returns>
-    public async Task<List<StudyGroupModel>> GetGroups(string token)
+    public async Task<List<StudyGroupModel>> GetGroups(string token, string instance = Instances.Production)
     {
-        var url = _siteOptions.ProductionUrl + RedCapApiEndpoints.StudyGroups;
+        var url = GetApiUrl(instance) + RedCapApiEndpoints.StudyGroups;
         return await url.WithHeader("token", token).GetJsonAsync<List<StudyGroupModel>>();
     }
 
@@ -26,7 +39,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     /// Get the number of subjects enrolled in a study.
     /// </summary>
     /// <param name="token">Study access token. Used to get current study ID parameter.</param>
-    /// <param name="instance">RedCap instance to check</param>
+    /// <param name="instance">RedCap instance to access./</param>
     /// <returns>Number of subjects in the given study.</returns>
     public async Task<int> GetSubjectsCount(string token, string instance = Instances.Production)
     {
@@ -77,7 +90,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     /// <returns>The Id of the given event type name.</returns>
     public async Task<int> GetAuditEventType(string token, string name, string instance)
     {
-        var url = instance == Instances.Production ? _siteOptions.ProductionUrl : _siteOptions.UatUrl + RedCapApiEndpoints.AuditLogsEventTypes;
+        var url = GetApiUrl(instance) + RedCapApiEndpoints.AuditLogsEventTypes;
         var eventTypes = await url.WithHeader("token", token).GetJsonAsync<List<AuditLogEventType>>();
         return eventTypes.First(x => x.Name == name).Id;
     }
@@ -92,7 +105,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     public async Task<List<AuditSubject>> GetAllAuditLogs(string token, AuditLogsFilter initialFilter,
         string instance)
     {
-        var url = instance == Instances.Production ? _siteOptions.ProductionUrl : _siteOptions.UatUrl + RedCapApiEndpoints.AuditLogs;
+        var url = GetApiUrl(instance) + RedCapApiEndpoints.AuditLogs;
 
         var allRecords = new List<AuditSubject>();
         var pageNumber = 1;
