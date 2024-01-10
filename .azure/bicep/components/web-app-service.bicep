@@ -23,7 +23,7 @@ param aspName string
 param logAnalyticsWorkspaceName string
 param tags object = {}
 
-param appFramework string = 'DOTNETCORE|7.0' // az webapp list-runtimes --os-type linux
+param appFramework string = 'DOTNETCORE|8.0' // az webapp list-runtimes --os-type linux
 
 param location string = resourceGroup().location
 

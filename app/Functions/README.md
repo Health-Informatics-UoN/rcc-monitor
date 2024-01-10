@@ -31,7 +31,7 @@ This function runs once a day, to tell an endpoint on the Webapp to send the Sit
 ### Prerequisites
 
 - Docker
-- .NET SDK `7.x`
+- .NET SDK `8.x`
 
 ### Running the functions
 

@@ -1,6 +1,8 @@
 "use client";
-import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
+
+import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
+import { SiteReport } from "@/types";
 
 const baseColumns: ColumnDef<SiteReport>[] = [
   {
