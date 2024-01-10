@@ -25,13 +25,12 @@ public class StudyProductionDataJob(
     /// Checks the RedCap Study Audit Logs for enrolled subjects, and counts the unique subject Ids.
     /// If the count > alert threshold - then set the alert on the Study. 
     /// </remarks>
-    [Function("BuildStudyMonitorJob")]
-    public async Task Run([TimerTrigger("0 0 9 * * *")] TimerInfo myTimer)
+    [Function("StudyProductionDataJob")]
+    public async Task Run([TimerTrigger("0 0 9 * * *", RunOnStartup = true)] TimerInfo myTimer)
     {
         _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
         var studies = await db.Studies
-            .AsNoTracking()
             .Where(x => x.Instance.Name == Instances.Build)
             .ToListAsync();
 
@@ -41,7 +40,7 @@ public class StudyProductionDataJob(
         foreach (var study in studies)
         {
             // Get the subjects number and set an alert if the threshold is reached.
-            var subjects = await redCapStudyService.GetSubjectsCount(study.ApiKey);
+            var subjects = await redCapStudyService.GetSubjectsCount(study.ApiKey, Instances.Build);
             if (subjects >= int.Parse(threshold.Value))
             {
                 study.SubjectsEnrolled = subjects;
