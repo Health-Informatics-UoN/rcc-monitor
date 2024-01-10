@@ -67,6 +67,7 @@ public class StudyService
             Instance = entity.Instance.Name,
             SubjectsEnrolled = entity.SubjectsEnrolled,
             StudyCapacityAlert = entity.StudyCapacityAlert,
+            ProductionSubjectsEnteredAlert = entity.ProductionSubjectsEnteredAlert,
             StudyCapacityAlertsActivated = entity.StudyCapacityAlertsActivated,
             StudyCapacityThreshold = entity.StudyCapacityThreshold,
             SubjectsEnrolledThreshold = entity.SubjectsEnrolledThreshold,
