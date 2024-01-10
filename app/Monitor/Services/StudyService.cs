@@ -95,7 +95,8 @@ public class StudyService
             Id = x.RedCapId,
             Name = x.Name,
             Instance = x.Instance.Name,
-            StudyCapacityAlert = x.StudyCapacityAlert
+            StudyCapacityAlert = x.StudyCapacityAlert,
+            ProductionSubjectsEnteredAlert = x.ProductionSubjectsEnteredAlert
         });
         
         return result;
