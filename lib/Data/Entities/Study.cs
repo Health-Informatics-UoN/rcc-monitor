@@ -55,6 +55,10 @@ public class Study
     /// </summary>
     public bool StudyCapacityAlert { get; set; } = false;
     /// <summary>
+    /// If data Production Subjects have been entered on a Study in Build
+    /// </summary>
+    public bool ProductionSubjectsEnteredAlert { get; set; } = false;
+    /// <summary>
     /// The number of subjects enrolled to a study.
     /// </summary>
     public int SubjectsEnrolled { get; set; }
