@@ -23,7 +23,6 @@ public class StudyService(
     RedCapStudyService redCapStudyService)
 {
     private readonly RedCapOptions _config = config.Value;
-    private readonly RedCapStudyService _redCapStudyService = redCapStudyService;
 
     /// <summary>
     /// Get a study with a given id.
@@ -341,25 +340,39 @@ public class StudyService(
         return result;
     }
 
+    /// <summary>
+    /// Validate the Permissions for a Study.
+    /// Check that the Study API Key only has permission to:
+    /// Study Groups: Read
+    /// Study Audit Logs: Read
+    /// </summary>
+    /// <param name="study">The Study to validate permissions for.</param>
+    /// <exception cref="Exception">The study has the wrong permissions.</exception>
     public async void ValidatePermissions(StudyModel study)
     {
-        var assignments = await _redCapStudyService.GetStudyAssignments(study, 1);
+        // TODO: Get the user id ?
+        var assignments = await redCapStudyService.GetStudyAssignments(study, 1);
 
         var hasAuditRead = false;
         var hasStudyGroupsRead = false;
+        var hasOtherPermissions = false;
 
         foreach (var assignment in assignments)
         {
-            var role = await _redCapStudyService.GetStudyRole(study, assignment.roleId);
+            var role = await redCapStudyService.GetStudyRole(study, assignment.roleId);
             foreach (var permission in role.permissions)
             {
                 switch (permission.componentName)
                 {
                     case ComponentName.AuditLogs:
-                        hasAuditRead = true;
+                        // Actually check if the permissions list contains the required permission id ONLY.
+                        hasAuditRead = CheckPermission(permission, ref hasAuditRead, AllowedPermissions.ResourcePermissionRead);
                         break;
                     case ComponentName.StudyGroups:
-                        hasStudyGroupsRead = true;
+                        hasStudyGroupsRead = CheckPermission(permission, ref hasStudyGroupsRead, AllowedPermissions.ResourcePermissionRead);
+                        break;
+                    default:
+                        hasOtherPermissions = true;
                         break;
                 }
             }
@@ -367,13 +380,25 @@ public class StudyService(
 
         if (!hasAuditRead || !hasStudyGroupsRead)
         {
-            throw new InvalidDataException("The API user does not have the required permissions.");
+            throw new Exception("The API user does not have the required permissions.");
+        }
+
+        if (hasOtherPermissions)
+        {
+            throw new Exception("The API user has too many permissions.");
         }
 
     }
 
-    private void CheckPermissions(List<GenericItem> allowedPermissions, string requiredPermission)
+    private static bool CheckPermission(StudyRoleComponentPermissions permission, ref bool change, string allowedPermission)
     {
-        
+        var x = permission.allowedPermissions.SingleOrDefault(x => x.name == allowedPermission);
+        if (permission.permissions.Exists(y => y.Equals(x?.id)))
+        {
+            change = true;
+        }
+
+        return change;
     }
+    
 }
