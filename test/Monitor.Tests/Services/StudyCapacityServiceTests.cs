@@ -1,6 +1,7 @@
 using System.Collections;
 using Monitor.Data.Entities;
 using Monitor.Shared.Models;
+using Monitor.Shared.Models.Studies;
 
 namespace Monitor.Tests.Services;
 

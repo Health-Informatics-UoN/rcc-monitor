@@ -1,7 +1,8 @@
-using Functions.Models;
 using Functions.Services;
 using Monitor.Data.Constants;
 using Monitor.Shared.Constants;
+using Monitor.Shared.Models.Reports;
+using Monitor.Shared.Models.Sites;
 using Moq;
 
 namespace Monitor.Tests.Services;
@@ -82,8 +83,14 @@ public class ReportServiceTests : IClassFixture<Fixtures>
         {
             new()
             {
-                ReportTypeModel = Reports.ConflictingSiteName,
-                Status = Status.Active,
+                ReportType = new ReportTypeModel
+                {
+                    Name = Reports.ConflictingSiteName
+                },
+                Status = new ReportStatusModel
+                {
+                    Name = Status.Active
+                },
                 Sites = new List<SiteModel>
                 {
                     new() { SiteName = "SiteA", SiteId = "456" },
@@ -123,9 +130,30 @@ public class ReportServiceTests : IClassFixture<Fixtures>
         // Add report models in DB.
         var mockActiveReports = new List<ReportModel>
         {
-            new() { ReportTypeModel = Reports.ConflictingSites, Status = Status.Active },
-            new() { ReportTypeModel = Reports.ConflictingSiteName, Status = Status.Active },
-            new() { ReportTypeModel = Reports.ConflictingSiteParent, Status = Status.Resolved }
+            new() { ReportType = new ReportTypeModel
+                {
+                    Name = Reports.ConflictingSites
+                }, Status = new ReportStatusModel
+                {
+                    Name = Status.Active
+                } 
+            },            
+            new() { ReportType = new ReportTypeModel
+                {
+                    Name = Reports.ConflictingSiteName
+                }, Status = new ReportStatusModel
+                {
+                    Name = Status.Active
+                } 
+            },
+            new() { ReportType = new ReportTypeModel
+                {
+                    Name = Reports.ConflictingSiteParent
+                }, Status = new ReportStatusModel
+                {
+                    Name = Status.Resolved
+                } 
+            }
         };
         foreach (var report in mockActiveReports)
         {
