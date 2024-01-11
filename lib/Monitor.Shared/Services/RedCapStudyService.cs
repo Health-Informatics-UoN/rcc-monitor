@@ -23,6 +23,18 @@ public class RedCapStudyService(IOptions<RedCapOptions> redCapOptions)
             ? _siteOptions.ProductionUrl
             : _siteOptions.BuildUrl;
     }
+    
+    /// <summary>
+    /// Get Tenant Token for an instance of RedCap.
+    /// </summary>
+    /// <param name="instance">Instance of RedCap to get.</param>
+    /// <returns>Tenant token for the instance.</returns>
+    private string GetTenantToken(string instance)
+    {
+        return instance == Instances.Production
+            ? _siteOptions.ProductionKey
+            : _siteOptions.BuildKey;
+    }
 
     /// <summary>
     /// Get a list of study groups for a given study.
@@ -135,13 +147,14 @@ public class RedCapStudyService(IOptions<RedCapOptions> redCapOptions)
     /// </summary>
     /// <remarks>
     /// This is the only way to access a User Id from a Study Token if you don't already know it.
+    /// This is why the tenant key is necessary to get it.
     /// </remarks>
     /// <param name="study">Study to get the assignments for.</param>
     /// <returns>A list of Study Assignments.</returns>
     public async Task<List<StudyAssignment>> GetStudyAssignments(StudyModel study)
     {
         var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyAssignments(study.Id);
-        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<List<StudyAssignment>>();
+        return await url.WithHeader("token", GetTenantToken(study.Instance)).GetJsonAsync<List<StudyAssignment>>();
     }
 
     /// <summary>
@@ -153,7 +166,7 @@ public class RedCapStudyService(IOptions<RedCapOptions> redCapOptions)
     public async Task<List<StudyAssignment>> GetStudyUserAssignments(StudyModel study, int userId)
     {
         var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyUserAssignments(study.Id, userId);
-        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<List<StudyAssignment>>();
+        return await url.WithHeader("token", GetTenantToken(study.Instance)).GetJsonAsync<List<StudyAssignment>>();
     }
 
     /// <summary>
@@ -165,6 +178,6 @@ public class RedCapStudyService(IOptions<RedCapOptions> redCapOptions)
     public async Task<StudyRole> GetStudyRole(StudyModel study, int roleId)
     {
         var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyRoles(study.Id, roleId);
-        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<StudyRole>();
+        return await url.WithHeader("token", GetTenantToken(study.Instance)).GetJsonAsync<StudyRole>();
     }
 }
