@@ -50,6 +50,7 @@ public class StudyCapacityServiceTests : IClassFixture<Fixtures>
         var study = new Study
         {
             RedCapId = studyId, 
+            ApiKey = "test"
         };
         var existingGroups = new List<StudyGroup>
         {
@@ -83,6 +84,7 @@ public class StudyCapacityServiceTests : IClassFixture<Fixtures>
         var study = new Study
         {
             RedCapId = studyId, 
+            ApiKey = "test"
         };
         _fixtures.DbContext.Studies.Add(study);
         await _fixtures.DbContext.SaveChangesAsync();
@@ -110,6 +112,7 @@ public class StudyCapacityServiceTests : IClassFixture<Fixtures>
         var study = new Study
         {
             RedCapId = studyId, 
+            ApiKey = "test",
         };
         var existingGroups = new List<StudyGroup>
         {

@@ -272,6 +272,15 @@ These go in the Environment Specific Key Vault only. e.g. `monitor-uat`.
 | `db-connection-string` | Postgres connection string for the App DB | ARM, Pipelines | App Settings, Database migrations |
 | `api-jwt-secret` | JWT Signing Key for API Tokens | ARM | App Settings |
 | `sendgrid-api-key` | SendGrid API key | ARM | App Settings |
+| `backend-keycloak-secret` | Backend Keycloak Client secret | ARM | App Settings |
+| `frontend-keycloak-secret` | Frontend Keycloak Client secret | ARM | App Settings |
+| `worker-identity-secret` | Worker app Keycloak Client secret | ARM | App Settings |
+| `keycloak-admin-password` | Direct admin access password | ARM | App Settings |
+| `keycloak-database-host` | Host of the Keycloak DB | ARM | App Settings |
+| `keycloak-database-password` | Password of the Keycloak DB | ARM | App Settings |
+| `keycloak-database-user` | User of the Keycloak DB | ARM | App Settings |
+| `nextauth-secret` | Frontend web auth secret | ARM | App Settings |
+| `database-encryption-key` | Encryption key for encrypted database fields | ARM | App Settings |
 
 If you need to generate a JWT Secret, you can use the same crypto cli built into the app :)
 

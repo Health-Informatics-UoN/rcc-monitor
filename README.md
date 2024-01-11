@@ -92,6 +92,9 @@ OutboundEmail:
     credentials:
       secret: ""
     RolesSource: "Realm"
+
+  DatabaseEncryption:
+    EncryptionKey: "test-key-example"
 ```
 
 The frontend app can be configured in any standard way an Node application can. Typically from the Azure Portal (Environment variables) or an `.env.local`.
