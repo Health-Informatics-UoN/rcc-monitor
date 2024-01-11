@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Monitor.Auth;
 using Monitor.Config;
-using Monitor.Constants;
+using Monitor.Shared.Constants;
 using Monitor.Data.Constants;
 using Monitor.Data.Entities;
 using Monitor.Models.Studies;
