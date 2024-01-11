@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Monitor.Auth;
 using Monitor.Config;
 using Monitor.Shared.Constants;
-using Monitor.Data.Constants;
 using Monitor.Data.Entities;
 using Monitor.Shared.Models.Studies;
 using StudyUser = Monitor.Data.Entities.StudyUser;

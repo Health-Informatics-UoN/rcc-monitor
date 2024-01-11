@@ -54,7 +54,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     }
 
     /// <summary>
-    /// Builds an <see cref="Monitor.Shared.Models.AuditLogs.AuditLogsFilter"/> for a given event Type.
+    /// Builds an <see cref="AuditLogsFilter"/> for a given event Type.
     /// </summary>
     /// <param name="auditEventId"></param>
     /// <param name="eventType"></param>
