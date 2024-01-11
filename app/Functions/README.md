@@ -64,6 +64,7 @@ In local development a `local.settings.json` file is required, with the followin
     "RedCap:UATKey": "", # Tenant level API token
     "RedCap:ProductionUrl": "https://nuh.eulogin.redcapcloud.com",
     "RedCap:UATUrl": "http://eubuild.redcapcloud.com",
+    "DatabaseEncryption:EncryptionKey": "test-key-example"
     },
      "ConnectionStrings": {
         "postgres": "Host=localhost;Username=postgres;Port=5432;Password=example;Database=monitor"

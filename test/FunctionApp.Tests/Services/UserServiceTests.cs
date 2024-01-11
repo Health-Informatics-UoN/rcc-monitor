@@ -56,7 +56,7 @@ public class UserServiceTests : IClassFixture<Fixtures>
             .ReturnsAsync(mockGroups);
 
         // Add a study with no users attached
-        var sampleStudy = new Study { RedCapId = 4 };
+        var sampleStudy = new Study { RedCapId = 4, ApiKey = "test"};
         _fixtures.DbContext.Studies.Add(sampleStudy);
         await _fixtures.DbContext.SaveChangesAsync();
 
@@ -97,7 +97,7 @@ public class UserServiceTests : IClassFixture<Fixtures>
             .ReturnsAsync(mockGroups);
 
         // Add a study with users attached
-        var sampleStudy = new Study { RedCapId = 5, Users = new List<StudyUser> { new() { UserId = "3" } } };
+        var sampleStudy = new Study { RedCapId = 5, ApiKey = "test", Users = new List<StudyUser> { new() { UserId = "3" } } };
         _fixtures.DbContext.Studies.Add(sampleStudy);
         await _fixtures.DbContext.SaveChangesAsync();
 
@@ -137,7 +137,7 @@ public class UserServiceTests : IClassFixture<Fixtures>
             .ReturnsAsync(mockGroups);
 
         // Add a study with no users attached
-        var sampleStudy = new Study { RedCapId = 6 };
+        var sampleStudy = new Study { RedCapId = 6, ApiKey = "test"};
         _fixtures.DbContext.Studies.Add(sampleStudy);
         await _fixtures.DbContext.SaveChangesAsync();
 
@@ -177,7 +177,7 @@ public class UserServiceTests : IClassFixture<Fixtures>
             .ReturnsAsync(mockGroups);
 
         // Add a study with no users attached
-        var sampleStudy = new Study { RedCapId = 7 };
+        var sampleStudy = new Study { RedCapId = 7, ApiKey = "test"};
         _fixtures.DbContext.Studies.Add(sampleStudy);
         await _fixtures.DbContext.SaveChangesAsync();
 
