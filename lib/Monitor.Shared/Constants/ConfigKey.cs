@@ -1,4 +1,4 @@
-namespace Monitor.Config;
+namespace Monitor.Shared.Constants;
 
 public static class ConfigKey
 {
