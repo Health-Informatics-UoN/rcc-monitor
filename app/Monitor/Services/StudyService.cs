@@ -9,28 +9,22 @@ using Monitor.Config;
 using Monitor.Shared.Constants;
 using Monitor.Data.Entities;
 using Monitor.Shared.Models.Studies;
+using Monitor.Shared.Services;
 using StudyUser = Monitor.Data.Entities.StudyUser;
 
 namespace Monitor.Services;
 
-public class StudyService
+public class StudyService(
+    ApplicationDbContext db,
+    IOptions<RedCapOptions> config,
+    UserService userService,
+    ConfigService configService,
+    IAuthorizationService authorizationService,
+    RedCapStudyService redCapStudyService)
 {
-    private readonly ApplicationDbContext _db;
-    private readonly RedCapOptions _config;
-    private readonly UserService _userService;
-    private readonly ConfigService _configService;
-    private readonly IAuthorizationService _authorizationService;
+    private readonly RedCapOptions _config = config.Value;
+    private readonly RedCapStudyService _redCapStudyService = redCapStudyService;
 
-    public StudyService(ApplicationDbContext db, IOptions<RedCapOptions> config, UserService userService,
-        ConfigService configService, IAuthorizationService authorizationService)
-    {
-        _db = db;
-        _userService = userService;
-        _configService = configService;
-        _config = config.Value;
-        _authorizationService = authorizationService;
-    }
-    
     /// <summary>
     /// Get a study with a given id.
     /// </summary>
@@ -39,7 +33,7 @@ public class StudyService
     /// <returns>Study with the given id.</returns>
     public async Task<StudyPartialModel> Get(int id, string? userId = null)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
             .AsNoTracking()
             .Include(x => x.Users)
             .Include(x => x.Instance)
@@ -50,7 +44,7 @@ public class StudyService
             ?? throw new KeyNotFoundException();
         
         // get users from keycloak
-        var users = await _userService.GetStudyUsers(entity.Users);
+        var users = await userService.GetStudyUsers(entity.Users);
 
         var model = new StudyPartialModel
         {
@@ -83,7 +77,7 @@ public class StudyService
     /// <returns>List of studies.</returns>
     public async Task<IEnumerable<StudyPartialModel>> List(string? userId = null)
     {
-        var list = await _db.Studies
+        var list = await db.Studies
             .Include(x => x.Users)
             .Include(x => x.Instance)
             .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
@@ -108,11 +102,11 @@ public class StudyService
     /// <returns></returns>
     public async Task DeleteStudy(int redCapId)
     {
-        var study = await _db.Studies.FindAsync(redCapId) 
+        var study = await db.Studies.FindAsync(redCapId) 
                     ?? throw new KeyNotFoundException($"No study with the RedCap ID: \"{redCapId}\" was found.");
 
-        _db.Studies.Remove(study);
-        await _db.SaveChangesAsync();
+        db.Studies.Remove(study);
+        await db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -126,19 +120,19 @@ public class StudyService
     public async Task<StudyModel> Create(StudyModel model, string userId)
     {
         // If the study already exists just add the user to it.
-        var check = await _db.Studies.FindAsync(model.Id);
+        var check = await db.Studies.FindAsync(model.Id);
         if (check is not null)
         {
             await AddUser(check.RedCapId, userId);
         }
         else
         {
-            var instance = _db.Instances.Single(x => x.Name == model.Instance) ?? throw new KeyNotFoundException();
+            var instance = db.Instances.Single(x => x.Name == model.Instance) ?? throw new KeyNotFoundException();
             
             // Get the current config defaults
-            var defaultCapacityThreshold = await _configService.GetValue(ConfigKey.RandomisationThreshold, "0.70");
-            var defaultCapacityFrequency = await _configService.GetValue(ConfigKey.RandomisationJobFrequency, "23:00");
-            var defaultSubjectsEnrolledThreshold = await _configService.GetValue(ConfigKey.SubjectsEnrolledThreshold, "10");
+            var defaultCapacityThreshold = await configService.GetValue(ConfigKey.RandomisationThreshold, "0.70");
+            var defaultCapacityFrequency = await configService.GetValue(ConfigKey.RandomisationJobFrequency, "23:00");
+            var defaultSubjectsEnrolledThreshold = await configService.GetValue(ConfigKey.SubjectsEnrolledThreshold, "10");
             
             var entity = new Study
             {
@@ -150,16 +144,16 @@ public class StudyService
                 StudyCapacityJobFrequency = TimeSpan.Parse(defaultCapacityFrequency),
                 SubjectsEnrolledThreshold = int.Parse(defaultSubjectsEnrolledThreshold)
             };
-            _db.Studies.Add(entity);
+            db.Studies.Add(entity);
             
             var user = new StudyUser
             {
                 UserId = userId,
                 Study = entity,
             };
-            _db.StudyUsers.Add(user);
+            db.StudyUsers.Add(user);
             
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
         }
         return model;
@@ -174,7 +168,7 @@ public class StudyService
     /// <exception cref="KeyNotFoundException">Study not found.</exception>
     public async Task<StudyPartialModel> AddUsers(int id, StudyPartialModel model)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
                          .Where(s => s.RedCapId == id)
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
@@ -190,7 +184,7 @@ public class StudyService
                 await AddUser(id, user.Id);
             }
         }
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
         
         return model;
     }    
@@ -204,7 +198,7 @@ public class StudyService
     /// <exception cref="KeyNotFoundException">Study not found.</exception>
     public async Task<StudyPartialModel> RemoveUsers(int id, StudyPartialModel model)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
                          .Where(s => s.RedCapId == id)
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
@@ -218,7 +212,7 @@ public class StudyService
             entity.Users.Remove(user);
         }
     
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
         
         return model;
     }
@@ -232,7 +226,7 @@ public class StudyService
     /// <exception cref="ArgumentException">Frequency format invalid.</exception>
     public async Task UpdateStudyCapacityConfig(int id, StudyPartialModel model)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
                          .Where(s => s.RedCapId == id)
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
@@ -252,7 +246,7 @@ public class StudyService
                 throw new ArgumentException("Invalid frequency format");
             }
         }
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
     
     /// <summary>
@@ -270,7 +264,7 @@ public class StudyService
 
         // Remove users only if they have permission.
         var authorizationResult = 
-            await _authorizationService.AuthorizeAsync(user, nameof(AuthPolicies.CanRemoveStudyUsers));
+            await authorizationService.AuthorizeAsync(user, nameof(AuthPolicies.CanRemoveStudyUsers));
 
         if (authorizationResult.Succeeded)
         {
@@ -288,7 +282,7 @@ public class StudyService
     /// <param name="userId">UserId to add to it.</param>
     public async Task AddUser(int studyId, string userId)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
             .Where(x => x.RedCapId == studyId)
             .FirstAsync();
         
@@ -298,8 +292,8 @@ public class StudyService
             Study = entity,
         };
         
-        _db.StudyUsers.Add(user);
-        await _db.SaveChangesAsync();
+        db.StudyUsers.Add(user);
+        await db.SaveChangesAsync();
     }
     
     /// <summary>
@@ -345,5 +339,41 @@ public class StudyService
         result.ApiKey = apiKey;
         result.Instance = instance;
         return result;
+    }
+
+    public async void ValidatePermissions(StudyModel study)
+    {
+        var assignments = await _redCapStudyService.GetStudyAssignments(study, 1);
+
+        var hasAuditRead = false;
+        var hasStudyGroupsRead = false;
+
+        foreach (var assignment in assignments)
+        {
+            var role = await _redCapStudyService.GetStudyRole(study, assignment.roleId);
+            foreach (var permission in role.permissions)
+            {
+                switch (permission.componentName)
+                {
+                    case ComponentName.AuditLogs:
+                        hasAuditRead = true;
+                        break;
+                    case ComponentName.StudyGroups:
+                        hasStudyGroupsRead = true;
+                        break;
+                }
+            }
+        }
+
+        if (!hasAuditRead || !hasStudyGroupsRead)
+        {
+            throw new InvalidDataException("The API user does not have the required permissions.");
+        }
+
+    }
+
+    private void CheckPermissions(List<GenericItem> allowedPermissions, string requiredPermission)
+    {
+        
     }
 }

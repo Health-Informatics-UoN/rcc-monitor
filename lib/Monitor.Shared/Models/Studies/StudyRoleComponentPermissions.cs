@@ -8,10 +8,16 @@ namespace Monitor.Shared.Models.Studies;
 public class StudyRoleComponentPermissions
 {
     public int id { get; set; }
+    /// <summary>
+    /// List of the possible permissions.
+    /// </summary>
     public List<GenericItem> allowedPermissions { get; set; } = [];
     public string componentName { get; set; } = string.Empty;
     public string componentShortName { get; set; } = string.Empty;
     public bool enabled { get; set; } = true;
+    /// <summary>
+    /// List of the permissions that role actually has, indexing <see cref="allowedPermissions"/>
+    /// </summary>
     public List<int> permissions { get; set; } = [];
 }
 
