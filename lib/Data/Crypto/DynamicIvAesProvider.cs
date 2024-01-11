@@ -38,7 +38,7 @@ public class DynamicIvAesProvider : IEncryptionProvider
     _padding = padding;
   }
 
-  public byte[] Encrypt(byte[] input)
+  public byte[]? Encrypt(byte[]? input)
   {
     if (input is null || input.Length == 0) return default;
 
@@ -58,7 +58,7 @@ public class DynamicIvAesProvider : IEncryptionProvider
     return StreamToBytes(memoryStream);
   }
 
-  public byte[] Decrypt(byte[] input)
+  public byte[]? Decrypt(byte[]? input)
   {
     if (input is null || input.Length == 0) return default;
 
