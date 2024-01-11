@@ -110,7 +110,7 @@ public class StudiesController : ControllerBase
     }
 
     [HttpPost("validate")]
-    [SwaggerOperation("Validate a studies API Key.")]
+    [SwaggerOperation("Validate a studies API Key and permissions.")]
     [SwaggerResponse(200, Type = typeof(StudyModel[]))]
     [SwaggerResponse(401, "User is not authorized.")]
     [SwaggerResponse(401, "The Api Key is not authorized with RedCap.")]
@@ -122,6 +122,7 @@ public class StudiesController : ControllerBase
         try
         {
             var response = await _studyService.Validate(model.ApiKey);
+            await _studyService.ValidatePermissions(response);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)

@@ -348,10 +348,13 @@ public class StudyService(
     /// </summary>
     /// <param name="study">The Study to validate permissions for.</param>
     /// <exception cref="Exception">The study has the wrong permissions.</exception>
-    public async void ValidatePermissions(StudyModel study)
+    public async Task ValidatePermissions(StudyModel study)
     {
-        // TODO: Get the user id ?
-        var assignments = await redCapStudyService.GetStudyAssignments(study, 1);
+        // This is the only way to get the user Id with a token from the API.
+        var assign = await redCapStudyService.GetStudyAssignments(study);
+        var userId = assign.First(x => x.email == _config.ApiEmail).userId;
+        
+        var assignments = await redCapStudyService.GetStudyUserAssignments(study, userId);
 
         var hasAuditRead = false;
         var hasStudyGroupsRead = false;
@@ -360,16 +363,16 @@ public class StudyService(
         foreach (var assignment in assignments)
         {
             var role = await redCapStudyService.GetStudyRole(study, assignment.roleId);
+            
             foreach (var permission in role.permissions)
             {
                 switch (permission.componentName)
                 {
                     case ComponentName.AuditLogs:
-                        // Actually check if the permissions list contains the required permission id ONLY.
-                        hasAuditRead = CheckPermission(permission, ref hasAuditRead, AllowedPermissions.ResourcePermissionRead);
+                        hasAuditRead = CheckPermission(permission, AllowedPermissions.ResourcePermissionRead, ref hasAuditRead);
                         break;
                     case ComponentName.StudyGroups:
-                        hasStudyGroupsRead = CheckPermission(permission, ref hasStudyGroupsRead, AllowedPermissions.ResourcePermissionRead);
+                        hasStudyGroupsRead = CheckPermission(permission, AllowedPermissions.ResourcePermissionRead, ref hasStudyGroupsRead);
                         break;
                     default:
                         hasOtherPermissions = true;
@@ -390,10 +393,10 @@ public class StudyService(
 
     }
 
-    private static bool CheckPermission(StudyRoleComponentPermissions permission, ref bool change, string allowedPermission)
+    private static bool CheckPermission(StudyRoleComponentPermissions permission, string allowedPermission, ref bool change)
     {
-        var x = permission.allowedPermissions.SingleOrDefault(x => x.name == allowedPermission);
-        if (permission.permissions.Exists(y => y.Equals(x?.id)))
+        var permissionIndex = permission.allowedPermissions.SingleOrDefault(x => x.name == allowedPermission);
+        if (permission.permissions.Exists(y => y.Equals(permissionIndex?.id)))
         {
             change = true;
         }

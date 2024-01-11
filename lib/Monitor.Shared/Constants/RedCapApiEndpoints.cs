@@ -8,6 +8,7 @@ public static class RedCapApiEndpoints
     private const string ApiBase = "/rest/v2";
     public const string Studies = $"{ApiBase}/studies";
     public const string StudyGroups = $"{ApiBase}/study-group-clases";
+    public static string StudyAssignments(int id) => $"{ApiBase}/studies/{id}/assignments";
     public static string StudyUserAssignments(int id, int userId) =>
         $"{ApiBase}/studies/{id}/users/{userId}/assignments";
 

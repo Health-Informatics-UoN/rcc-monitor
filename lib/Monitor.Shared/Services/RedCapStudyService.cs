@@ -131,12 +131,26 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     }
 
     /// <summary>
+    /// Get Study Assignments for a Study from RedCap.
+    /// </summary>
+    /// <remarks>
+    /// This is the only way to access a User Id from a Study Token if you don't already know it.
+    /// </remarks>
+    /// <param name="study">Study to get the assignments for.</param>
+    /// <returns>A list of Study Assignments.</returns>
+    public async Task<List<StudyAssignment>> GetStudyAssignments(StudyModel study)
+    {
+        var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyAssignments(study.Id);
+        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<List<StudyAssignment>>();
+    }
+
+    /// <summary>
     /// Get User Assignments (roles) for a Study from RedCap.
     /// </summary>
     /// <param name="study">Study to get assignments for.</param>
     /// <param name="userId">User Id to get assignments for.</param>
     /// <returns>A list of User Assignments for the Study.</returns>
-    public async Task<List<StudyAssignment>> GetStudyAssignments(StudyModel study, int userId)
+    public async Task<List<StudyAssignment>> GetStudyUserAssignments(StudyModel study, int userId)
     {
         var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyUserAssignments(study.Id, userId);
         return await url.WithHeader("token", study.ApiKey).GetJsonAsync<List<StudyAssignment>>();
