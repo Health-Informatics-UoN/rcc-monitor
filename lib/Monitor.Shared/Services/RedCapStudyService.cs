@@ -60,7 +60,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     /// <param name="auditEventId"></param>
     /// <param name="eventType"></param>
     /// <returns>A filter for audit logs.</returns>
-    public Task<AuditLogsFilter> BuildAuditLogsFilter(int auditEventId, string eventType)
+    private Task<AuditLogsFilter> BuildAuditLogsFilter(int auditEventId, string eventType)
     {
         return Task.FromResult(new AuditLogsFilter
         {
@@ -89,7 +89,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     /// <param name="name">The event type name to get the Id of.</param>
     /// <param name="instance">RedCap instance to access.</param>
     /// <returns>The Id of the given event type name.</returns>
-    public async Task<int> GetAuditEventType(string token, string name, string instance)
+    private async Task<int> GetAuditEventType(string token, string name, string instance)
     {
         var url = GetApiUrl(instance) + RedCapApiEndpoints.AuditLogsEventTypes;
         var eventTypes = await url.WithHeader("token", token).GetJsonAsync<List<AuditLogEventType>>();
@@ -103,7 +103,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     /// <param name="initialFilter">Initial Audit Logs filter to use.</param>
     /// <param name="instance">RedCap instance to access.</param>
     /// <returns>List of audit subjects returned from RedCap.</returns>
-    public async Task<List<AuditSubject>> GetAllAuditLogs(string token, AuditLogsFilter initialFilter,
+    private async Task<List<AuditSubject>> GetAllAuditLogs(string token, AuditLogsFilter initialFilter,
         string instance)
     {
         var url = GetApiUrl(instance) + RedCapApiEndpoints.AuditLogs;
@@ -128,5 +128,29 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
         }
 
         return allRecords;
+    }
+
+    /// <summary>
+    /// Get User Assignments (roles) for a Study from RedCap.
+    /// </summary>
+    /// <param name="study">Study to get assignments for.</param>
+    /// <param name="userId">User Id to get assignments for.</param>
+    /// <returns>A list of User Assignments for the Study.</returns>
+    public async Task<List<StudyAssignment>> GetStudyAssignments(StudyModel study, int userId)
+    {
+        var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyUserAssignments(study.Id, userId);
+        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<List<StudyAssignment>>();
+    }
+
+    /// <summary>
+    /// Get Study Role details from RedCap.
+    /// </summary>
+    /// <param name="study">Study to get the role for.</param>
+    /// <param name="roleId">Role Id to get the role.</param>
+    /// <returns>A </returns>
+    public async Task<List<StudyRole>> GetStudyRole(StudyModel study, int roleId)
+    {
+        var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyRoles(study.Id, roleId);
+        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<List<StudyRole>>();
     }
 }
