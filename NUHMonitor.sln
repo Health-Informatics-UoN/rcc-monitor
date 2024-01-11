@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor", "app\Monitor\Moni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions", "app\Functions\Functions.csproj", "{E692E477-75F8-4EA3-AAEE-782F371FFDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor.Shared", "Monitor.Shared\Monitor.Shared.csproj", "{38F7341D-1E50-48BC-9610-AD93E0761793}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor.Shared", "lib\Monitor.Shared\Monitor.Shared.csproj", "{38F7341D-1E50-48BC-9610-AD93E0761793}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
