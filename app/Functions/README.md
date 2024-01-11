@@ -6,6 +6,7 @@ Currently, these are:
 
 - `SiteDiffReportJob`
 - `StudyCapacityJob`
+- `StudyProductionDataJob`
 - `SendSummaryEmail`
 
 ## `SiteDiffReportJob`
@@ -21,6 +22,10 @@ These warnings are:
 ## `StudyCapacityJob`
 
 This function runs every hour, to check whether the RedCap Production studies have reach their capacity threshold, as set by the Study Groups. This is necessary, as a Study can reach its capacity without noticing.
+
+## `StudyProductionDataJob`
+
+This function runs every day at 9am, to check if RedCap Build Studies might have real world data being entered. This is necessary, as it is possible for users to mistake the build instance for a production, and enter real world data.
 
 ## `SendSummaryEmail`
 
