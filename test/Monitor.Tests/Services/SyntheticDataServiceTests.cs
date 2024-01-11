@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using Monitor.Models.SyntheticData;
 using Monitor.Services.SyntheticData;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class SyntheticDataServiceTests
 {
