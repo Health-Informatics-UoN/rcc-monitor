@@ -67,6 +67,7 @@ public class StudyService
             Instance = entity.Instance.Name,
             SubjectsEnrolled = entity.SubjectsEnrolled,
             StudyCapacityAlert = entity.StudyCapacityAlert,
+            ProductionSubjectsEnteredAlert = entity.ProductionSubjectsEnteredAlert,
             StudyCapacityAlertsActivated = entity.StudyCapacityAlertsActivated,
             StudyCapacityThreshold = entity.StudyCapacityThreshold,
             SubjectsEnrolledThreshold = entity.SubjectsEnrolledThreshold,
@@ -94,7 +95,8 @@ public class StudyService
             Id = x.RedCapId,
             Name = x.Name,
             Instance = x.Instance.Name,
-            StudyCapacityAlert = x.StudyCapacityAlert
+            StudyCapacityAlert = x.StudyCapacityAlert,
+            ProductionSubjectsEnteredAlert = x.ProductionSubjectsEnteredAlert
         });
         
         return result;

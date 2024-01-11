@@ -7,6 +7,7 @@ export interface StudyPartial {
   users: User[];
   studyGroup: StudyGroup[];
   studyCapacityAlert: boolean;
+  productionSubjectsEnteredAlert: boolean;
   studyCapacityAlertsActivated: boolean;
   studyCapacityThreshold: number;
   studyCapacityJobFrequency: string;

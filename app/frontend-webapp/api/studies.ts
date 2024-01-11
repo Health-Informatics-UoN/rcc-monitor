@@ -1,9 +1,11 @@
 "use server";
 
-import { Study, StudyPartial } from "@/types/studies";
-import request from "./request";
-import { ApiError } from "./error";
 import { revalidatePath } from "next/cache";
+
+import { Study, StudyPartial } from "@/types/studies";
+
+import { ApiError } from "./error";
+import request from "./request";
 
 const fetchKeys = {
   list: "studies",
@@ -39,6 +41,7 @@ export async function getStudy(id: number): Promise<StudyPartial> {
       users: [],
       studyGroup: [],
       studyCapacityAlert: false,
+      productionSubjectsEnteredAlert: false,
       instance: "Build",
       studyCapacityAlertsActivated: false,
       studyCapacityThreshold: 0,
