@@ -1,6 +1,7 @@
 using Functions.Models;
 using Functions.Services;
 using Monitor.Data.Constants;
+using Monitor.Shared.Constants;
 using Moq;
 
 namespace Francois.Tests.Services;

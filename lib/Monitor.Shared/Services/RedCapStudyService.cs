@@ -1,6 +1,5 @@
 using Flurl.Http;
 using Microsoft.Extensions.Options;
-using Monitor.Data.Constants;
 using Monitor.Shared.Config;
 using Monitor.Shared.Constants;
 using Monitor.Shared.Models;

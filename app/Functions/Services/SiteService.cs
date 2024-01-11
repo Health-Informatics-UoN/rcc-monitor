@@ -1,5 +1,6 @@
 using Functions.Models;
 using Monitor.Data.Constants;
+using Monitor.Shared.Constants;
 
 namespace Functions.Services;
 

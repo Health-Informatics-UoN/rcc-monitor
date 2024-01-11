@@ -11,8 +11,4 @@
       <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\lib\Data\Data.csproj" />
-    </ItemGroup>
-
 </Project>

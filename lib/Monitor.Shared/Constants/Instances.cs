@@ -1,4 +1,4 @@
-namespace Monitor.Data.Constants;
+namespace Monitor.Shared.Constants;
 
 public class Instances
 {

@@ -32,7 +32,4 @@
       <ProjectReference Include="..\..\lib\Data\Data.csproj" />
       <ProjectReference Include="..\..\lib\Monitor.Shared\Monitor.Shared.csproj" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Constants\" />
-    </ItemGroup>
 </Project>
