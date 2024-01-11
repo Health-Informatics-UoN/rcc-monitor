@@ -8,9 +8,9 @@ using Monitor.Shared.Models.Studies;
 
 namespace Monitor.Shared.Services;
 
-public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
+public class RedCapStudyService(IOptions<RedCapOptions> redCapOptions)
 {
-    private readonly SiteOptions _siteOptions = siteOptions.Value;
+    private readonly RedCapOptions _siteOptions = redCapOptions.Value;
 
     /// <summary>
     /// Get Api Url for an instance of RedCap.
@@ -21,7 +21,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     {
         return instance == Instances.Production
             ? _siteOptions.ProductionUrl
-            : _siteOptions.UatUrl;
+            : _siteOptions.BuildUrl;
     }
 
     /// <summary>

@@ -8,6 +8,7 @@ using Monitor.Auth;
 using Monitor.Config;
 using Monitor.Shared.Constants;
 using Monitor.Data.Entities;
+using Monitor.Shared.Config;
 using Monitor.Shared.Models.Studies;
 using Monitor.Shared.Services;
 using StudyUser = Monitor.Data.Entities.StudyUser;

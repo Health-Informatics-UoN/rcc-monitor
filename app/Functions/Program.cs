@@ -28,7 +28,7 @@ var host = new HostBuilder()
         });
 
         // Adds a named client that uses the token management 
-        var apiConfig = context.Configuration.GetSection("RedCap").Get<SiteOptions>();
+        var apiConfig = context.Configuration.GetSection("Backend").Get<SiteOptions>();
         s.AddClientAccessTokenHttpClient("client", configureClient: client =>
         {
             client.BaseAddress = new Uri(apiConfig?.ApiUrl ?? throw new InvalidOperationException());
@@ -37,7 +37,7 @@ var host = new HostBuilder()
 
         s.AddDataDbContext(context.Configuration);
         s.AddOptions()
-            .Configure<SiteOptions>(context.Configuration.GetSection("RedCap"));
+            .Configure<RedCapOptions>(context.Configuration.GetSection("RedCap"));
             
         s.AddTransient<SiteService>();
         s.AddTransient<IReportingService, ReportService>();
