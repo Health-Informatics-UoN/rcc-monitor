@@ -5,7 +5,6 @@ using Flurl.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Monitor.Auth;
-using Monitor.Config;
 using Monitor.Shared.Constants;
 using Monitor.Data.Entities;
 using Monitor.Shared.Config;
@@ -34,15 +33,15 @@ public class StudyService(
     public async Task<StudyPartialModel> Get(int id, string? userId = null)
     {
         var entity = await db.Studies
-            .AsNoTracking()
-            .Include(x => x.Users)
-            .Include(x => x.Instance)
-            .Include(x => x.StudyGroups)
-            .Where(x => x.RedCapId == id)
-            .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
-            .SingleOrDefaultAsync()
-            ?? throw new KeyNotFoundException();
-        
+                         .AsNoTracking()
+                         .Include(x => x.Users)
+                         .Include(x => x.Instance)
+                         .Include(x => x.StudyGroups)
+                         .Where(x => x.RedCapId == id)
+                         .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
+                         .SingleOrDefaultAsync()
+                     ?? throw new KeyNotFoundException();
+
         // get users from keycloak
         var users = await userService.GetStudyUsers(entity.Users);
 
@@ -52,7 +51,7 @@ public class StudyService(
             Name = entity.Name,
             Users = users,
             StudyGroup = entity.StudyGroups.Select(x => new StudyGroupModel
-            { 
+            {
                 Id = x.Id,
                 Name = x.Name,
                 PlannedSize = x.PlannedSize
@@ -69,7 +68,7 @@ public class StudyService(
         };
         return model;
     }
-    
+
     /// <summary>
     /// Get the list of studies for a relevant user.
     /// </summary>
@@ -82,7 +81,7 @@ public class StudyService(
             .Include(x => x.Instance)
             .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
             .ToListAsync();
-        
+
         var result = list.Select(x => new StudyPartialModel
         {
             Id = x.RedCapId,
@@ -91,10 +90,10 @@ public class StudyService(
             StudyCapacityAlert = x.StudyCapacityAlert,
             ProductionSubjectsEnteredAlert = x.ProductionSubjectsEnteredAlert
         });
-        
+
         return result;
     }
-    
+
     /// <summary>
     /// Delete a study by RedCapId.
     /// </summary>
@@ -102,7 +101,7 @@ public class StudyService(
     /// <returns></returns>
     public async Task DeleteStudy(int redCapId)
     {
-        var study = await db.Studies.FindAsync(redCapId) 
+        var study = await db.Studies.FindAsync(redCapId)
                     ?? throw new KeyNotFoundException($"No study with the RedCap ID: \"{redCapId}\" was found.");
 
         db.Studies.Remove(study);
@@ -128,12 +127,13 @@ public class StudyService(
         else
         {
             var instance = db.Instances.Single(x => x.Name == model.Instance) ?? throw new KeyNotFoundException();
-            
+
             // Get the current config defaults
             var defaultCapacityThreshold = await configService.GetValue(ConfigKey.RandomisationThreshold, "0.70");
             var defaultCapacityFrequency = await configService.GetValue(ConfigKey.RandomisationJobFrequency, "23:00");
-            var defaultSubjectsEnrolledThreshold = await configService.GetValue(ConfigKey.SubjectsEnrolledThreshold, "10");
-            
+            var defaultSubjectsEnrolledThreshold =
+                await configService.GetValue(ConfigKey.SubjectsEnrolledThreshold, "10");
+
             var entity = new Study
             {
                 ApiKey = model.ApiKey,
@@ -145,20 +145,20 @@ public class StudyService(
                 SubjectsEnrolledThreshold = int.Parse(defaultSubjectsEnrolledThreshold)
             };
             db.Studies.Add(entity);
-            
+
             var user = new StudyUser
             {
                 UserId = userId,
                 Study = entity,
             };
             db.StudyUsers.Add(user);
-            
-            await db.SaveChangesAsync();
 
+            await db.SaveChangesAsync();
         }
+
         return model;
     }
-    
+
     /// <summary>
     /// Add users to a study.
     /// </summary>
@@ -173,7 +173,7 @@ public class StudyService(
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
                      throw new KeyNotFoundException();
-        
+
         if (model.Users != null)
         {
             var usersToAdd = model.Users
@@ -184,11 +184,12 @@ public class StudyService(
                 await AddUser(id, user.Id);
             }
         }
+
         await db.SaveChangesAsync();
-        
+
         return model;
-    }    
-    
+    }
+
     /// <summary>
     /// Remove users from a study.
     /// </summary>
@@ -203,17 +204,18 @@ public class StudyService(
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
                      throw new KeyNotFoundException();
-        
+
         var usersToRemove = entity.Users
-            .Where(existingUser => model.Users != null && model.Users.All(newUser => newUser.Id != existingUser.UserId)).ToList();
-        
+            .Where(existingUser => model.Users != null && model.Users.All(newUser => newUser.Id != existingUser.UserId))
+            .ToList();
+
         foreach (var user in usersToRemove)
         {
             entity.Users.Remove(user);
         }
-    
+
         await db.SaveChangesAsync();
-        
+
         return model;
     }
 
@@ -231,7 +233,7 @@ public class StudyService(
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
                      throw new KeyNotFoundException();
-        
+
         entity.StudyCapacityAlertsActivated = model.StudyCapacityAlertsActivated;
 
         if (model.StudyCapacityAlertsActivated)
@@ -246,9 +248,10 @@ public class StudyService(
                 throw new ArgumentException("Invalid frequency format");
             }
         }
+
         await db.SaveChangesAsync();
     }
-    
+
     /// <summary>
     /// Update a study
     /// </summary>
@@ -263,7 +266,7 @@ public class StudyService(
         var response = await AddUsers(id, model);
 
         // Remove users only if they have permission.
-        var authorizationResult = 
+        var authorizationResult =
             await authorizationService.AuthorizeAsync(user, nameof(AuthPolicies.CanRemoveStudyUsers));
 
         if (authorizationResult.Succeeded)
@@ -274,7 +277,7 @@ public class StudyService(
         return response;
     }
 
-    
+
     /// <summary>
     /// Add a User to an existing Study.
     /// </summary>
@@ -285,17 +288,17 @@ public class StudyService(
         var entity = await db.Studies
             .Where(x => x.RedCapId == studyId)
             .FirstAsync();
-        
+
         var user = new StudyUser
         {
             UserId = userId,
             Study = entity,
         };
-        
+
         db.StudyUsers.Add(user);
         await db.SaveChangesAsync();
     }
-    
+
     /// <summary>
     /// Validate the Study's APIKey against RedCap.
     /// We try to validate against both environments.
@@ -318,7 +321,8 @@ public class StudyService(
             }
             catch (FlurlHttpException buildEx) when (buildEx.Call.Response.StatusCode == 401)
             {
-                throw new UnauthorizedAccessException("The API Key is not authorized with RedCap on both environments.", buildEx);
+                throw new UnauthorizedAccessException("The API Key is not authorized with RedCap on both environments.",
+                    buildEx);
             }
         }
     }
@@ -354,26 +358,28 @@ public class StudyService(
         // This is the only way to get the user Id with a token from the API.
         var assign = await redCapStudyService.GetStudyAssignments(study);
         var userId = assign.First(x => x.email == _config.ApiEmail).userId;
-        
+
         var assignments = await redCapStudyService.GetStudyUserAssignments(study, userId);
 
-        var hasAuditRead = false;
-        var hasStudyGroupsRead = false;
+        var hasReadAuditLogsPermission = false;
+        var hasReadStudyGroupsPermission = false;
         var hasOtherPermissions = false;
 
         foreach (var assignment in assignments)
         {
             var role = await redCapStudyService.GetStudyRole(study, assignment.roleId);
-            
+
             foreach (var permission in role.permissions)
             {
                 switch (permission.componentName)
                 {
                     case ComponentName.AuditLogs:
-                        hasAuditRead = CheckPermission(permission, AllowedPermissions.ResourcePermissionRead, ref hasAuditRead);
+                        hasReadAuditLogsPermission = CheckPermission(permission,
+                            AllowedPermissions.ResourcePermissionRead, ref hasReadAuditLogsPermission);
                         break;
                     case ComponentName.StudyGroups:
-                        hasStudyGroupsRead = CheckPermission(permission, AllowedPermissions.ResourcePermissionRead, ref hasStudyGroupsRead);
+                        hasReadStudyGroupsPermission = CheckPermission(permission,
+                            AllowedPermissions.ResourcePermissionRead, ref hasReadStudyGroupsPermission);
                         break;
                     default:
                         hasOtherPermissions = true;
@@ -382,7 +388,7 @@ public class StudyService(
             }
         }
 
-        if (!hasAuditRead || !hasStudyGroupsRead)
+        if (!hasReadAuditLogsPermission || !hasReadStudyGroupsPermission)
         {
             throw new Exception("The API user does not have the required permissions.");
         }
@@ -391,10 +397,10 @@ public class StudyService(
         {
             throw new Exception("The API user has too many permissions.");
         }
-
     }
 
-    private static bool CheckPermission(StudyRoleComponentPermissions permission, string allowedPermission, ref bool change)
+    private static bool CheckPermission(StudyRoleComponentPermissions permission, string allowedPermission,
+        ref bool change)
     {
         var permissionIndex = permission.allowedPermissions.SingleOrDefault(x => x.name == allowedPermission);
         if (permission.permissions.Exists(y => y.Equals(permissionIndex?.id)))
@@ -404,5 +410,4 @@ public class StudyService(
 
         return change;
     }
-    
 }
