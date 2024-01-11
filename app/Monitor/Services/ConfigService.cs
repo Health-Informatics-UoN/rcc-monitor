@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
 using Monitor.Data.Entities;
 using Monitor.Models;
+using Monitor.Models.Config;
 
 namespace Monitor.Services;
 

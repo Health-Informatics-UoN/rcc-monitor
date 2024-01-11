@@ -1,4 +1,4 @@
-namespace Monitor.Shared.Models;
+namespace Monitor.Shared.Models.AuditLog;
 
 public class AuditLogs
 {

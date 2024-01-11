@@ -1,4 +1,4 @@
-namespace Monitor.Models;
+namespace Monitor.Shared.Models.Sites;
 
 public class SiteModel
 {

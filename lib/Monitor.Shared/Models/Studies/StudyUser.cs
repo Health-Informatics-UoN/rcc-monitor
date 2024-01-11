@@ -1,4 +1,4 @@
-namespace Monitor.Models.Studies;
+namespace Monitor.Shared.Models.Studies;
 
 public class StudyUser
 {

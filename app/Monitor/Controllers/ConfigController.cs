@@ -5,6 +5,7 @@ using Microsoft.FeatureManagement;
 using Monitor.Auth;
 using Monitor.Constants;
 using Monitor.Models;
+using Monitor.Models.Config;
 using Monitor.Services;
 using Swashbuckle.AspNetCore.Annotations;
 

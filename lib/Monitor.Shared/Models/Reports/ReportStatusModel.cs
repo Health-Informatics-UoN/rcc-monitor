@@ -1,6 +1,6 @@
-namespace Monitor.Models;
+namespace Monitor.Shared.Models.Reports;
 
-public class ReportTypeModel
+public class ReportStatusModel
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

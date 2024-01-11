@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data.Entities;
-using Monitor.Models.Studies;
+using Monitor.Shared.Models.Studies;
 using StudyUser = Monitor.Data.Entities.StudyUser;
 
 namespace Monitor.Tests.Services;
@@ -70,7 +70,7 @@ public class StudyServiceTests : IClassFixture<Fixtures>
         // Input with the users who are kept.
         var model = new StudyPartialModel
         {
-            Users = new List<Monitor.Models.Studies.StudyUser>
+            Users = new List<Shared.Models.Studies.StudyUser>
             {
                 new() { Id = "user1" },
                 new() { Id = "user2" }
@@ -114,7 +114,7 @@ public class StudyServiceTests : IClassFixture<Fixtures>
         // Input with new users to be added
         var model = new StudyPartialModel
         {
-            Users = new List<Monitor.Models.Studies.StudyUser>
+            Users = new List<Shared.Models.Studies.StudyUser>
             {
                 new() { Id = "user3" },
                 new() { Id = "user4" }

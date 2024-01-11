@@ -1,6 +1,6 @@
 using Monitor.Data.Entities;
 
-namespace Monitor.Models;
+namespace Monitor.Models.Config;
 
 public class ConfigModel
 {

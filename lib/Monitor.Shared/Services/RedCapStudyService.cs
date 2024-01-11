@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Monitor.Shared.Config;
 using Monitor.Shared.Constants;
 using Monitor.Shared.Models;
+using Monitor.Shared.Models.AuditLog;
 
 namespace Monitor.Shared.Services;
 
@@ -53,7 +54,7 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     }
 
     /// <summary>
-    /// Builds an <see cref="AuditLogsFilter"/> for a given event Type.
+    /// Builds an <see cref="Monitor.Shared.Models.AuditLogs.AuditLogsFilter"/> for a given event Type.
     /// </summary>
     /// <param name="auditEventId"></param>
     /// <param name="eventType"></param>

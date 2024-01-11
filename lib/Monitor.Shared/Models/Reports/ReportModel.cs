@@ -1,4 +1,6 @@
-namespace Monitor.Models;
+using Monitor.Shared.Models.Sites;
+
+namespace Monitor.Shared.Models.Reports;
 
 public class ReportModel
 {
