@@ -1,5 +1,8 @@
 using Functions.Models;
 using Monitor.Data.Constants;
+using Monitor.Shared.Constants;
+using Monitor.Shared.Models.Reports;
+using Monitor.Shared.Models.Sites;
 
 namespace Functions.Services;
 
@@ -19,7 +22,10 @@ public class SiteService
             {
                 DateTime = DateTimeOffset.UtcNow,
                 Description = "",
-                ReportTypeModel = Reports.ConflictingSites,
+                ReportType = new ReportTypeModel
+                {
+                    Name = Reports.ConflictingSites
+                },
                 Sites = new List<SiteModel>
                 {
                     new()
@@ -51,7 +57,10 @@ public class SiteService
                     {
                         DateTime = DateTimeOffset.UtcNow,
                         Description = "",
-                        ReportTypeModel = Reports.ConflictingSiteName,
+                        ReportType = new ReportTypeModel
+                        {
+                            Name = Reports.ConflictingSiteName
+                        },
                         Sites = new List<SiteModel>
                         {
                             new()
@@ -92,7 +101,10 @@ public class SiteService
                 (site1, site2) => new ReportModel
                 {
                     DateTime = DateTimeOffset.UtcNow,
-                    ReportTypeModel = Reports.ConflictingSiteParent,
+                    ReportType = new ReportTypeModel
+                    {
+                        Name = Reports.ConflictingSiteParent
+                    },
                     Sites = new List<SiteModel>
                     {
                         new()

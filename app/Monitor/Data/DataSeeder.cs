@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Monitor.Config;
 using Monitor.Data.Constants;
 using Monitor.Data.Entities;
+using Monitor.Shared.Constants;
 
 namespace Monitor.Data;
 

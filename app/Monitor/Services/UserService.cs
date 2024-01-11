@@ -6,8 +6,8 @@ using Microsoft.Extensions.Options;
 using Monitor.Config;
 using Monitor.Constants;
 using Monitor.Data;
-using Monitor.Models.Studies;
 using Monitor.Models.Users;
+using Monitor.Shared.Models.Studies;
 
 
 namespace Monitor.Services;

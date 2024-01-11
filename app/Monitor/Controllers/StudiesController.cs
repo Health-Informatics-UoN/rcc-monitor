@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
 using Monitor.Constants;
-using Monitor.Models.Studies;
 using Monitor.Services;
+using Monitor.Shared.Models.Studies;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Monitor.Controllers;

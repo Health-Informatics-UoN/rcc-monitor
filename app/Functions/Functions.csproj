@@ -30,5 +30,6 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\lib\Data\Data.csproj" />
+      <ProjectReference Include="..\..\lib\Monitor.Shared\Monitor.Shared.csproj" />
     </ItemGroup>
 </Project>

@@ -6,6 +6,9 @@ using Monitor.Data.Constants;
 using Monitor.Models;
 using Monitor.Models.Emails;
 using Monitor.Services.Contracts;
+using Monitor.Shared.Models.Instances;
+using Monitor.Shared.Models.Reports;
+using Monitor.Shared.Models.Sites;
 
 namespace Monitor.Services;
 

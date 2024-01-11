@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
 using Monitor.Constants;
-using Monitor.Models;
 using Monitor.Services;
+using Monitor.Shared.Models.Reports;
 
 namespace Monitor.Controllers;
 

@@ -9,16 +9,20 @@
       "path": "../app/frontend-webapp"
     },
     {
-      "name": "src/Data",
+      "name": "lib/Data",
       "path": "../lib/Data"
     },
     {
-      "name": "src/Functions",
+      "name": "app/Functions",
       "path": "../app/Functions"
     },
     {
-      "name": "src/Monitor",
+      "name": "app/Monitor",
       "path": "../app/Monitor"
+    },
+    {
+      "name": "lib/Shared",
+      "path": "../lib/Monitor.Shared"
     },
   ],
   "extensions": {

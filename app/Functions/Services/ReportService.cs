@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
 using Monitor.Data.Constants;
 using Monitor.Data.Entities;
+using Monitor.Shared.Models.Reports;
+using Monitor.Shared.Models.Sites;
 using Site = Monitor.Data.Entities.Site;
 
 namespace Functions.Services;
@@ -24,7 +26,7 @@ public class ReportService : IReportingService
     
     public void Create(ReportModel reportModel)
     {
-        var reportType = _db.ReportTypes.First(x => x.Name == reportModel.ReportTypeModel);
+        var reportType = _db.ReportTypes.First(x => x.Name == reportModel.ReportType.Name);
         var status = _db.ReportStatus.First(x => x.Name == Status.Active);
         var entity = new Report
         {
@@ -62,8 +64,14 @@ public class ReportService : IReportingService
             Id = x.Id,
             DateTime = x.DateTime,
             Description = x.Description,
-            ReportTypeModel = x.ReportType.Name,
-            Status = x.Status.Name,
+            ReportType = new ReportTypeModel
+            {
+                Name = x.ReportType.Name
+            },
+            Status = new ReportStatusModel
+            {
+                Name = x.Status.Name
+            },
             Sites = x.Sites.Select(site => new SiteModel
             {
                 Id = site.Id,

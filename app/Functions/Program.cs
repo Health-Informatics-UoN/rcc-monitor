@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Monitor.Data;
 using Monitor.Data.Config;
+using Monitor.Shared.Config;
+using Monitor.Shared.Services;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()

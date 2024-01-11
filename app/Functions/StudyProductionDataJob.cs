@@ -1,10 +1,10 @@
-using Functions.Config;
-using Functions.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Monitor.Data;
 using Monitor.Data.Constants;
+using Monitor.Shared.Constants;
+using Monitor.Shared.Services;
 
 namespace Functions;
 

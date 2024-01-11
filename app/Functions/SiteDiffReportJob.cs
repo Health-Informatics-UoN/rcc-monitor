@@ -5,6 +5,7 @@ using Functions.Config;
 using Functions.Services;
 using Functions.Services.Contracts;
 using Monitor.Data.Constants;
+using Monitor.Shared.Config;
 
 namespace Functions;
 

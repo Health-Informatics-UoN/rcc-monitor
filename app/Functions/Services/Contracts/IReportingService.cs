@@ -1,4 +1,4 @@
-using Functions.Models;
+using Monitor.Shared.Models.Reports;
 
 namespace Functions.Services.Contracts;
 

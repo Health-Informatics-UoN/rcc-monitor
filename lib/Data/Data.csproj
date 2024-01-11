@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>Monitor.Data</AssemblyName>
         <RootNamespace>Monitor.Data</RootNamespace>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
