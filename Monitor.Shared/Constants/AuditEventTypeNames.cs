@@ -1,4 +1,4 @@
-namespace Functions.Constants;
+namespace Monitor.Shared.Constants;
 
 public class AuditEventTypeNames
 {

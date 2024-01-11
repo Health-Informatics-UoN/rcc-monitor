@@ -2,6 +2,8 @@ using Functions.Models;
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data;
 using Monitor.Data.Entities;
+using Monitor.Shared.Models;
+using Monitor.Shared.Services;
 
 namespace Functions.Services;
 

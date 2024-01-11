@@ -1,5 +1,6 @@
 using Functions.Models;
 using Monitor.Data.Entities;
+using Monitor.Shared.Models;
 
 namespace Francois.Tests.Services;
 

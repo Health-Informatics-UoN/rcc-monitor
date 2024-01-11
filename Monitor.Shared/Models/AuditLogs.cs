@@ -1,4 +1,4 @@
-namespace Functions.Models;
+namespace Monitor.Shared.Models;
 
 public class AuditLogs
 {

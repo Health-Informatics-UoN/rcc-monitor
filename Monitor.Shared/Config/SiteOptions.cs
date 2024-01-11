@@ -1,4 +1,4 @@
-namespace Functions.Config;
+namespace Monitor.Shared.Config;
 
 public class SiteOptions
 {

@@ -1,11 +1,11 @@
 using Flurl.Http;
-using Functions.Config;
-using Functions.Constants;
-using Functions.Models;
 using Microsoft.Extensions.Options;
 using Monitor.Data.Constants;
+using Monitor.Shared.Config;
+using Monitor.Shared.Constants;
+using Monitor.Shared.Models;
 
-namespace Functions.Services;
+namespace Monitor.Shared.Services;
 
 public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
 {

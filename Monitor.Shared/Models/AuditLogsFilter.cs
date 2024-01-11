@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Functions.Models;
+namespace Monitor.Shared.Models;
 
 public class AuditLogsFilter
 {

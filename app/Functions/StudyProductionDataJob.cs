@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Monitor.Data;
 using Monitor.Data.Constants;
+using Monitor.Shared.Services;
 
 namespace Functions;
 

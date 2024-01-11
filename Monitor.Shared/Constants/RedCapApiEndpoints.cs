@@ -1,4 +1,4 @@
-namespace Functions.Constants;
+namespace Monitor.Shared.Constants;
 
 /// <summary>
 /// RedCap API Endpoints

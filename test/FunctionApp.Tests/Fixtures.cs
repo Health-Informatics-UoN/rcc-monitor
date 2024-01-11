@@ -8,6 +8,8 @@ using Monitor.Config;
 using Monitor.Data;
 using Monitor.Data.Config;
 using Monitor.Services;
+using Monitor.Shared.Config;
+using Monitor.Shared.Services;
 using Moq;
 
 namespace Francois.Tests;
