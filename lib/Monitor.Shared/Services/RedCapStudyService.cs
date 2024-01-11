@@ -4,6 +4,7 @@ using Monitor.Shared.Config;
 using Monitor.Shared.Constants;
 using Monitor.Shared.Models;
 using Monitor.Shared.Models.AuditLog;
+using Monitor.Shared.Models.Studies;
 
 namespace Monitor.Shared.Services;
 
