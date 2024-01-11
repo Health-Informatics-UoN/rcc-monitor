@@ -147,10 +147,10 @@ public class RedCapStudyService(IOptions<SiteOptions> siteOptions)
     /// </summary>
     /// <param name="study">Study to get the role for.</param>
     /// <param name="roleId">Role Id to get the role.</param>
-    /// <returns>A </returns>
-    public async Task<List<StudyRole>> GetStudyRole(StudyModel study, int roleId)
+    /// <returns>The Study role for the Id.</returns>
+    public async Task<StudyRole> GetStudyRole(StudyModel study, int roleId)
     {
         var url = GetApiUrl(study.Instance) + RedCapApiEndpoints.StudyRoles(study.Id, roleId);
-        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<List<StudyRole>>();
+        return await url.WithHeader("token", study.ApiKey).GetJsonAsync<StudyRole>();
     }
 }
