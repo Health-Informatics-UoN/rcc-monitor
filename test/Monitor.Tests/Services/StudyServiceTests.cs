@@ -3,7 +3,7 @@ using Monitor.Data.Entities;
 using Monitor.Models.Studies;
 using StudyUser = Monitor.Data.Entities.StudyUser;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class StudyServiceTests : IClassFixture<Fixtures>
 {

@@ -1,8 +1,8 @@
 using Functions.Models;
-using Functions.Services.Contracts;
 using Functions.Services;
+using Functions.Services.Contracts;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class PlaceholderDataServiceTests
 {

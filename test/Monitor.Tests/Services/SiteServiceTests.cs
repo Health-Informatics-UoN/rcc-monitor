@@ -1,7 +1,7 @@
 using Functions.Models;
 using Functions.Services;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class SiteServiceTests
 {

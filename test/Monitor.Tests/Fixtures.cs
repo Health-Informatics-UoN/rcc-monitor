@@ -12,7 +12,7 @@ using Monitor.Shared.Config;
 using Monitor.Shared.Services;
 using Moq;
 
-namespace Francois.Tests;
+namespace Monitor.Tests;
 
 public class Fixtures
 {

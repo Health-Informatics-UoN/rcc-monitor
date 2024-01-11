@@ -1,6 +1,6 @@
 using Monitor.Services.SyntheticData;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class DataGeneratorTests
 {

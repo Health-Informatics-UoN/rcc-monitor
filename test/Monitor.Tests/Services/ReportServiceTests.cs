@@ -4,7 +4,7 @@ using Monitor.Data.Constants;
 using Monitor.Shared.Constants;
 using Moq;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class ReportServiceTests : IClassFixture<Fixtures>
 {

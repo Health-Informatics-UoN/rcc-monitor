@@ -1,8 +1,8 @@
-using Functions.Models;
+using System.Collections;
 using Monitor.Data.Entities;
 using Monitor.Shared.Models;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class StudyCapacityServiceTests : IClassFixture<Fixtures>
 {
@@ -139,7 +139,7 @@ public class StudyCapacityServiceTests : IClassFixture<Fixtures>
             .Where(x => x.Study.RedCapId == studyId)
             .ToList();
         
-        Assert.Single(groups);
+        Assert.Single((IEnumerable)groups);
         Assert.Equal("Group 1", groups[0].Name);
     }
 }

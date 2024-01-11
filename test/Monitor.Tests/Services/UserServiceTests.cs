@@ -10,7 +10,7 @@ using Monitor.Models.Users;
 using Monitor.Services;
 using Moq;
 
-namespace Francois.Tests.Services;
+namespace Monitor.Tests.Services;
 
 public class UserServiceTests : IClassFixture<Fixtures>
 {
