@@ -426,14 +426,25 @@ public class StudyService(
     /// </summary>
     /// <param name="permission">The existing permissions on the Study Role Component.</param>
     /// <param name="allowedPermissions">A list of permissions we require: <see cref="AllowedPermissions"/></param>
-    /// <returns></returns>
-    public bool CheckPermissions(StudyRoleComponentPermissions permission,
-        List<string> allowedPermissions)
+    /// <returns>True if the required permissions only exist on the Study Role Component.</returns>
+    public bool CheckPermissions(StudyRoleComponentPermissions permission, List<string> allowedPermissions)
     {
-        var matchingPermissions =
-            permission.allowedPermissions.Where(x => allowedPermissions.Contains(x.name)).ToList();
+        var matchingPermissions = permission.allowedPermissions
+            .Where(x => allowedPermissions.Contains(x.name))
+            .ToList();
 
-        return matchingPermissions.Count == allowedPermissions.Count &&
-               matchingPermissions.All(matchingPermission => permission.permissions.Contains(matchingPermission.id));
+        // Check if the count of matching permissions is equal to the count of allowed permissions
+        var isCountMatch = matchingPermissions.Count == allowedPermissions.Count;
+
+        // Check if all matching permissions are assigned to the role
+        var areAllAssigned =
+            matchingPermissions.All(matchingPermission => permission.permissions.Contains(matchingPermission.id));
+
+        // Check if all assigned permissions are part of the matching permissions
+        var areAllPartOfMatching = permission.permissions.All(assignedPermissionId =>
+            matchingPermissions.Any(matchingPermission => matchingPermission.id == assignedPermissionId));
+
+        return isCountMatch && areAllAssigned && areAllPartOfMatching;
     }
+
 }
