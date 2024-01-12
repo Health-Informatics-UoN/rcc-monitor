@@ -6,6 +6,7 @@ using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
 using Monitor.Constants;
 using Monitor.Services;
+using Monitor.Shared.Exceptions;
 using Monitor.Shared.Models.Studies;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -128,6 +129,10 @@ public class StudiesController : ControllerBase
         catch (UnauthorizedAccessException ex)
         {
             return StatusCode(401, ex.Message);
+        }
+        catch (Exception ex) when (ex is MissingPermissionsException or ExtraPermissionsException)
+        {
+            return Forbid(ex.Message);
         }
     }
     
