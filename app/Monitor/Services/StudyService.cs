@@ -336,6 +336,7 @@ public class StudyService(
     /// <exception cref="UnauthorizedAccessException">The APIKey is not authorized with RedCap.</exception>
     private async Task<StudyModel> ValidateWithInstance(string apiKey, string instance)
     {
+        // TODO: Move this to RedCapStudyService
         var url = instance == Instances.Production ? _config.ProductionUrl : _config.BuildUrl;
         url += RedCapApiEndpoints.Studies;
 
@@ -355,59 +356,65 @@ public class StudyService(
     /// <exception cref="Exception">The study has the wrong permissions.</exception>
     public async Task ValidatePermissions(StudyModel study)
     {
-        // This is the only way to get the user Id with a token from the API.
-        var assign = await redCapStudyService.GetStudyAssignments(study);
-        var userId = assign.First(x => x.email == _config.ApiEmail).userId;
+        // This is the only way to get the user Id from the API.
+        var studyAssignments = await redCapStudyService.GetStudyAssignments(study);
+        var userId = studyAssignments.First(x => x.email == _config.ApiEmail).userId;
 
-        var assignments = await redCapStudyService.GetStudyUserAssignments(study, userId);
+        var studyUserAssignments = await redCapStudyService.GetStudyUserAssignments(study, userId);
 
-        var hasReadAuditLogsPermission = false;
-        var hasReadStudyGroupsPermission = false;
-        var hasOtherPermissions = false;
+        // Define the permissions we currently accept, add more if needed.
+        var requiredPermissions = new Dictionary<string, List<string>>
+        {
+            { ComponentName.AuditLogs, [AllowedPermissions.ResourcePermissionRead] },
+            { ComponentName.StudyGroups, [AllowedPermissions.ResourcePermissionRead] }
+        };
 
-        foreach (var assignment in assignments)
+        // Keep track of permissions, and add them as we unwrap them.
+        var permissionsResult = new Dictionary<string, bool>();
+        var extraPermissions = new List<string>();
+
+        foreach (var assignment in studyUserAssignments)
         {
             var role = await redCapStudyService.GetStudyRole(study, assignment.roleId);
 
             foreach (var permission in role.permissions)
             {
-                switch (permission.componentName)
+                if (requiredPermissions.TryGetValue(permission.componentName, out var allowedPermissions))
                 {
-                    case ComponentName.AuditLogs:
-                        hasReadAuditLogsPermission = CheckPermission(permission,
-                            AllowedPermissions.ResourcePermissionRead, ref hasReadAuditLogsPermission);
-                        break;
-                    case ComponentName.StudyGroups:
-                        hasReadStudyGroupsPermission = CheckPermission(permission,
-                            AllowedPermissions.ResourcePermissionRead, ref hasReadStudyGroupsPermission);
-                        break;
-                    default:
-                        hasOtherPermissions = true;
-                        break;
+                    permissionsResult[permission.componentName] = CheckPermissions(permission, allowedPermissions);
+                }
+                else
+                {
+                    extraPermissions.Add(permission.componentName);
                 }
             }
         }
 
-        if (!hasReadAuditLogsPermission || !hasReadStudyGroupsPermission)
+        if (!permissionsResult.Values.All(result => result))
         {
             throw new Exception("The API user does not have the required permissions.");
         }
 
-        if (hasOtherPermissions)
+        if (extraPermissions.Count > 0)
         {
-            throw new Exception("The API user has too many permissions.");
+            throw new Exception(
+                $"The API User has extra permissions: {string.Join(", ", extraPermissions)}, please remove them from the Users role.");
         }
     }
 
-    private static bool CheckPermission(StudyRoleComponentPermissions permission, string allowedPermission,
-        ref bool change)
+    /// <summary>
+    /// Check if the Study Role Component has only the required permissions.
+    /// </summary>
+    /// <param name="permission">The existing permissions on the Study Role Component.</param>
+    /// <param name="allowedPermissions">A list of permissions we require: <see cref="AllowedPermissions"/></param>
+    /// <returns></returns>
+    private static bool CheckPermissions(StudyRoleComponentPermissions permission,
+        List<string> allowedPermissions)
     {
-        var permissionIndex = permission.allowedPermissions.SingleOrDefault(x => x.name == allowedPermission);
-        if (permission.permissions.Exists(y => y.Equals(permissionIndex?.id)))
-        {
-            change = true;
-        }
+        var matchingPermissions =
+            permission.allowedPermissions.Where(x => allowedPermissions.Contains(x.name)).ToList();
 
-        return change;
+        return matchingPermissions.Count == allowedPermissions.Count &&
+               matchingPermissions.All(matchingPermission => permission.permissions.Contains(matchingPermission.id));
     }
 }
