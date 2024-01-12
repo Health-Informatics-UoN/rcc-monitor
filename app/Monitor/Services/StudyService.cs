@@ -371,7 +371,7 @@ public class StudyService(
 
         if (!permissionsResult.Values.All(result => result))
         {
-            throw new MissingPermissionsException("The API user does not have the required permissions.");
+            throw new MissingPermissionsException("The API user does not have the correct permissions.");
         }
 
         if (extraPermissions.Count > 0)

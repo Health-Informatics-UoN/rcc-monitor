@@ -132,7 +132,7 @@ public class StudiesController : ControllerBase
         }
         catch (Exception ex) when (ex is MissingPermissionsException or ExtraPermissionsException)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, ex.Message);
         }
     }
     
