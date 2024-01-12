@@ -12,6 +12,7 @@
         <Version Condition="'$(GitHash)' != ''">$(Version)+$(GitHash)</Version>
         <SpaProxyServerUrl>http://localhost:3000</SpaProxyServerUrl>
         <SpaProxyLaunchCommand>npm run dev --prefix ../frontend-webapp</SpaProxyLaunchCommand>
+        <UserSecretsId>001ca682-4446-4215-bd26-e1c566b92c9b</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
