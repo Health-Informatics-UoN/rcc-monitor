@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Monitor.Data.Entities;
+using Monitor.Shared.Constants;
 using Monitor.Shared.Models.Studies;
 using StudyUser = Monitor.Data.Entities.StudyUser;
 
@@ -126,6 +127,97 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
         // Check that the users were added
         Assert.NotNull(updatedStudy?.Users.FirstOrDefault(u => u.UserId == "user3"));
         Assert.NotNull(updatedStudy?.Users.FirstOrDefault(u => u.UserId == "user4"));
+    }
+    
+    [Fact]
+    public void CheckPermissions_AllRequiredPermissionsPresent_ReturnsTrue()
+    {
+        // Arrange
+        var studyService = fixtures.GetStudyService();
+        var permission = new StudyRoleComponentPermissions
+        {
+            allowedPermissions = [new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionRead }],
+            permissions = [1]
+        };
+
+        var allowedPermissions = new List<string> { AllowedPermissions.ResourcePermissionRead };
+
+        // Act
+        var result = studyService.CheckPermissions(permission, allowedPermissions);
+
+        // Assert
+        Assert.True(result);
+    }
+    
+    [Fact]
+    public void CheckPermissions_RequiredPermissionsMissing_ReturnsFalse()
+    {
+        // Arrange
+        var studyService = fixtures.GetStudyService();
+        var permission = new StudyRoleComponentPermissions
+        {
+            allowedPermissions = [new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionRead }],
+            permissions = [1]
+        };
+
+        var allowedPermissions = new List<string> { 
+            AllowedPermissions.ResourcePermissionRead, 
+            AllowedPermissions.ResourcePermissionDelete 
+        };
+
+        // Act
+        var result = studyService.CheckPermissions(permission, allowedPermissions);
+
+        // Assert
+        Assert.False(result);
+    }
+    
+    [Fact]
+    public void CheckPermissions_ExistingPermissionsWrong_ReturnsFalse()
+    {
+        // Arrange
+        var studyService = fixtures.GetStudyService();
+        var permission = new StudyRoleComponentPermissions
+        {
+            allowedPermissions = [new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionDelete }],
+            permissions = [1]
+        };
+
+        var allowedPermissions = new List<string> { 
+            AllowedPermissions.ResourcePermissionRead, 
+        };
+
+        // Act
+        var result = studyService.CheckPermissions(permission, allowedPermissions);
+
+        // Assert
+        Assert.False(result);
+    }
+    
+    [Fact]
+    public void CheckPermissions_ExistingPermissionsAreExtra_ReturnsFalse()
+    {
+        // Arrange
+        var studyService = fixtures.GetStudyService();
+        var permission = new StudyRoleComponentPermissions
+        {
+            allowedPermissions =
+            [
+                new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionDelete },
+                new GenericItem { id = 2, name = AllowedPermissions.ResourcePermissionRead }
+            ],
+            permissions = [1, 2]
+        };
+
+        var allowedPermissions = new List<string> { 
+            AllowedPermissions.ResourcePermissionRead
+        };
+
+        // Act
+        var result = studyService.CheckPermissions(permission, allowedPermissions);
+
+        // Assert
+        Assert.False(result);
     }
 
 

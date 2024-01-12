@@ -427,7 +427,7 @@ public class StudyService(
     /// <param name="permission">The existing permissions on the Study Role Component.</param>
     /// <param name="allowedPermissions">A list of permissions we require: <see cref="AllowedPermissions"/></param>
     /// <returns></returns>
-    public static bool CheckPermissions(StudyRoleComponentPermissions permission,
+    public bool CheckPermissions(StudyRoleComponentPermissions permission,
         List<string> allowedPermissions)
     {
         var matchingPermissions =
