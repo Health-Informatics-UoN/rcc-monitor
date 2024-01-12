@@ -11,7 +11,6 @@ public static class RedCapApiEndpoints
     public static string StudyAssignments(int id) => $"{ApiBase}/studies/{id}/assignments";
     public static string StudyUserAssignments(int id, int userId) =>
         $"{ApiBase}/studies/{id}/users/{userId}/assignments";
-
     public static string StudyRoles(int id, int roleId) =>
         $"{ApiBase}/study-roles/{id}/{roleId}";
     public const string AuditLogsEventTypes = $"{ApiBase}/audit-logs/event-types";
