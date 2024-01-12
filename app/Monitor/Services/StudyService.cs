@@ -8,6 +8,7 @@ using Monitor.Auth;
 using Monitor.Shared.Constants;
 using Monitor.Data.Entities;
 using Monitor.Shared.Config;
+using Monitor.Shared.Exceptions;
 using Monitor.Shared.Models.Studies;
 using Monitor.Shared.Services;
 using StudyUser = Monitor.Data.Entities.StudyUser;
@@ -370,12 +371,12 @@ public class StudyService(
 
         if (!permissionsResult.Values.All(result => result))
         {
-            throw new Exception("The API user does not have the required permissions.");
+            throw new MissingPermissionsException("The API user does not have the required permissions.");
         }
 
         if (extraPermissions.Count > 0)
         {
-            throw new Exception(
+            throw new ExtraPermissionsException(
                 $"The API User has additional permissions: {string.Join(", ", extraPermissions)}.");
         }
     }
