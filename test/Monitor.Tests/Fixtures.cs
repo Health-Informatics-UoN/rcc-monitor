@@ -1,4 +1,3 @@
-using Functions.Config;
 using Functions.Services;
 using Keycloak.AuthServices.Sdk.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -50,8 +49,9 @@ public class Fixtures
         var userService = new UserService(DbContext, mockKeycloakUserClient.Object, Options.Create(new KeycloakOptions()));
         var configService = new ConfigService(DbContext);
         var authorizationService = new Mock<IAuthorizationService>().Object;
+        var redCapStudyService = new RedCapStudyService(options);
 
-        return new StudyService(DbContext, options, userService, configService, authorizationService);
+        return new StudyService(DbContext, options, userService, configService, authorizationService, redCapStudyService);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class Fixtures
     /// <returns></returns>
     public StudyCapacityService GetStudyCapacityService()
     {
-        var redCapStudyService = new RedCapStudyService(Options.Create(new SiteOptions()));
+        var redCapStudyService = new RedCapStudyService(Options.Create(new RedCapOptions()));
 
         return new StudyCapacityService(DbContext, redCapStudyService);
     }
