@@ -65,7 +65,7 @@ public class StudyService(
             StudyCapacityThreshold = entity.StudyCapacityThreshold,
             SubjectsEnrolledThreshold = entity.SubjectsEnrolledThreshold,
             StudyCapacityJobFrequency = entity.StudyCapacityJobFrequency.ToString(@"hh\:mm\:ss"),
-            StudyCapacityLastChecked = entity.StudyCapacityLastChecked.ToString("G")
+            StudyCapacityLastChecked = entity.StudyCapacityLastChecked.ToString("u")
         };
         return model;
     }
@@ -348,6 +348,7 @@ public class StudyService(
     /// Check that the Study API Key only has permission to:
     /// Study Groups: Read
     /// Study Audit Logs: Read
+    /// Assign Users: Read, Update.
     /// </summary>
     /// <param name="study">The Study to validate permissions for.</param>
     /// <exception cref="Exception">The study has the wrong permissions.</exception>
@@ -363,7 +364,11 @@ public class StudyService(
         var requiredPermissions = new Dictionary<string, List<string>>
         {
             { ComponentName.AuditLogs, [AllowedPermissions.ResourcePermissionRead] },
-            { ComponentName.StudyGroups, [AllowedPermissions.ResourcePermissionRead] }
+            { ComponentName.StudyGroups, [AllowedPermissions.ResourcePermissionRead] },
+            { ComponentName.AssignUsers, [
+                AllowedPermissions.ResourcePermissionRead,
+                AllowedPermissions.ResourcePermissionUpdate
+            ]}
         };
 
         var (permissionsResult, extraPermissions) =
