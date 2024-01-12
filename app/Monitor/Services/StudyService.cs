@@ -332,15 +332,11 @@ public class StudyService(
     /// </summary>
     /// <param name="apiKey">ApiKey to validate.</param>
     /// <param name="instance">The RedCap instance to try.</param>
-    /// <returns></returns>
+    /// <returns>The matching study from RedCap</returns>
     /// <exception cref="UnauthorizedAccessException">The APIKey is not authorized with RedCap.</exception>
     private async Task<StudyModel> ValidateWithInstance(string apiKey, string instance)
     {
-        // TODO: Move this to RedCapStudyService
-        var url = instance == Instances.Production ? _config.ProductionUrl : _config.BuildUrl;
-        url += RedCapApiEndpoints.Studies;
-
-        var result = await url.WithHeader("token", apiKey).GetJsonAsync<StudyModel>();
+        var result = await redCapStudyService.GetStudy(instance, apiKey);
         result.ApiKey = apiKey;
         result.Instance = instance;
         return result;

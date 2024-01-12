@@ -37,6 +37,18 @@ public class RedCapStudyService(IOptions<RedCapOptions> redCapOptions)
     }
 
     /// <summary>
+    /// Get a Study for a given token on a RedCap instance.
+    /// </summary>
+    /// <param name="instance">RedCap instance to get from.</param>
+    /// <param name="token">Study token to use.</param>
+    /// <returns>The Study that matches the token from RedCap</returns>
+    public async Task<StudyModel> GetStudy(string instance, string token)
+    {
+        var url = GetApiUrl(instance) + RedCapApiEndpoints.Studies;
+        return await url.WithHeader("token", token).GetJsonAsync<StudyModel>();
+    }
+
+    /// <summary>
     /// Get a list of study groups for a given study.
     /// </summary>
     /// <param name="token">Study access token. Used to get current study ID parameter.</param>
