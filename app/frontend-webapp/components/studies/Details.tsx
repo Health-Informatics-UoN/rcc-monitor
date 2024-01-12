@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Formik, Form } from "formik";
+import { formatDistanceToNow } from "date-fns";
+import { Form, Formik } from "formik";
 import {
   AlertCircle,
   AlertTriangle,
@@ -9,29 +9,21 @@ import {
   BellRing,
   Plus,
 } from "lucide-react";
-import { css } from "@/styled-system/css";
-import { Box, Flex, Grid } from "@/styled-system/jsx";
-import { h1, h4, icon } from "@/styled-system/recipes";
+import React from "react";
+import { number, object, string } from "yup";
 
-import { UserManagement } from "@/components/studies/UserManagement";
+import { updateStudy } from "@/api/studies";
+import { Description } from "@/components/Description";
+import EnvironmentBadge from "@/components/EnvironmentBadge";
+import { FormikInput } from "@/components/forms/FormikInput";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/components/shadow-ui/Alert";
-import { Separator } from "@/components/shadow-ui/Separator";
-
-import { StudyPartial } from "@/types/studies";
-import { updateStudy } from "@/api/studies";
 import { Button } from "@/components/shadow-ui/Button";
-import { toast } from "@/components/shadow-ui/Toast/use-toast";
-import { FormikInput } from "@/components/forms/FormikInput";
+import { Separator } from "@/components/shadow-ui/Separator";
 import { Switch } from "@/components/shadow-ui/Switch";
-import { object, string, number } from "yup";
-import { Description } from "@/components/Description";
-import { ConfigModel } from "@/types/config";
-import { configKeys } from "@/constants/configKeys";
-import EnvironmentBadge from "@/components/EnvironmentBadge";
 import {
   Table,
   TableBody,
@@ -40,7 +32,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/shadow-ui/Table";
-import { formatDistanceToNow } from "date-fns";
+import { toast } from "@/components/shadow-ui/Toast/use-toast";
+import { UserManagement } from "@/components/studies/UserManagement";
+import { configKeys } from "@/constants/configKeys";
+import { css } from "@/styled-system/css";
+import { Box, Flex, Grid } from "@/styled-system/jsx";
+import { h1, h4, icon } from "@/styled-system/recipes";
+import { ConfigModel } from "@/types/config";
+import { StudyPartial } from "@/types/studies";
 
 const validationSchema = object({
   studyCapacityThreshold: number()
@@ -117,129 +116,25 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
     >
       {({ isSubmitting, values }) => (
         <Form noValidate>
-          <h1 className={h1()}>{model.name}</h1>
-          <Flex gap={5} m="20px 0" h="20px" alignItems="end">
-            <Box>
-              <p className={css({ fontWeight: "bold" })}>
-                RedCap Id: <span>{model.id}</span>
-              </p>
-            </Box>
-            <EnvironmentBadge name={model.instance} />
-          </Flex>
-          <Grid gap="4" py="4">
-            <Separator />
+          <StudyHeader study={model} />
+          <Separator />
+          <Grid gap="4">
             <h4 className={h4()}>Users</h4>
             <UserManagement users={values.users} />
           </Grid>
-
-          {model.studyGroup?.length > 0 && (
-            <Box m="20px 0">
-              <h4 className={h4()}>Study Groups</h4>
-              <Table>
-                <TableHeader>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Planned Size</TableHead>
-                </TableHeader>
-                <TableBody>
-                  {model.studyGroup.map((group) => (
-                    <TableRow key={group.id}>
-                      <TableCell>{group.name}</TableCell>
-                      <TableCell>{group.plannedSize}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          )}
           <Separator />
-
-          <Grid gap="4" py="4">
-            <h4 className={h4()}>Subjects Enrolled</h4>
-            {model.instance === "Build" &&
-              model.subjectsEnrolled > model.subjectsEnrolledThreshold && (
-                <Box w="80%">
-                  <Alert variant="destructive">
-                    <AlertTriangle className={icon()} />
-                    <AlertTitle>Subjects enrolled capacity exceeded</AlertTitle>
-                    <AlertDescription>
-                      The capacity is {model.subjectsEnrolledThreshold} and you
-                      currently have {model.subjectsEnrolled} subjects enrolled
-                    </AlertDescription>
-                  </Alert>
-                </Box>
-              )}
-            <Flex gap={5}>
-              <Box>
-                <p className={css({ fontWeight: "bold" })}>
-                  Capacity: <span>{model.subjectsEnrolledThreshold}</span>
-                </p>
-              </Box>
-              <Box>
-                <p className={css({ fontWeight: "bold" })}>
-                  Subjects Enrolled: <span>{model.subjectsEnrolled}</span>
-                </p>
-              </Box>
-            </Flex>
-          </Grid>
-
-          <div className={css({ m: "50px 0px" })}>
-            <Flex gap={3} alignItems="center">
-              <h4 className={h4()}>Study Capacity</h4>
-              {model.studyCapacityAlert ? (
-                <BellRing className={icon()} />
-              ) : (
-                <BellOff className={icon()} />
-              )}
-            </Flex>
-
-            <Box m="30px 0">
-              <p className={css({ fontWeight: "bold" })}>
-                Last Checked:{" "}
-                <span className={css({ fontWeight: "normal" })}>
-                  {formatDistanceToNow(
-                    new Date(model.studyCapacityLastChecked),
-                    {
-                      addSuffix: true,
-                    }
-                  )}
-                </span>
-              </p>
-            </Box>
-            <div>
-              <Flex gap={5} alignItems="center" m="15px 0px 25px 0px">
-                <p className={css({ fontWeight: "bold" })}>Alerts</p>
-                <Switch
-                  checked={isRandChecked}
-                  onCheckedChange={() =>
-                    handleChecked(isRandChecked, setRandChecked)
-                  }
-                />
-              </Flex>
-              <Box w="200px">
-                <Description text={thresholdDescription}>
-                  <div>
-                    <FormikInput
-                      name="studyCapacityThreshold"
-                      id="studyCapacityThreshold"
-                      label="Threshold (%)"
-                      disabled={!isRandChecked}
-                    />
-                  </div>
-                </Description>
-                <Description text={frequencyDescription}>
-                  <div>
-                    <FormikInput
-                      name="studyCapacityJobFrequency"
-                      id="Study Capacity Job Frequency"
-                      label="Frequency"
-                      disabled={!isRandChecked}
-                    />
-                  </div>
-                </Description>
-              </Box>
-            </div>
-          </div>
-
+          {model.studyGroup?.length > 0 && <StudyGroupsTable study={model} />}
+          <Separator />
+          <SubjectsEnrolled study={model} />
+          <Separator />
+          <StudyCapacity
+            study={model}
+            isRandChecked={isRandChecked}
+            handleChecked={handleChecked}
+            setRandChecked={setRandChecked}
+            thresholdDescription={thresholdDescription}
+            frequencyDescription={frequencyDescription}
+          />
           <div
             className={css({
               display: "flex",
@@ -251,9 +146,8 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
               <Plus className={icon({ right: "sm" })} />
             </Button>
           </div>
-
           {feedback && (
-            <Alert variant="destructive" mt={"4"}>
+            <Alert variant="destructive">
               <AlertCircle />
               <AlertTitle>Updating study failed.</AlertTitle>
               <AlertDescription>{feedback}</AlertDescription>
@@ -262,5 +156,150 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
         </Form>
       )}
     </Formik>
+  );
+}
+
+function StudyCapacity({
+  study,
+  isRandChecked,
+  handleChecked,
+  setRandChecked,
+  thresholdDescription,
+  frequencyDescription,
+}: {
+  study: StudyPartial;
+  isRandChecked: boolean;
+  handleChecked: (checked: boolean, setChecked: (val: boolean) => void) => void;
+  setRandChecked: React.Dispatch<React.SetStateAction<boolean>>;
+  thresholdDescription: string;
+  frequencyDescription: string;
+}) {
+  return (
+    <div>
+      <Flex gap={3} alignItems="center">
+        <h4 className={h4()}>Study Capacity</h4>
+        {study.studyCapacityAlert ? (
+          <BellRing className={icon()} />
+        ) : (
+          <BellOff className={icon()} />
+        )}
+      </Flex>
+
+      <Box>
+        <p className={css({ fontWeight: "bold" })}>
+          Last Checked:{" "}
+          <span className={css({ fontWeight: "normal" })}>
+            {/* {formatDistanceToNow(
+          new Date(model.studyCapacityLastChecked),
+          {
+            addSuffix: true,
+          }
+        )} */}
+          </span>
+        </p>
+      </Box>
+      <div>
+        <Flex gap={5} alignItems="center">
+          <p className={css({ fontWeight: "bold" })}>Alerts</p>
+          <Switch
+            checked={isRandChecked}
+            onCheckedChange={() => handleChecked(isRandChecked, setRandChecked)}
+          />
+        </Flex>
+        <Box w="200px">
+          <Description text={thresholdDescription}>
+            <div>
+              <FormikInput
+                name="studyCapacityThreshold"
+                id="studyCapacityThreshold"
+                label="Threshold (%)"
+                disabled={!isRandChecked}
+              />
+            </div>
+          </Description>
+          <Description text={frequencyDescription}>
+            <div>
+              <FormikInput
+                name="studyCapacityJobFrequency"
+                id="Study Capacity Job Frequency"
+                label="Frequency"
+                disabled={!isRandChecked}
+              />
+            </div>
+          </Description>
+        </Box>
+      </div>
+    </div>
+  );
+}
+
+function SubjectsEnrolled({ study }: { study: StudyPartial }) {
+  return (
+    <Grid gap="4">
+      <h4 className={h4()}>Subjects Enrolled</h4>
+      {study.instance === "Build" &&
+        study.subjectsEnrolled > study.subjectsEnrolledThreshold && (
+          <Box w="80%">
+            <Alert variant="destructive">
+              <AlertTriangle className={icon()} />
+              <AlertTitle>Subjects enrolled capacity exceeded</AlertTitle>
+              <AlertDescription>
+                The capacity is {study.subjectsEnrolledThreshold} and you
+                currently have {study.subjectsEnrolled} subjects enrolled
+              </AlertDescription>
+            </Alert>
+          </Box>
+        )}
+      <Flex gap={5}>
+        <Box>
+          <p className={css({ fontWeight: "bold" })}>
+            Capacity: <span>{study.subjectsEnrolledThreshold}</span>
+          </p>
+        </Box>
+        <Box>
+          <p className={css({ fontWeight: "bold" })}>
+            Subjects Enrolled: <span>{study.subjectsEnrolled}</span>
+          </p>
+        </Box>
+      </Flex>
+    </Grid>
+  );
+}
+
+function StudyHeader({ study }: { study: StudyPartial }) {
+  return (
+    <>
+      <h1 className={h1()}>{study.name}</h1>
+      <Flex gap={5} alignItems="end">
+        <Box>
+          <p className={css({ fontWeight: "bold" })}>
+            RedCap Id: <span>{study.id}</span>
+          </p>
+        </Box>
+        <EnvironmentBadge name={study.instance} />
+      </Flex>
+    </>
+  );
+}
+
+function StudyGroupsTable({ study }: { study: StudyPartial }): React.ReactNode {
+  return (
+    <Box>
+      <h4 className={h4()}>Study Groups</h4>
+      <Table>
+        <TableHeader>
+          <TableHead>Name</TableHead>
+          <TableHead>Planned Size</TableHead>
+        </TableHeader>
+        <TableBody>
+          {study.studyGroup.map((group) => (
+            <TableRow key={group.id}>
+              <TableCell>{group.name}</TableCell>
+              <TableCell>{group.plannedSize}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
   );
 }
