@@ -369,6 +369,33 @@ public class StudyService(
             { ComponentName.StudyGroups, [AllowedPermissions.ResourcePermissionRead] }
         };
 
+        var (permissionsResult, extraPermissions) =
+            await UnwrapPermissions(studyUserAssignments, requiredPermissions, study);
+
+        if (!permissionsResult.Values.All(result => result))
+        {
+            throw new Exception("The API user does not have the required permissions.");
+        }
+
+        if (extraPermissions.Count > 0)
+        {
+            throw new Exception(
+                $"The API User has additional permissions: {string.Join(", ", extraPermissions)}.");
+        }
+    }
+
+    /// <summary>
+    /// Unwraps the RedCap Assignment object to check the correct permissions exist.
+    /// </summary>
+    /// <param name="studyUserAssignments">The Study Assignments from RedCap.</param>
+    /// <param name="requiredPermissions">The permissions we want to validate.</param>
+    /// <param name="study">Study to unwrap permissions for.</param>
+    /// <returns>A tuple of the permissions given, and the extra permissions.</returns>
+    public async Task<(Dictionary<string, bool> permissionsResult, List<string> extraPermissions)> UnwrapPermissions(
+        IEnumerable<StudyAssignment> studyUserAssignments,
+        IReadOnlyDictionary<string, List<string>> requiredPermissions,
+        StudyModel study)
+    {
         // Keep track of permissions, and add them as we unwrap them.
         var permissionsResult = new Dictionary<string, bool>();
         var extraPermissions = new List<string>();
@@ -390,17 +417,9 @@ public class StudyService(
             }
         }
 
-        if (!permissionsResult.Values.All(result => result))
-        {
-            throw new Exception("The API user does not have the required permissions.");
-        }
-
-        if (extraPermissions.Count > 0)
-        {
-            throw new Exception(
-                $"The API User has extra permissions: {string.Join(", ", extraPermissions)}, please remove them from the Users role.");
-        }
+        return (permissionsResult, extraPermissions);
     }
+
 
     /// <summary>
     /// Check if the Study Role Component has only the required permissions.
@@ -408,7 +427,7 @@ public class StudyService(
     /// <param name="permission">The existing permissions on the Study Role Component.</param>
     /// <param name="allowedPermissions">A list of permissions we require: <see cref="AllowedPermissions"/></param>
     /// <returns></returns>
-    private static bool CheckPermissions(StudyRoleComponentPermissions permission,
+    public static bool CheckPermissions(StudyRoleComponentPermissions permission,
         List<string> allowedPermissions)
     {
         var matchingPermissions =
