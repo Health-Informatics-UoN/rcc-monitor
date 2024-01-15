@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Monitor.Data.Entities;
 using Monitor.Shared.Constants;
 using Monitor.Shared.Models.Studies;
+using Monitor.Shared.Services;
+using Moq;
 using StudyUser = Monitor.Data.Entities.StudyUser;
 
 namespace Monitor.Tests.Services;
@@ -218,6 +220,54 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public async Task UnwrapPermissions_ReturnsCorrectPermissions()
+    {
+        // Arrange
+        var studyService = fixtures.GetStudyService();
+
+        var study = new StudyModel();
+
+        var studyUserAssignments = new List<StudyAssignment>
+        {
+            new()
+            {
+                roleId = 1
+            }
+        };
+        
+        var requiredPermissions = new Dictionary<string, List<string>>
+        {
+            { ComponentName.AuditLogs, [AllowedPermissions.ResourcePermissionRead] },
+            { ComponentName.StudyGroups, [AllowedPermissions.ResourcePermissionRead] },
+            { ComponentName.AssignUsers, [
+                AllowedPermissions.ResourcePermissionRead,
+                AllowedPermissions.ResourcePermissionUpdate
+            ]}
+        };
+        
+        // TODO: Add mocks
+        var expectedStudyRole = new StudyRole
+        {
+            permissions = new List<StudyRoleComponentPermissions>
+            {
+                AllowedPermissions = new List<GenericItem>
+                {
+                    
+                }
+            }
+        }
+        RedCapStudyService.Setup(x => x.GetStudyRole(It.IsAny<StudyModel>(), It.IsAny<int>()))
+            .ReturnsAsync(expectedStudyRole);
+
+        // Act
+        var (permissionsResult, extraPermissions) = 
+            await studyService.UnwrapPermissions(studyUserAssignments, requiredPermissions, study);
+
+        // Assert
+
     }
 
 
