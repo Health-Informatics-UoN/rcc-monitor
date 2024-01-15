@@ -21,7 +21,7 @@ public class StudyService(
     UserService userService,
     ConfigService configService,
     IAuthorizationService authorizationService,
-    RedCapStudyService redCapStudyService)
+    IRedCapStudyService redCapStudyService)
 {
     private readonly RedCapOptions _config = config.Value;
 

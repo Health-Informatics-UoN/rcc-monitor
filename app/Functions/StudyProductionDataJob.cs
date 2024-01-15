@@ -11,7 +11,7 @@ namespace Functions;
 public class StudyProductionDataJob(
     ILoggerFactory loggerFactory,
     ApplicationDbContext db,
-    RedCapStudyService redCapStudyService)
+    IRedCapStudyService redCapStudyService)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<StudyProductionDataJob>();
 
