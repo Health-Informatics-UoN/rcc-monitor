@@ -138,8 +138,8 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
         var studyService = fixtures.GetStudyService();
         var permission = new StudyRoleComponentPermissions
         {
-            allowedPermissions = [new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionRead }],
-            permissions = [1]
+            AllowedPermissions = [new GenericItem { Id = 1, Name = AllowedPermissions.ResourcePermissionRead }],
+            Permissions = [1]
         };
 
         var allowedPermissions = new List<string> { AllowedPermissions.ResourcePermissionRead };
@@ -158,8 +158,8 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
         var studyService = fixtures.GetStudyService();
         var permission = new StudyRoleComponentPermissions
         {
-            allowedPermissions = [new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionRead }],
-            permissions = [1]
+            AllowedPermissions = [new GenericItem { Id = 1, Name = AllowedPermissions.ResourcePermissionRead }],
+            Permissions = [1]
         };
 
         var allowedPermissions = new List<string> { 
@@ -181,8 +181,8 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
         var studyService = fixtures.GetStudyService();
         var permission = new StudyRoleComponentPermissions
         {
-            allowedPermissions = [new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionDelete }],
-            permissions = [1]
+            AllowedPermissions = [new GenericItem { Id = 1, Name = AllowedPermissions.ResourcePermissionDelete }],
+            Permissions = [1]
         };
 
         var allowedPermissions = new List<string> { 
@@ -203,12 +203,12 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
         var studyService = fixtures.GetStudyService();
         var permission = new StudyRoleComponentPermissions
         {
-            allowedPermissions =
+            AllowedPermissions =
             [
-                new GenericItem { id = 1, name = AllowedPermissions.ResourcePermissionDelete },
-                new GenericItem { id = 2, name = AllowedPermissions.ResourcePermissionRead }
+                new GenericItem { Id = 1, Name = AllowedPermissions.ResourcePermissionDelete },
+                new GenericItem { Id = 2, Name = AllowedPermissions.ResourcePermissionRead }
             ],
-            permissions = [1, 2]
+            Permissions = [1, 2]
         };
 
         var allowedPermissions = new List<string> { 
@@ -222,8 +222,9 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
         Assert.False(result);
     }
 
-    [Fact]
-    public async Task UnwrapPermissions_ReturnsCorrectPermissions()
+    [Theory]
+    [InlineData(ComponentName.AuditLogs, new[] {AllowedPermissions.ResourcePermissionRead}, ComponentName.StudyGroups)]
+    public async Task UnwrapPermissions_ReturnsCorrectPermissions(string componentName, string[] allowedPermissions, string additionalPermissions)
     {
         // Arrange
         var studyService = fixtures.GetStudyService();
@@ -240,33 +241,17 @@ public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
         
         var requiredPermissions = new Dictionary<string, List<string>>
         {
-            { ComponentName.AuditLogs, [AllowedPermissions.ResourcePermissionRead] },
-            { ComponentName.StudyGroups, [AllowedPermissions.ResourcePermissionRead] },
-            { ComponentName.AssignUsers, [
-                AllowedPermissions.ResourcePermissionRead,
-                AllowedPermissions.ResourcePermissionUpdate
-            ]}
+            { componentName, allowedPermissions.ToList() }
         };
         
-        // TODO: Add mocks
-        var expectedStudyRole = new StudyRole
-        {
-            permissions = new List<StudyRoleComponentPermissions>
-            {
-                AllowedPermissions = new List<GenericItem>
-                {
-                    
-                }
-            }
-        }
-        RedCapStudyService.Setup(x => x.GetStudyRole(It.IsAny<StudyModel>(), It.IsAny<int>()))
-            .ReturnsAsync(expectedStudyRole);
-
         // Act
         var (permissionsResult, extraPermissions) = 
             await studyService.UnwrapPermissions(studyUserAssignments, requiredPermissions, study);
-
+        
         // Assert
+        Assert.True(permissionsResult.ContainsKey(componentName));
+        Assert.True(permissionsResult[componentName]);
+        Assert.Contains(additionalPermissions, extraPermissions);
 
     }
 
