@@ -69,7 +69,7 @@ public static class ConfigureWebServices
         // App specific services 
         b.Services
             .AddEmailSender(b.Configuration)
-            .AddTransient<RedCapStudyService>()
+            .AddTransient<IRedCapStudyService, RedCapStudyService>()
             .AddTransient<ReportService>()
             .AddTransient<SyntheticDataService>()
             .AddTransient<StudyService>()
