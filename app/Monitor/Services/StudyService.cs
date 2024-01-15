@@ -408,13 +408,13 @@ public class StudyService(
 
             foreach (var permission in role.permissions)
             {
-                if (requiredPermissions.TryGetValue(permission.componentName, out var allowedPermissions))
+                if (requiredPermissions.TryGetValue(permission.ComponentName, out var allowedPermissions))
                 {
-                    permissionsResult[permission.componentName] = CheckPermissions(permission, allowedPermissions);
+                    permissionsResult[permission.ComponentName] = CheckPermissions(permission, allowedPermissions);
                 }
                 else
                 {
-                    extraPermissions.Add(permission.componentName);
+                    extraPermissions.Add(permission.ComponentName);
                 }
             }
         }
@@ -431,8 +431,8 @@ public class StudyService(
     /// <returns>True if the required permissions only exist on the Study Role Component.</returns>
     public bool CheckPermissions(StudyRoleComponentPermissions permission, List<string> allowedPermissions)
     {
-        var matchingPermissions = permission.allowedPermissions
-            .Where(x => allowedPermissions.Contains(x.name))
+        var matchingPermissions = permission.AllowedPermissions
+            .Where(x => allowedPermissions.Contains(x.Name))
             .ToList();
 
         // Check if the count of matching permissions is equal to the count of allowed permissions
@@ -440,11 +440,11 @@ public class StudyService(
 
         // Check if all matching permissions are assigned to the role
         var areAllAssigned =
-            matchingPermissions.All(matchingPermission => permission.permissions.Contains(matchingPermission.id));
+            matchingPermissions.All(matchingPermission => permission.Permissions.Contains(matchingPermission.Id));
 
         // Check if all assigned permissions are part of the matching permissions
-        var areAllPartOfMatching = permission.permissions.All(assignedPermissionId =>
-            matchingPermissions.Any(matchingPermission => matchingPermission.id == assignedPermissionId));
+        var areAllPartOfMatching = permission.Permissions.All(assignedPermissionId =>
+            matchingPermissions.Any(matchingPermission => matchingPermission.Id == assignedPermissionId));
 
         return isCountMatch && areAllAssigned && areAllPartOfMatching;
     }

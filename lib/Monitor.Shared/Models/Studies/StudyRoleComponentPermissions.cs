@@ -7,18 +7,18 @@ namespace Monitor.Shared.Models.Studies;
 /// </summary>
 public class StudyRoleComponentPermissions
 {
-    public int id { get; set; }
+    public int Id { get; set; }
     /// <summary>
     /// List of the possible permissions.
     /// </summary>
-    public List<GenericItem> allowedPermissions { get; set; } = [];
-    public string componentName { get; set; } = string.Empty;
-    public string componentShortName { get; set; } = string.Empty;
-    public bool enabled { get; set; } = true;
+    public List<GenericItem> AllowedPermissions { get; set; } = [];
+    public string ComponentName { get; set; } = string.Empty;
+    public string ComponentShortName { get; set; } = string.Empty;
+    public bool Enabled { get; set; } = true;
     /// <summary>
-    /// List of the permissions that role actually has, indexing <see cref="allowedPermissions"/>
+    /// List of the permissions that role actually has, indexing <see cref="AllowedPermissions"/>
     /// </summary>
-    public List<int> permissions { get; set; } = [];
+    public List<int> Permissions { get; set; } = [];
 }
 
 /// <summary>
@@ -26,10 +26,10 @@ public class StudyRoleComponentPermissions
 /// </summary>
 public class GenericItem
 {
-    public int id { get; set; }
+    public int Id { get; set; }
     /// <summary>
     /// See <seealso cref="AllowedPermissions"/>
     /// </summary>
-    public string name { get; set; } = string.Empty;
-    public string description { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 }
