@@ -351,7 +351,8 @@ public class StudyService(
     /// Assign Users: Read, Update.
     /// </summary>
     /// <param name="study">The Study to validate permissions for.</param>
-    /// <exception cref="Exception">The study has the wrong permissions.</exception>
+    /// <exception cref="MissingPermissionsException">The study has missing permissions.</exception>
+    /// <exception cref="ExtraPermissionsException">The study has additional permissions.</exception>
     public async Task ValidatePermissions(StudyModel study)
     {
         // This is the only way to get the user Id from the API.
