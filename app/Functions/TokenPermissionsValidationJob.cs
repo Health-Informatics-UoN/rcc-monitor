@@ -2,12 +2,13 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Monitor.Data;
-using Monitor.Services;
 using Monitor.Shared.Models.Studies;
+using Monitor.Shared.Services;
 
 namespace Functions;
 
-public class TokenPermissionsValidationJob(ILoggerFactory loggerFactory, ApplicationDbContext db, StudyService studyService)
+public class TokenPermissionsValidationJob(ILoggerFactory loggerFactory, ApplicationDbContext db, 
+    StudyPermissionsService studyPermissionsService)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<TokenPermissionsValidationJob>();
 
@@ -42,7 +43,7 @@ public class TokenPermissionsValidationJob(ILoggerFactory loggerFactory, Applica
         
         foreach (var study in models)
         {
-            await studyService.ValidatePermissions(study);
+            await studyPermissionsService.ValidatePermissions(study);
         }
     }
 }
