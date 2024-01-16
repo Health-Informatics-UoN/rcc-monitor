@@ -2,11 +2,9 @@ using Functions.Config;
 using Functions.Services;
 using Functions.Services.Contracts;
 using IdentityModel.Client;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Monitor.Data;
 using Monitor.Data.Config;
 using Monitor.Shared.Config;
 using Monitor.Shared.Services;
@@ -43,6 +41,7 @@ var host = new HostBuilder()
         s.AddTransient<IReportingService, ReportService>();
         s.AddTransient<IRedCapStudyService, RedCapStudyService>();
         s.AddTransient<StudyCapacityService>();
+        s.AddTransient<StudyPermissionsService>();
         s.AddHttpClient();
         
         var useRedCapData = context.Configuration.GetValue<bool>("UseRedCapData");
