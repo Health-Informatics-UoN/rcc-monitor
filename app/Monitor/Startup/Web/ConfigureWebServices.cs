@@ -73,6 +73,7 @@ public static class ConfigureWebServices
             .AddTransient<ReportService>()
             .AddTransient<SyntheticDataService>()
             .AddTransient<StudyService>()
+            .AddTransient<StudyPermissionsService>()
             .AddTransient<UserService>()
             .AddTransient<ConfigService>();
 
