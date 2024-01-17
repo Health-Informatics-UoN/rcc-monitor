@@ -9,7 +9,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
     public void CheckPermissions_AllRequiredPermissionsPresent_ReturnsTrue()
     {
         // Arrange
-        var studyService = fixtures.GetStudyService();
+        var studyPermissionsService = fixtures.GetStudyPermissionsService();
         var permission = new StudyRoleComponentPermissions
         {
             AllowedPermissions = [new GenericItem { Id = 1, Name = AllowedPermissions.ResourcePermissionRead }],
@@ -19,7 +19,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
         var allowedPermissions = new List<string> { AllowedPermissions.ResourcePermissionRead };
 
         // Act
-        var result = studyService.CheckPermissions(permission, allowedPermissions);
+        var result = studyPermissionsService.CheckPermissions(permission, allowedPermissions);
 
         // Assert
         Assert.True(result);
@@ -29,7 +29,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
     public void CheckPermissions_RequiredPermissionsMissing_ReturnsFalse()
     {
         // Arrange
-        var studyService = fixtures.GetStudyService();
+        var studyPermissionsService = fixtures.GetStudyPermissionsService();
         var permission = new StudyRoleComponentPermissions
         {
             AllowedPermissions = [new GenericItem { Id = 1, Name = AllowedPermissions.ResourcePermissionRead }],
@@ -42,7 +42,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
         };
 
         // Act
-        var result = studyService.CheckPermissions(permission, allowedPermissions);
+        var result = studyPermissionsService.CheckPermissions(permission, allowedPermissions);
 
         // Assert
         Assert.False(result);
@@ -52,7 +52,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
     public void CheckPermissions_ExistingPermissionsWrong_ReturnsFalse()
     {
         // Arrange
-        var studyService = fixtures.GetStudyService();
+        var studyPermissionsService = fixtures.GetStudyPermissionsService();
         var permission = new StudyRoleComponentPermissions
         {
             AllowedPermissions = [new GenericItem { Id = 1, Name = AllowedPermissions.ResourcePermissionDelete }],
@@ -64,7 +64,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
         };
 
         // Act
-        var result = studyService.CheckPermissions(permission, allowedPermissions);
+        var result = studyPermissionsService.CheckPermissions(permission, allowedPermissions);
 
         // Assert
         Assert.False(result);
@@ -74,7 +74,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
     public void CheckPermissions_ExistingPermissionsAreExtra_ReturnsFalse()
     {
         // Arrange
-        var studyService = fixtures.GetStudyService();
+        var studyPermissionsService = fixtures.GetStudyPermissionsService();
         var permission = new StudyRoleComponentPermissions
         {
             AllowedPermissions =
@@ -90,7 +90,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
         };
 
         // Act
-        var result = studyService.CheckPermissions(permission, allowedPermissions);
+        var result = studyPermissionsService.CheckPermissions(permission, allowedPermissions);
 
         // Assert
         Assert.False(result);
@@ -101,7 +101,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
     public async Task UnwrapPermissions_ReturnsCorrectPermissions(string componentName, string[] allowedPermissions, string additionalPermissions)
     {
         // Arrange
-        var studyService = fixtures.GetStudyService();
+        var studyPermissionsService = fixtures.GetStudyPermissionsService();
 
         var study = new StudyModel();
 
@@ -120,7 +120,7 @@ public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fix
         
         // Act
         var (permissionsResult, extraPermissions) = 
-            await studyService.UnwrapPermissions(studyUserAssignments, requiredPermissions, study);
+            await studyPermissionsService.UnwrapPermissions(studyUserAssignments, requiredPermissions, study);
         
         // Assert
         Assert.True(permissionsResult.ContainsKey(componentName));

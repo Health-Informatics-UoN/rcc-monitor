@@ -53,6 +53,13 @@ public class Fixtures
         var authorizationService = new Mock<IAuthorizationService>().Object;
         var redCapStudyService = new Mock<IRedCapStudyService>();
         
+        return new StudyService(DbContext, options, userService, configService, authorizationService, redCapStudyService.Object);
+    }
+
+    public IRedCapStudyService GetRedCapStudyService()
+    {
+        var redCapStudyService = new Mock<IRedCapStudyService>();
+        
         // Mock the RedCap API to return AuditLogs and StudyGroups read permissions.
         var expectedStudyRole = new StudyRole
         {
@@ -98,8 +105,14 @@ public class Fixtures
         };
         redCapStudyService.Setup(x => x.GetStudyRole(It.IsAny<StudyModel>(), It.IsAny<int>()))
             .ReturnsAsync(expectedStudyRole);
+        
+        return redCapStudyService.Object;
+    }
 
-        return new StudyService(DbContext, options, userService, configService, authorizationService, redCapStudyService.Object);
+    public StudyPermissionsService GetStudyPermissionsService()
+    {
+        var redCapStudyService = GetRedCapStudyService();
+        return new StudyPermissionsService(Options.Create(new RedCapOptions()), redCapStudyService);
     }
 
     /// <summary>
