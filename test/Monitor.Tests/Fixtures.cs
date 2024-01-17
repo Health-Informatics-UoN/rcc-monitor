@@ -109,6 +109,10 @@ public class Fixtures
         return redCapStudyService.Object;
     }
 
+    /// <summary>
+    /// Fixture for the StudyPermissionsService
+    /// </summary>
+    /// <returns></returns>
     public StudyPermissionsService GetStudyPermissionsService()
     {
         var redCapStudyService = GetRedCapStudyService();
