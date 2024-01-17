@@ -6,7 +6,7 @@ using Monitor.Shared.Models.Studies;
 
 namespace Monitor.Shared.Services;
 
-public class StudyPermissionsService(
+public class StudyPermissionService(
     IOptions<RedCapOptions> config,
     IRedCapStudyService redCapStudyService)
 {

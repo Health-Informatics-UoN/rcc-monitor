@@ -17,7 +17,7 @@ namespace Monitor.Controllers;
 [FeatureGate(FeatureFlags.StudyManagement)]
 [Route("api/[controller]")]
 [Authorize(nameof(AuthPolicies.CanViewStudies))]
-public class StudiesController(StudyService studyService, StudyPermissionsService studyPermissionsService) : ControllerBase
+public class StudiesController(StudyService studyService, StudyPermissionService studyPermissionService) : ControllerBase
 {
     [HttpGet]
     [SwaggerOperation("Get a list of Studies.")]
@@ -115,7 +115,7 @@ public class StudiesController(StudyService studyService, StudyPermissionsServic
         try
         {
             var response = await studyService.Validate(model.ApiKey);
-            await studyPermissionsService.ValidatePermissions(response);
+            await studyPermissionService.ValidatePermissions(response);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)

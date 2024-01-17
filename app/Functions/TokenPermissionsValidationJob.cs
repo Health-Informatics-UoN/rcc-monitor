@@ -8,7 +8,7 @@ using Monitor.Shared.Services;
 namespace Functions;
 
 public class TokenPermissionsValidationJob(ILoggerFactory loggerFactory, ApplicationDbContext db, 
-    StudyPermissionsService studyPermissionsService)
+    StudyPermissionService studyPermissionService)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<TokenPermissionsValidationJob>();
 
@@ -43,7 +43,7 @@ public class TokenPermissionsValidationJob(ILoggerFactory loggerFactory, Applica
         
         foreach (var study in models)
         {
-            await studyPermissionsService.ValidatePermissions(study);
+            await studyPermissionService.ValidatePermissions(study);
         }
     }
 }

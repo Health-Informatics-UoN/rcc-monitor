@@ -3,7 +3,7 @@ using Monitor.Shared.Models.Studies;
 
 namespace Monitor.Tests.Services;
 
-public class StudyPermissionsServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
+public class StudyPermissionServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
 {
     [Fact]
     public void CheckPermissions_AllRequiredPermissionsPresent_ReturnsTrue()

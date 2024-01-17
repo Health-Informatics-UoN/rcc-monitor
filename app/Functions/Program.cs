@@ -41,7 +41,7 @@ var host = new HostBuilder()
         s.AddTransient<IReportingService, ReportService>();
         s.AddTransient<IRedCapStudyService, RedCapStudyService>();
         s.AddTransient<StudyCapacityService>();
-        s.AddTransient<StudyPermissionsService>();
+        s.AddTransient<StudyPermissionService>();
         s.AddHttpClient();
         
         var useRedCapData = context.Configuration.GetValue<bool>("UseRedCapData");

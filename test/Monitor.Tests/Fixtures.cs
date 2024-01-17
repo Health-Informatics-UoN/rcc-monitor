@@ -113,10 +113,10 @@ public class Fixtures
     /// Fixture for the StudyPermissionsService
     /// </summary>
     /// <returns></returns>
-    public StudyPermissionsService GetStudyPermissionsService()
+    public StudyPermissionService GetStudyPermissionsService()
     {
         var redCapStudyService = GetRedCapStudyService();
-        return new StudyPermissionsService(Options.Create(new RedCapOptions()), redCapStudyService);
+        return new StudyPermissionService(Options.Create(new RedCapOptions()), redCapStudyService);
     }
 
     /// <summary>
