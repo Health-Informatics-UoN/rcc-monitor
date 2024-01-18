@@ -19,6 +19,8 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
-      - run: npm ci
-      - run: npm run build
+          node-version: 19
+      - run: npm i --workspaces=false
+        working-directory: app/frontend-webapp
+      - run: npm run build --workspaces=false
+        working-directory: app/frontend-webapp
