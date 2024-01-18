@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - app/Functions/**
-      - .github/workflows/build.backend-api.yml
+      - .github/workflows/build.function.yml
 
 env:
   # Configure these
