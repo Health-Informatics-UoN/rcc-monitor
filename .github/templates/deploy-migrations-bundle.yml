@@ -1,0 +1,75 @@
+parameters:
+  - name: environment
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: dbServerName
+    type: string
+  - name: keyVaultName
+    type: string
+  - name: displayName
+    type: string
+    default: Migrate Database
+  - name: dependsOn
+    type: object
+    default: []
+
+jobs:
+  - deployment: DbMigrations
+    dependsOn: ${{ parameters.dependsOn }}
+    displayName: ${{ parameters.displayName }}
+    environment: ${{ parameters.environment }}
+    variables:
+      firewall-rule-name: devopsAgentDbmigration
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              artifact: migrations
+
+            # KeyVault secrets
+            - task: AzureKeyVault@1
+              displayName: Fetch Connection String
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                keyVaultName: ${{ parameters.keyVaultName }}
+                secretsFilter: "db-connection-string"
+                runAsPreJob: false
+
+            # grant the agent a firewall rule to run migrations
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                scriptType: bash
+                scriptLocation: inlineScript
+                # ip 0.0.0.0 covers the internal Azure network
+                inlineScript: >-
+                  az postgres flexible-server firewall-rule create
+                  -g ${{ parameters.resourceGroup }}
+                  -n ${{ parameters.dbServerName }}
+                  -r $(firewall-rule-name)
+                  --start-ip-address 0.0.0.0
+                  --end-ip-address 0.0.0.0
+
+            # Run the Migrations
+            - bash: |
+                chmod +x ./efbundle
+                ./efbundle --connection "$(db-connection-string)"
+              displayName: Run Migrations
+              workingDirectory: $(Pipeline.Workspace)/migrations
+
+            # remove the firewall rule
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: >-
+                  az postgres flexible-server firewall-rule delete
+                  -g ${{ parameters.resourceGroup }}
+                  -n ${{ parameters.dbServerName }}
+                  -r $(firewall-rule-name)
+                  -y

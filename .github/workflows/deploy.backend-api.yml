@@ -1,0 +1,77 @@
+name: Deploy Backend API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      # build / publish
+      DATA_PROJECT: ./app/Data/Data.csproj
+      WEBAPP_PROJECT: ./app/Monitor/Monitor.csproj
+      DOTNET_BUILD_CONFIG: release
+
+      # deploy
+      AZURE_SUBSCRIPTION: Research Unmanaged NUH (R02287-1)
+      AZURE_RESOURCE_GROUP: rg-prj-rum-we-R02287-1
+      DB_SERVER: monitor-uat # default to uat
+      UAT_ENV: NUH RedCap Monitor UAT
+      PROD_ENV: NUH RedCap Monitor Prod
+
+    stages:
+      - name: Publish
+        jobs:
+          - name: Publish_Migrations_Bundle
+            uses: ./templates/publish-migrations-bundle.yml
+            with:
+              migrationsProject: ${{ env.DATA_PROJECT }}
+              project: ${{ env.WEBAPP_PROJECT }}
+              buildConfig: ${{ env.DOTNET_BUILD_CONFIG }}
+
+          - name: Publish_WebApp
+            displayName: Publish Web App
+            steps:
+              - name: Get git commit hash
+                run: echo "##vso[task.setvariable variable=GitHash]$(git describe --always)"
+
+              - name: Setup .NET
+                uses: actions/setup-dotnet@v2
+                with:
+                  dotnet-version: 8.x
+
+              - name: dotnet publish
+                run: dotnet publish ${{ env.WEBAPP_PROJECT }} -c ${{ env.DOTNET_BUILD_CONFIG }} -o ${{ github.workspace }}/publish -p:GitHash=${{ env.GitHash }}
+
+              - name: Publish webapp artifact
+                uses: actions/upload-artifact@v2
+                with:
+                  name: webapp
+                  path: ${{ github.workspace }}/publish
+
+      - name: Deploy_UAT
+        displayName: Deploy UAT
+        depends-on: Publish
+        jobs:
+          - name: Deploy_Migrations_Bundle
+            uses: ./templates/deploy-migrations-bundle.yml
+            with:
+              dependsOn: Deploy_WebApp
+              environment: ${{ env.UAT_ENV }}
+              azureSubscription: ${{ env.AZURE_SUBSCRIPTION }}
+              resourceGroup: ${{ env.AZURE_RESOURCE_GROUP }}
+              dbServerName: ${{ env.DB_SERVER }}
+              keyVaultName: monitor-uat
+
+          - name: Deploy_WebApp
+            uses: ./templates/deploy-app-service.yml
+            with:
+              jobName: Deploy_WebApp
+              displayName: Deploy Web App
+              environment: ${{ env.UAT_ENV }}
+              artifact: webapp
+              azureSubscription: ${{ env.AZURE_SUBSCRIPTION }}
+              appName: uat-monitor-backend
