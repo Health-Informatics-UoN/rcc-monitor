@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       publish-run-id:
-        description: The Workflow Run ID for a successful Publish of the Equine Castration
+        description: The Workflow Run ID for a successful Publish
         required: true
         type: string
       publish-migration-artifact:
@@ -22,7 +22,7 @@ on:
 
 env:
   run-id: ${{ github.event.inputs.publish-run-id }}
-  bundleExecutable_migration: migrate-equine-castration-db # CI_migration-output-filename from the publish workflow
+  bundleExecutable_migration: monitor-uat # CI_migration-output-filename from the publish workflow
   dotnet-version: 8.0.x # dotnet version to use
   uat-az-app-service: uat-monitor-backend # name of the app service to deploy to
 
