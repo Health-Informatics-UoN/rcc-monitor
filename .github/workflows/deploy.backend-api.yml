@@ -63,5 +63,5 @@ jobs:
         with:
           app-name: 'uat-monitor-backend'
           slot-name: 'Production'
-          package: ./app/Monitor
+          package: ./app
           
