@@ -1,11 +1,11 @@
 name: Build Backend API
 
 on:
-  workflow_dispatch:
-  pull_request:
-    paths:
-      - app/Monitor/**
-      - .github/workflows/build.backend-api.yml
+  # workflow_dispatch:
+  # pull_request:
+  #   paths:
+  #     - app/Monitor/**
+  #     - .github/workflows/build.backend-api.yml
 
 env:
   # Configure these

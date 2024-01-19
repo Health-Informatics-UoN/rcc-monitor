@@ -1,11 +1,11 @@
 name: Build Frontend Web App
 
-on:
-  workflow_dispatch:
-  pull_request:
-    paths:
-      - app/frontend-webapp/**
-      - .github/workflows/build.frontend-webapp.yml
+# on:
+#   workflow_dispatch:
+#   pull_request:
+#     paths:
+#       - app/frontend-webapp/**
+#       - .github/workflows/build.frontend-webapp.yml
 
 env:
   package: client-app

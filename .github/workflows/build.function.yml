@@ -1,11 +1,11 @@
 name: Build Functions
 
-on:
-  workflow_dispatch:
-  pull_request:
-    paths:
-      - app/Functions/**
-      - .github/workflows/build.function.yml
+# on:
+#   workflow_dispatch:
+#   pull_request:
+#     paths:
+#       - app/Functions/**
+#       - .github/workflows/build.function.yml
 
 env:
   # Configure these
