@@ -1,11 +1,11 @@
 name: Build Backend Tests
 
-# on:
-#   workflow_dispatch:
-#   pull_request:
-#     paths:
-#       - test/Monitor.Tests/**
-#       - .github/workflows/test.backend.yml
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - test/Monitor.Tests/**
+      - .github/workflows/test.backend.yml
 
 env:
   # Configure these

@@ -24,16 +24,16 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build Monitor --configuration Release
+        run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish Monitor -c Release -o ${{env.DOTNET_ROOT}}/Monitor
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/Monitord
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_868F94AB0F7F4F5DBD0C9E74E6A07145 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FF2C12AE420E463BAD4175ED163B7D50 }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to UAT
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
