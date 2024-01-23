@@ -7,14 +7,15 @@ on:
       - feat/142368/configure-pipelines
 
 env:
-  AZURE_WEBAPP_NAME: uat-monitor-frontend
   AZURE_WEBAPP_PACKAGE_PATH: '././app/frontend-webapp'
   NODE_VERSION: '18.x'
 
 jobs:
+  # Deploy uat
   build-and-deploy:
-    name: Build and Deploy
+    name: Build and Deploy UAT
     runs-on: ubuntu-latest
+    environment: uat
     steps:
     - uses: actions/checkout@main
     - name: Use Node.js ${{ env.NODE_VERSION }}
