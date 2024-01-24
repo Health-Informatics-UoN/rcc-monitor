@@ -11,7 +11,7 @@ on:
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
-  DATABASE_MIGRATION_PATH: 'lib/*'
+  DATABASE_MIGRATION_PATH: 'lib'
   DOTNET_VERSION: '8.x'
 
 jobs:

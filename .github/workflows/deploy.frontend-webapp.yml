@@ -26,7 +26,7 @@ jobs:
 
     - name: npm install and build
       run: |
-        npm install -g husky
+        npm install husky
         npm install
         npm run build
       working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
