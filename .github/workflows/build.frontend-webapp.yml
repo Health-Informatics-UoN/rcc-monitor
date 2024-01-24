@@ -27,7 +27,7 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path: ${{ parameters.packageRoot }}/.next/cache
+          path: ${{ PACKAGE_ROOT }}/.next/cache
           key: nextjs | $(Agent.OS) | ${{ PACKAGE_ROOT }}/package-lock.json
 
       - name: Install dependencies
