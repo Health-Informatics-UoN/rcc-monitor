@@ -4,6 +4,20 @@
 name: Build and Deploy Backend API
 
 on:
+  workflow_dispatch:
+    inputs:
+      publish-run-id:
+        description: The Workflow Run ID for a successful Publish of Monitor
+        required: true
+        type: string
+      publish-migration-artifact:
+        description: Migrations artifact name from the workflow matching the publish-run-id
+        required: true
+        type: string
+      publish-dotnet-artifact:
+        description: dotnet artifact name from the workflow matching the publish-run-id
+        required: true
+        type: string
   push:
     branches:
       - main
@@ -11,8 +25,11 @@ on:
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
-  DATABASE_MIGRATION_PATH: 'lib'
   DOTNET_VERSION: '8.x'
+  RUN_ID: ${{ github.event.inputs.publish-run-id }}
+  BUNDLE_EXECUTABLE_MIGRATION: migrate-monitor-db # CI_migration-output-filename from the publish workflow
+  MIGRATION_ARTIFACT: ${{ github.event.inputs.publish-migration-artifact }}
+  DOTNET_ARTIFACT: ${{ github.event.inputs.publish-dotnet-artifact }}
 
 jobs:
   build:
@@ -52,12 +69,13 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: .net-app
+          run_id: ${{ env.RUN_ID }}
+          name: ${{ env.MIGRATION_ARTIFACT }}
 
       - name: Apply Migrations
         run: |
-          cd ${{ env.DATABASE_MIGRATION_PATH }}
-          dotnet ef database update -p Data -s ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} --configuration Release
+          chmod +x ${{ env.BUNDLE_EXECUTABLE_MIGRATION}}
+          ./${{ env.BUNDLE_EXECUTABLE_MIGRATION }} --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
 
   deploy-uat:
     needs: deploy-uat-migrations
@@ -68,7 +86,8 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: .net-app
+          run_id: ${{ env.RUN_ID }}
+          name: ${{ env.MIGRATION_ARTIFACT }}
            
       - name: 'Run Azure webapp deploy action using publish profile credentials'
         uses: azure/webapps-deploy@v2
