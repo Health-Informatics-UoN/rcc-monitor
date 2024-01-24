@@ -27,19 +27,19 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path: ${{ PACKAGE_ROOT }}/.next/cache
-          key: nextjs | $(Agent.OS) | ${{ PACKAGE_ROOT }}/package-lock.json
+          path: ${{ env.PACKAGE_ROOT }}/.next/cache
+          key: nextjs | $(Agent.OS) | ${{ env.PACKAGE_ROOT }}/package-lock.json
 
       - name: Install dependencies
         run: npm i --workspaces=false
-        working-directory: ${{ PACKAGE_ROOT }}
+        working-directory: ${{ env.PACKAGE_ROOT }}
         
       - name: Build
         run: npm run build --workspaces=false
-        working-directory: ${{ PACKAGE_ROOT }}
+        working-directory: ${{ env.PACKAGE_ROOT }}
 
       - name: Copy Static Assets
         run: |
           cp -r .next/static .next/standalone/.next/
           cp -r public .next/standalone/
-        working-directory: ${{ PACKAGE_ROOT }} 
+        working-directory: ${{ env.PACKAGE_ROOT }} 
