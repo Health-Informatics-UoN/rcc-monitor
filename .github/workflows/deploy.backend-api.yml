@@ -9,7 +9,7 @@ on:
       - feat/142368/configure-pipelines
 
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: '././app'
+  AZURE_WEBAPP_PACKAGE_PATH: './app/Monitor'
   DOTNET_VERSION: '8.x'
 
 jobs:
@@ -30,13 +30,13 @@ jobs:
         run: |
           dotnet restore
           dotnet build --configuration Release
-          dotnet publish -c Release --property:PublishDir='${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/Monitor'
+          dotnet publish -c Release --property:PublishDir='${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/Monitor
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   
   # Deploy UAT
   deploy-uat:
@@ -55,4 +55,4 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_BACKEND_PUBLISH_PROFILE  }}
-          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/Monitor'
+          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
