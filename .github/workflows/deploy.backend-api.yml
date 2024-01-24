@@ -7,9 +7,11 @@ on:
   push:
     branches:
       - main
+      - feat/142368/configure-pipelines
 
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: './app/Monitor'
+  AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
+  DATABASE_MIGRATION_PATH: 'lib/*'
   DOTNET_VERSION: '8.x'
 
 jobs:
@@ -23,21 +25,41 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Get Git Commit Hash
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "GIT_HASH=$calculatedSha" >> $GITHUB_ENV
       
       - name: dotnet build and publish
         run: |
           dotnet restore
           dotnet build --configuration Release
-          dotnet publish -c Release --property:PublishDir='${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+          dotnet publish -c Release --property:PublishDir='${{ env.AZURE_WEBAPP_PACKAGE_PATH }}' -p:GitHash=${{ env.GIT_HASH }}
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
           path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-  
+
   # Deploy UAT
+  deploy-uat-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+
+      - name: Apply Migrations
+        run: |
+          cd ${{ env.DATABASE_MIGRATION_PATH }}
+          dotnet ef database update -p Data -s ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} --configuration Release
+
   deploy-uat:
+    needs: deploy-uat-migrations
     runs-on: ubuntu-latest
     needs: build
     environment: uat

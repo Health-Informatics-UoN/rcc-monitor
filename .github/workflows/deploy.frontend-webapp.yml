@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main
+      - feat/142368/configure-pipelines
 
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: './app/frontend-webapp'
-  NODE_VERSION: '18.x'
+  AZURE_WEBAPP_PACKAGE_PATH: app/frontend-webapp
+  NODE_VERSION: 20
 
 jobs:
   # Deploy uat
@@ -17,16 +18,19 @@ jobs:
     environment: uat
     steps:
     - uses: actions/checkout@main
+
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
+
     - name: npm install and build
       run: |
         npm install
         npm run build
-      working-directory: './app/frontend-webapp'
-    - name: 'Deploy to Azure WebApp'
+      working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+    - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
