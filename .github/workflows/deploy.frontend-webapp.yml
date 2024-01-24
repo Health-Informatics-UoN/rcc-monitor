@@ -23,7 +23,6 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: npm install and build
       run: |
-        npm install -g husky
         npm install
         npm run build
       working-directory: './app/frontend-webapp'
