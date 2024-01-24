@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: './app/Functions'
@@ -21,7 +20,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-          include-prerelease: true
       
       - name: dotnet build and publish
         run: |

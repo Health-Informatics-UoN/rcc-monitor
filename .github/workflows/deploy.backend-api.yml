@@ -1,12 +1,12 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and Deploy Backend API
 
 on:
   push:
     branches:
       - main
-      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: './app/Monitor'
@@ -23,7 +23,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-          include-prerelease: true
       
       - name: dotnet build and publish
         run: |
