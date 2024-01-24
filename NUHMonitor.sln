@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor.Tests", "test\Monit
 		{425EFF64-5E2C-4A71-A8F7-BEC243EFB127} = {425EFF64-5E2C-4A71-A8F7-BEC243EFB127}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor.Tests", "test\Monitor.Tests\Monitor.Tests.csproj", "{AD9B94F3-9764-49C3-812D-72F647DB793B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "lib\Data\Data.csproj", "{CE2BF65A-315E-4BA1-9381-1F56881F0D35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitor", "app\Monitor\Monitor.csproj", "{F4213AE5-82A1-4972-BEE3-644EC455CA9F}"
