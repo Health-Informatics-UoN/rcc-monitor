@@ -1,6 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-name: Build and Deploy Backend API
+name: Build and Deploy Functions App
 
 on:
   push:
@@ -9,7 +7,7 @@ on:
       - feat/142368/configure-pipelines
 
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: './app/Monitor'
+  AZURE_WEBAPP_PACKAGE_PATH: './app/Functions'
   DOTNET_VERSION: '8.x'
 
 jobs:
@@ -52,6 +50,6 @@ jobs:
       - name: 'Run Azure webapp deploy action using publish profile credentials'
         uses: azure/webapps-deploy@v2
         with: 
-          app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_BACKEND_PUBLISH_PROFILE  }}
+          app-name: ${{ env.AZURE_WEBAPP_FUNCTIONS_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_FUNCTIONS_PUBLISH_PROFILE  }}
           package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
