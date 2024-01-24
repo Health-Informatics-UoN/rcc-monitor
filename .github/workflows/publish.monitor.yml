@@ -62,9 +62,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: npm/action-setup@v2.0.1
-        with:
-          version: 6.30.0
+      
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.CI_node-version }}
@@ -82,7 +80,7 @@ jobs:
 
   # publish the dotnet app
   publish-monitor:
-    needs: [init, publish-frontend-webapp]
+    needs: [init]
     runs-on: ubuntu-latest
 
     steps:
