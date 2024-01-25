@@ -33,7 +33,7 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path: ${{ nv.AZURE_WEBAPP_PACKAGE_PATH  }}/.next/cache
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}/.next/cache
           key: nextjs | $(Agent.OS) | ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/package-lock.json
 
       - name: Build
