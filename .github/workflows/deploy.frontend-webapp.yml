@@ -11,13 +11,11 @@ env:
   NODE_VERSION: 20
 
 jobs:
-  # Deploy uat
-  build-and-deploy:
-    name: Build and Deploy UAT
+  publish_WebFrontend:
+    name: Publish Frontend Web App
     runs-on: ubuntu-latest
-    environment: uat
     steps:
-    - uses: actions/checkout@main
+      - uses: actions/checkout@v2
 
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v4
@@ -28,11 +26,40 @@ jobs:
       run: |
         npm i --workspaces=false
         npm run build
+      working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} 
+
+    - name: Cache .next/cache
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ${{ nv.AZURE_WEBAPP_PACKAGE_PATH  }}/.next/cache
+        key: nextjs | $(Agent.OS) | ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/package-lock.json
+
+    - name: Build
+      run: npm run build --workspaces=false
       working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-    - name: Deploy to Azure WebApp
-      uses: azure/webapps-deploy@v2
-      with: 
-        app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+    - name: Copy Static Assets
+      run: |
+        cp -r .next/static .next/standalone/.next/
+        cp -r public .next/standalone/
+      working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+    - name: Publish webapp artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/.next/standalone
+
+  deploy-uat:
+    name: Deploy UAT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
