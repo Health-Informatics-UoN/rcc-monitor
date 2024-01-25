@@ -50,9 +50,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get git commit hash
-        run: echo "##vso[task.setvariable variable=GitHash]${{ env.git describe --always }}"
-        shell: bash
+      - name: Get Git Commit Hash
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "GitHash=$calculatedSha" >> $GITHUB_ENV
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
