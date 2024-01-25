@@ -55,6 +55,7 @@ jobs:
     name: Deploy UAT
     needs: publish_WebFrontend
     runs-on: ubuntu-latest
+    environment: uat
     steps:
       - uses: actions/checkout@v2
 
