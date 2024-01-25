@@ -86,6 +86,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Set Git Permissions
+        run: chmod -R +rwx .git
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
