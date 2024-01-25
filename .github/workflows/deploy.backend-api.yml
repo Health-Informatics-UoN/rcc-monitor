@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
@@ -43,6 +42,7 @@ jobs:
           path: ${{ github.workspace }}
           name: migrations
 
+  # Publish Web App
   publish_webapp:
     name: Publish Web App
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
           path: ${{ github.workspace }}
           name: webapp
 
-    # Deploy UAT
+  # Deploy UAT
   deploy-uat:
     name: Deploy UAT
     needs: [publish_DbMigrations, publish_webapp]
