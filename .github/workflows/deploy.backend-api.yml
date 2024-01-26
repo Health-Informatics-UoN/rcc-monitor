@@ -37,7 +37,7 @@ jobs:
         run: dotnet ef migrations bundle -p ${{ env.WEB_APP_PROJECT }} -o ${{ github.workspace }}/efbundle -r linux-x64 --self-contained --configuration ${{ env.DOTNET_BUILD_CONFIG }}
         shell: bash
 
-      - name: Publish bundle artifact
+      - name: Publish migrations bundle artifact
         uses: actions/upload-artifact@v4
         with:
           path: ${{ github.workspace }}
@@ -67,7 +67,7 @@ jobs:
         shell: bash
 
       - name: Publish webapp artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: ${{ github.workspace }}
           name: webapp
