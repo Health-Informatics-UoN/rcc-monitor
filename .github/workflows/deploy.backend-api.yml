@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
@@ -108,9 +107,6 @@ jobs:
         with:
           path: webapp
           name: webapp
-
-      - name: List content of directory
-        run: ls -la
            
       - name: 'Run Azure webapp deploy action using publish profile credentials'
         uses: azure/webapps-deploy@v2
