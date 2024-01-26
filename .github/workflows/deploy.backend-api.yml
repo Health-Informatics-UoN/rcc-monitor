@@ -117,4 +117,4 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_BACKEND_PUBLISH_PROFILE  }}
-          package: ${{ github.workspaces }}/webapp
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
