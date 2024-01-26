@@ -38,9 +38,9 @@ jobs:
         shell: bash
 
       - name: Publish bundle artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          path: ${{ github.workspace }}
+          path: ${{ AZURE_WEBAPP_PACKAGE_PATH }}
           name: migrations
 
   # Publish Web App
@@ -67,9 +67,9 @@ jobs:
         shell: bash
 
       - name: Publish webapp artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          path: ${{ github.workspace }}
+          path: ${{ AZURE_WEBAPP_PACKAGE_PATH }}
           name: webapp
 
   # Deploy UAT
