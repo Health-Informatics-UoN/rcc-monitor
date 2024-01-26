@@ -98,8 +98,8 @@ jobs:
 
       - name: Run Migrations
         run: |
-          chmod +x ${{ github.workspace }}/efbundle
-          ${{ github.workspace }}/efbundle --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
+          chmod +x ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/efbundle
+          ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/efbundle --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
         working-directory: ${{ github.workspace }}/migrations
         shell: bash
 
