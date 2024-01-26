@@ -98,8 +98,8 @@ jobs:
 
       - name: Run Migrations
         run: |
-          chmod +x ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-          ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
+          chmod +x ${{ github.workspace }}/migrations
+          ${{ github.workspace }}/migrations --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
         working-directory: ${{ github.workspace }}/migrations
         shell: bash
 
