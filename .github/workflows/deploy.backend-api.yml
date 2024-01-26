@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
@@ -90,19 +91,22 @@ jobs:
         run: chmod -R +rwx .git
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
+          path: migrations
           name: migrations
 
       - name: Run Migrations
         run: |
           chmod +x ./efbundle
           ./efbundle --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
+        working-directory: ${{ github.workspace }}/migrations
         shell: bash
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
+          path: webapp
           name: webapp
            
       - name: 'Run Azure webapp deploy action using publish profile credentials'
@@ -110,4 +114,4 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_BACKEND_PUBLISH_PROFILE  }}
-          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+          package: ${{ github.workspace }}/webapp
