@@ -65,9 +65,6 @@ jobs:
         with:
           name: frontendwebapp
 
-      - name: List contents of the deployment directory
-        run: ls -R ${{ runner.workspace }}/frontendwebapp
-
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with: 
