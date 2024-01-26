@@ -25,7 +25,6 @@ jobs:
       - name: npm install and build
         run: |
           npm i --workspaces=false
-          npm run build
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} 
 
       - name: Cache .next/cache
@@ -65,9 +64,12 @@ jobs:
         with:
           name: frontendwebapp
 
+      - name: List content of directory
+      - run: ls -la
+
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with: 
           app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
-          package: frontendwebapp.zip
+          package: ${{ github.workspace }}/frontendwebapp
