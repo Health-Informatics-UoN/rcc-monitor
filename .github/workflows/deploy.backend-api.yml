@@ -97,9 +97,7 @@ jobs:
           name: migrations
 
       - name: Run Migrations
-        run: |
-          chmod +x ${{ github.workspace }}/migrations/migrations.zip
-          ${{ github.workspace }}/migrations/migrations.zip --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
+        run: --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
         working-directory: ${{ github.workspace }}/migrations
         shell: bash
 
