@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/.next/standalone
-          artifact: frontendwebapp
+          name: frontendwebapp
 
   deploy-uat:
     name: Deploy UAT
