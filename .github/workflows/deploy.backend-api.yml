@@ -21,16 +21,6 @@ jobs:
   publish_DbMigrations:
     name: Publish Database Migrations Bundle
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        include:
-          - artifact: win-x64
-            file-extension: ".exe"
-            args: >-
-              -r win-x64
-          - artifact: linux-x64
-
     steps:
       - uses: actions/checkout@v2
 
@@ -44,18 +34,14 @@ jobs:
         shell: bash
 
       - name: Build bundle
-        run: >-
-          dotnet ef migrations bundle 
-          -p ${{ env.WEB_APP_PROJECT }}
-          -o ${{ format('{0}{1}', "migrate-monitor-db", matrix.file-extension) }}
-          ${{ matrix.args }}
-          --self-contained
+        run: dotnet ef migrations bundle -p ${{ env.WEB_APP_PROJECT }} -o ${{ github.workspace }}/efbundle -r linux-x64 --self-contained --configuration ${{ env.DOTNET_BUILD_CONFIG }}
+        shell: bash
 
       - name: Publish bundle artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
-          path: ${{ format('migrations-{0}_{1}', needs.init.outputs.version, matrix.artifact) }}
-          name: ${{ format('{0}{1}', "migrate-monitor-db", matrix.file-extension) }}
+          path: ${{ github.workspace }}
+          name: migrations
 
   # Publish Web App
   publish_webapp:
@@ -81,9 +67,9 @@ jobs:
         shell: bash
 
       - name: Publish webapp artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          path: ${{ github.workspace }}
           name: webapp
 
   # Deploy UAT
@@ -107,13 +93,12 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          path: migrations
           name: migrations
 
       - name: Run Migrations
         run: |
-          chmod +x migrate-monitor-db
-          ./migrate-monitor-db --connection "${{ secrets.DB_CONNECTION_STRING }}"
+          chmod +x ./efbundle
+          ./efbundle --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
         working-directory: ${{ github.workspace }}/migrations
         shell: bash
 
@@ -128,4 +113,4 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_BACKEND_PUBLISH_PROFILE  }}
-          package: ${{ github.workspace }}/webapp
+          package: ${{ github.workspaces }}/webapp
