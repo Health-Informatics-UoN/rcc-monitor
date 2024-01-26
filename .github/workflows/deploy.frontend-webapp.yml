@@ -64,9 +64,6 @@ jobs:
           path: frontendwebapp
           name: frontendwebapp
 
-      - name: List content of directory
-        run: ls -la
-
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with: 

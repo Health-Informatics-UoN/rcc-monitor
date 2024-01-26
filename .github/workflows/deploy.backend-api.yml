@@ -108,6 +108,9 @@ jobs:
         with:
           path: webapp
           name: webapp
+
+      - name: List content of directory
+        run: ls -la
            
       - name: 'Run Azure webapp deploy action using publish profile credentials'
         uses: azure/webapps-deploy@v2
