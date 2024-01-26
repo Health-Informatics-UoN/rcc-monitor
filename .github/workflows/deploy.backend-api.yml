@@ -34,9 +34,7 @@ jobs:
         shell: bash
 
       - name: Build bundle
-        run: | 
-          dotnet ef migrations bundle -p ${{ env.WEB_APP_PROJECT }} -o ${{ github.workspace }}/efbundle -r linux-x64 --self-contained --configuration ${{ env.DOTNET_BUILD_CONFIG }}
-          ls -l ${{ github.workspace }}/efbundle
+        run: dotnet ef migrations bundle -p ${{ env.WEB_APP_PROJECT }} -o ${{ github.workspace }}/efbundle -r linux-x64 --self-contained --configuration ${{ env.DOTNET_BUILD_CONFIG }}
         shell: bash
 
       - name: Publish bundle artifact
@@ -100,8 +98,8 @@ jobs:
 
       - name: Run Migrations
         run: |
-          chmod +x ./efbundle
-          ./efbundle --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
+          chmod +x ${{ github.workspace }}/efbundle
+          ${{ github.workspace }}/efbundle --connection "${{ secrets.UAT_DB_CONNECTION_STRING }}"
         working-directory: ${{ github.workspace }}/migrations
         shell: bash
 
