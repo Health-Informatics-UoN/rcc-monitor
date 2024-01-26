@@ -49,7 +49,7 @@ jobs:
       - name: Publish webapp artifact
         uses: actions/upload-artifact@v3
         with:
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/.next/standalone
           name: frontendwebapp
 
   deploy-uat:
@@ -70,4 +70,4 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: frontendwebapp.zip
