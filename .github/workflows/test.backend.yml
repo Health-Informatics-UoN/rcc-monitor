@@ -22,11 +22,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup .NET Core
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.CI_dotnet-version }}
+
+      - name: Restore repo dotnet tools
+        run: dotnet tool restore
+        shell: bash
+      
       - name: dotnet build
         run: >-
           dotnet build
+          ${{ env.CI_project }}
+          -c ${{ env.CI_build-config }}
+      
+      - name: Run Monitor.Tests
+        run: >-
+          dotnet test
           ${{ env.CI_project }}
           -c ${{ env.CI_build-config }}
