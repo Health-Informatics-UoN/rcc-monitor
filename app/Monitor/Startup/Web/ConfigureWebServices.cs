@@ -13,6 +13,8 @@ using Monitor.Extensions;
 using Monitor.Models.SyntheticData;
 using Monitor.Services;
 using Monitor.Services.SyntheticData;
+using Monitor.Shared.Config;
+using Monitor.Shared.Services;
 
 namespace Monitor.Startup.Web;
 
@@ -67,9 +69,11 @@ public static class ConfigureWebServices
         // App specific services 
         b.Services
             .AddEmailSender(b.Configuration)
+            .AddTransient<IRedCapStudyService, RedCapStudyService>()
             .AddTransient<ReportService>()
             .AddTransient<SyntheticDataService>()
             .AddTransient<StudyService>()
+            .AddTransient<StudyPermissionService>()
             .AddTransient<UserService>()
             .AddTransient<ConfigService>();
 
