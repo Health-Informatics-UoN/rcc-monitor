@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: app/frontend-webapp
@@ -50,11 +51,34 @@ jobs:
           path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/.next/standalone
           name: frontendwebapp
 
+  # Deploy UAT
   deploy-uat:
     name: Deploy UAT
     needs: publish_WebFrontend
     runs-on: ubuntu-latest
     environment: uat
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          path: frontendwebapp
+          name: frontendwebapp
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
+          package: ${{ github.workspace }}/frontendwebapp
+
+  # Deploy Production
+  deploy-prod:
+    name: Deploy Production
+    needs: deploy-uat
+    runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v2
 
