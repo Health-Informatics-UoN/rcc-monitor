@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
@@ -113,4 +114,4 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_BACKEND_PUBLISH_PROFILE  }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ${{ github.workspace }}/webapp
