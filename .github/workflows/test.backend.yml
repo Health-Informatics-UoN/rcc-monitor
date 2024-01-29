@@ -1,0 +1,39 @@
+name: Build Backend Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - test/Monitor.Tests/**
+      - .github/workflows/test.backend.yml
+
+env:
+  # Configure these
+  CI_build-config: release
+  CI_dotnet-version: 8.0.x
+  CI_project: ./test/Monitor.Tests/Monitor.Tests.csproj
+
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.CI_dotnet-version }}
+      
+      - name: dotnet build
+        run: >-
+          dotnet build
+          ${{ env.CI_project }}
+          -c ${{ env.CI_build-config }}
+      
+      - name: Run Monitor.Tests
+        run: >-
+          dotnet test
+          ${{ env.CI_project }}
+          -c ${{ env.CI_build-config }}
