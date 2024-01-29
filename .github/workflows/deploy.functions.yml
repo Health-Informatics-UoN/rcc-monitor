@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feat/142368/configure-pipelines
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: './app/Functions'
