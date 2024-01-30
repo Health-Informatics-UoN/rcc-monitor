@@ -9,9 +9,11 @@ import {
   XIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useRef } from "react";
 
 import { deleteStudy } from "@/api/studies";
+import { hasPermission, permissions } from "@/auth/permissions";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import EnvironmentBadge from "@/components/EnvironmentBadge";
@@ -115,6 +117,7 @@ export const columns: ColumnDef<StudyPartial>[] = [
     cell: ({ row }) => {
       const study = row.original;
       const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
+      const { data: session } = useSession();
 
       const handleDelete = async (id: number) => {
         const response = await deleteStudy(id);
@@ -169,15 +172,19 @@ export const columns: ColumnDef<StudyPartial>[] = [
                 View
               </DropdownMenuItem>
             </Link>
-            <DropdownMenuItem
-              onClick={(e: React.MouseEvent<HTMLElement>) => {
-                e.preventDefault();
-                deleteButtonRef.current?.click();
-              }}
-            >
-              <XIcon className={icon({})} />
-              Delete
-            </DropdownMenuItem>
+
+            {hasPermission(session?.permissions, permissions.DeleteStudies) && (
+              <DropdownMenuItem
+                onClick={(e: React.MouseEvent<HTMLElement>) => {
+                  e.preventDefault();
+                  deleteButtonRef.current?.click();
+                }}
+              >
+                <XIcon className={icon({})} />
+                Delete
+              </DropdownMenuItem>
+            )}
+
             <div className={visuallyHidden()}>
               <ConfirmationDialog
                 title="Are you sure you want to delete this study?"
