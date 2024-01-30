@@ -1,7 +1,7 @@
-import KeycloakProvider from "next-auth/providers/keycloak";
-import { JWT } from "next-auth/jwt";
 import { NextAuthOptions, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import { Provider } from "next-auth/providers/index";
+import KeycloakProvider from "next-auth/providers/keycloak";
 
 export const options: NextAuthOptions = {
   providers: [
