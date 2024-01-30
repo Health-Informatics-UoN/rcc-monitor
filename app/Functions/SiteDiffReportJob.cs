@@ -1,7 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Functions.Config;
 using Functions.Services;
 using Functions.Services.Contracts;
 using Monitor.Data.Constants;
@@ -9,24 +8,14 @@ using Monitor.Shared.Config;
 
 namespace Functions;
 
-public class SiteDiffReportJob
+public class SiteDiffReportJob(
+    SiteService siteService,
+    IDataService redCapSitesService,
+    IReportingService reportingService,
+    IOptions<RedCapOptions> redCapOptions)
 {
-    private readonly SiteService _siteService;
-    private readonly IDataService _redCapSitesService;
-    private readonly IReportingService _reportingService;
-    private readonly SiteOptions _siteOptions;
-    
-    public SiteDiffReportJob(SiteService siteService,
-        IDataService redCapSitesService,
-        IReportingService reportingService,
-        IOptions<SiteOptions> siteOptions
-    )
-    {
-        _siteService = siteService;
-        _redCapSitesService = redCapSitesService;
-        _reportingService = reportingService;
-        _siteOptions = siteOptions.Value;
-    }
+    private readonly RedCapOptions _siteOptions = redCapOptions.Value;
+
     [Function("SiteDiffReportJob")]
     public async Task Run([TimerTrigger("0 * 10 * * *", RunOnStartup = true)] MyInfo myTimer, FunctionContext context)
     {
@@ -35,32 +24,32 @@ public class SiteDiffReportJob
         logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
 
         // Fetch data
-        var uatSites = await _redCapSitesService.ListDetail(_siteOptions.UatUrl, _siteOptions.UatKey);
-        var prodSites = await _redCapSitesService.ListDetail(_siteOptions.ProductionUrl, _siteOptions.ProductionKey);
+        var uatSites = await redCapSitesService.ListDetail(_siteOptions.BuildUrl, _siteOptions.BuildKey);
+        var prodSites = await redCapSitesService.ListDetail(_siteOptions.ProductionUrl, _siteOptions.ProductionKey);
         
         // Sites with different names
-        var redCapConflictingNames = _siteService.GetConflictingNames(uatSites, prodSites);
-        var newNameConflicts = _reportingService.ResolveConflicts(redCapConflictingNames, Reports.ConflictingSiteName);
+        var redCapConflictingNames = siteService.GetConflictingNames(uatSites, prodSites);
+        var newNameConflicts = reportingService.ResolveConflicts(redCapConflictingNames, Reports.ConflictingSiteName);
         foreach (var report in newNameConflicts)
         {
-            _reportingService.Create(report);
+            reportingService.Create(report);
         }
 
         // Sites missing from production
-        var conflictingSites = _siteService.GetConflictingSites(uatSites, prodSites);
-        var newSiteConflicts = _reportingService.ResolveConflicts(conflictingSites, Reports.ConflictingSites);
+        var conflictingSites = siteService.GetConflictingSites(uatSites, prodSites);
+        var newSiteConflicts = reportingService.ResolveConflicts(conflictingSites, Reports.ConflictingSites);
         foreach (var report in newSiteConflicts)
         {
-            _reportingService.Create(report);
+            reportingService.Create(report);
         }
 
         // Sites with mismatched parents
-        var conflictingSiteParents = _siteService.GetConflictingParents(uatSites, prodSites);
+        var conflictingSiteParents = siteService.GetConflictingParents(uatSites, prodSites);
         var newSiteParentConflicts =
-            _reportingService.ResolveConflicts(conflictingSiteParents, Reports.ConflictingSiteParent);
+            reportingService.ResolveConflicts(conflictingSiteParents, Reports.ConflictingSiteParent);
         foreach (var report in newSiteParentConflicts)
         {
-            _reportingService.Create(report);
+            reportingService.Create(report);
         }
     }
 }

@@ -5,32 +5,26 @@ using Flurl.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Monitor.Auth;
-using Monitor.Config;
 using Monitor.Shared.Constants;
 using Monitor.Data.Entities;
+using Monitor.Shared.Config;
+using Monitor.Shared.Exceptions;
 using Monitor.Shared.Models.Studies;
+using Monitor.Shared.Services;
 using StudyUser = Monitor.Data.Entities.StudyUser;
 
 namespace Monitor.Services;
 
-public class StudyService
+public class StudyService(
+    ApplicationDbContext db,
+    IOptions<RedCapOptions> config,
+    UserService userService,
+    ConfigService configService,
+    IAuthorizationService authorizationService,
+    IRedCapStudyService redCapStudyService)
 {
-    private readonly ApplicationDbContext _db;
-    private readonly RedCapOptions _config;
-    private readonly UserService _userService;
-    private readonly ConfigService _configService;
-    private readonly IAuthorizationService _authorizationService;
+    private readonly RedCapOptions _config = config.Value;
 
-    public StudyService(ApplicationDbContext db, IOptions<RedCapOptions> config, UserService userService,
-        ConfigService configService, IAuthorizationService authorizationService)
-    {
-        _db = db;
-        _userService = userService;
-        _configService = configService;
-        _config = config.Value;
-        _authorizationService = authorizationService;
-    }
-    
     /// <summary>
     /// Get a study with a given id.
     /// </summary>
@@ -39,18 +33,18 @@ public class StudyService
     /// <returns>Study with the given id.</returns>
     public async Task<StudyPartialModel> Get(int id, string? userId = null)
     {
-        var entity = await _db.Studies
-            .AsNoTracking()
-            .Include(x => x.Users)
-            .Include(x => x.Instance)
-            .Include(x => x.StudyGroups)
-            .Where(x => x.RedCapId == id)
-            .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
-            .SingleOrDefaultAsync()
-            ?? throw new KeyNotFoundException();
-        
+        var entity = await db.Studies
+                         .AsNoTracking()
+                         .Include(x => x.Users)
+                         .Include(x => x.Instance)
+                         .Include(x => x.StudyGroups)
+                         .Where(x => x.RedCapId == id)
+                         .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
+                         .SingleOrDefaultAsync()
+                     ?? throw new KeyNotFoundException();
+
         // get users from keycloak
-        var users = await _userService.GetStudyUsers(entity.Users);
+        var users = await userService.GetStudyUsers(entity.Users);
 
         var model = new StudyPartialModel
         {
@@ -58,7 +52,7 @@ public class StudyService
             Name = entity.Name,
             Users = users,
             StudyGroup = entity.StudyGroups.Select(x => new StudyGroupModel
-            { 
+            {
                 Id = x.Id,
                 Name = x.Name,
                 PlannedSize = x.PlannedSize
@@ -71,11 +65,11 @@ public class StudyService
             StudyCapacityThreshold = entity.StudyCapacityThreshold,
             SubjectsEnrolledThreshold = entity.SubjectsEnrolledThreshold,
             StudyCapacityJobFrequency = entity.StudyCapacityJobFrequency.ToString(@"hh\:mm\:ss"),
-            StudyCapacityLastChecked = entity.StudyCapacityLastChecked.ToString("G")
+            StudyCapacityLastChecked = entity.StudyCapacityLastChecked.ToString("u")
         };
         return model;
     }
-    
+
     /// <summary>
     /// Get the list of studies for a relevant user.
     /// </summary>
@@ -83,12 +77,12 @@ public class StudyService
     /// <returns>List of studies.</returns>
     public async Task<IEnumerable<StudyPartialModel>> List(string? userId = null)
     {
-        var list = await _db.Studies
+        var list = await db.Studies
             .Include(x => x.Users)
             .Include(x => x.Instance)
             .Where(x => userId == null || x.Users.Any(s => s.UserId == userId))
             .ToListAsync();
-        
+
         var result = list.Select(x => new StudyPartialModel
         {
             Id = x.RedCapId,
@@ -97,10 +91,10 @@ public class StudyService
             StudyCapacityAlert = x.StudyCapacityAlert,
             ProductionSubjectsEnteredAlert = x.ProductionSubjectsEnteredAlert
         });
-        
+
         return result;
     }
-    
+
     /// <summary>
     /// Delete a study by RedCapId.
     /// </summary>
@@ -108,11 +102,11 @@ public class StudyService
     /// <returns></returns>
     public async Task DeleteStudy(int redCapId)
     {
-        var study = await _db.Studies.FindAsync(redCapId) 
+        var study = await db.Studies.FindAsync(redCapId)
                     ?? throw new KeyNotFoundException($"No study with the RedCap ID: \"{redCapId}\" was found.");
 
-        _db.Studies.Remove(study);
-        await _db.SaveChangesAsync();
+        db.Studies.Remove(study);
+        await db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -126,20 +120,21 @@ public class StudyService
     public async Task<StudyModel> Create(StudyModel model, string userId)
     {
         // If the study already exists just add the user to it.
-        var check = await _db.Studies.FindAsync(model.Id);
+        var check = await db.Studies.FindAsync(model.Id);
         if (check is not null)
         {
             await AddUser(check.RedCapId, userId);
         }
         else
         {
-            var instance = _db.Instances.Single(x => x.Name == model.Instance) ?? throw new KeyNotFoundException();
-            
+            var instance = db.Instances.Single(x => x.Name == model.Instance) ?? throw new KeyNotFoundException();
+
             // Get the current config defaults
-            var defaultCapacityThreshold = await _configService.GetValue(ConfigKey.RandomisationThreshold, "0.70");
-            var defaultCapacityFrequency = await _configService.GetValue(ConfigKey.RandomisationJobFrequency, "23:00");
-            var defaultSubjectsEnrolledThreshold = await _configService.GetValue(ConfigKey.SubjectsEnrolledThreshold, "10");
-            
+            var defaultCapacityThreshold = await configService.GetValue(ConfigKey.RandomisationThreshold, "0.70");
+            var defaultCapacityFrequency = await configService.GetValue(ConfigKey.RandomisationJobFrequency, "23:00");
+            var defaultSubjectsEnrolledThreshold =
+                await configService.GetValue(ConfigKey.SubjectsEnrolledThreshold, "10");
+
             var entity = new Study
             {
                 ApiKey = model.ApiKey,
@@ -150,21 +145,21 @@ public class StudyService
                 StudyCapacityJobFrequency = TimeSpan.Parse(defaultCapacityFrequency),
                 SubjectsEnrolledThreshold = int.Parse(defaultSubjectsEnrolledThreshold)
             };
-            _db.Studies.Add(entity);
-            
+            db.Studies.Add(entity);
+
             var user = new StudyUser
             {
                 UserId = userId,
                 Study = entity,
             };
-            _db.StudyUsers.Add(user);
-            
-            await _db.SaveChangesAsync();
+            db.StudyUsers.Add(user);
 
+            await db.SaveChangesAsync();
         }
+
         return model;
     }
-    
+
     /// <summary>
     /// Add users to a study.
     /// </summary>
@@ -174,12 +169,12 @@ public class StudyService
     /// <exception cref="KeyNotFoundException">Study not found.</exception>
     public async Task<StudyPartialModel> AddUsers(int id, StudyPartialModel model)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
                          .Where(s => s.RedCapId == id)
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
                      throw new KeyNotFoundException();
-        
+
         if (model.Users != null)
         {
             var usersToAdd = model.Users
@@ -190,11 +185,12 @@ public class StudyService
                 await AddUser(id, user.Id);
             }
         }
-        await _db.SaveChangesAsync();
-        
+
+        await db.SaveChangesAsync();
+
         return model;
-    }    
-    
+    }
+
     /// <summary>
     /// Remove users from a study.
     /// </summary>
@@ -204,22 +200,23 @@ public class StudyService
     /// <exception cref="KeyNotFoundException">Study not found.</exception>
     public async Task<StudyPartialModel> RemoveUsers(int id, StudyPartialModel model)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
                          .Where(s => s.RedCapId == id)
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
                      throw new KeyNotFoundException();
-        
+
         var usersToRemove = entity.Users
-            .Where(existingUser => model.Users != null && model.Users.All(newUser => newUser.Id != existingUser.UserId)).ToList();
-        
+            .Where(existingUser => model.Users != null && model.Users.All(newUser => newUser.Id != existingUser.UserId))
+            .ToList();
+
         foreach (var user in usersToRemove)
         {
             entity.Users.Remove(user);
         }
-    
-        await _db.SaveChangesAsync();
-        
+
+        await db.SaveChangesAsync();
+
         return model;
     }
 
@@ -232,12 +229,12 @@ public class StudyService
     /// <exception cref="ArgumentException">Frequency format invalid.</exception>
     public async Task UpdateStudyCapacityConfig(int id, StudyPartialModel model)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
                          .Where(s => s.RedCapId == id)
                          .Include(study => study.Users)
                          .FirstOrDefaultAsync() ??
                      throw new KeyNotFoundException();
-        
+
         entity.StudyCapacityAlertsActivated = model.StudyCapacityAlertsActivated;
 
         if (model.StudyCapacityAlertsActivated)
@@ -252,9 +249,10 @@ public class StudyService
                 throw new ArgumentException("Invalid frequency format");
             }
         }
-        await _db.SaveChangesAsync();
+
+        await db.SaveChangesAsync();
     }
-    
+
     /// <summary>
     /// Update a study
     /// </summary>
@@ -269,8 +267,8 @@ public class StudyService
         var response = await AddUsers(id, model);
 
         // Remove users only if they have permission.
-        var authorizationResult = 
-            await _authorizationService.AuthorizeAsync(user, nameof(AuthPolicies.CanRemoveStudyUsers));
+        var authorizationResult =
+            await authorizationService.AuthorizeAsync(user, nameof(AuthPolicies.CanRemoveStudyUsers));
 
         if (authorizationResult.Succeeded)
         {
@@ -280,7 +278,7 @@ public class StudyService
         return response;
     }
 
-    
+
     /// <summary>
     /// Add a User to an existing Study.
     /// </summary>
@@ -288,20 +286,20 @@ public class StudyService
     /// <param name="userId">UserId to add to it.</param>
     public async Task AddUser(int studyId, string userId)
     {
-        var entity = await _db.Studies
+        var entity = await db.Studies
             .Where(x => x.RedCapId == studyId)
             .FirstAsync();
-        
+
         var user = new StudyUser
         {
             UserId = userId,
             Study = entity,
         };
-        
-        _db.StudyUsers.Add(user);
-        await _db.SaveChangesAsync();
+
+        db.StudyUsers.Add(user);
+        await db.SaveChangesAsync();
     }
-    
+
     /// <summary>
     /// Validate the Study's APIKey against RedCap.
     /// We try to validate against both environments.
@@ -324,7 +322,8 @@ public class StudyService
             }
             catch (FlurlHttpException buildEx) when (buildEx.Call.Response.StatusCode == 401)
             {
-                throw new UnauthorizedAccessException("The API Key is not authorized with RedCap on both environments.", buildEx);
+                throw new UnauthorizedAccessException("The API Key is not authorized with RedCap on both environments.",
+                    buildEx);
             }
         }
     }
@@ -334,16 +333,14 @@ public class StudyService
     /// </summary>
     /// <param name="apiKey">ApiKey to validate.</param>
     /// <param name="instance">The RedCap instance to try.</param>
-    /// <returns></returns>
+    /// <returns>The matching study from RedCap</returns>
     /// <exception cref="UnauthorizedAccessException">The APIKey is not authorized with RedCap.</exception>
     private async Task<StudyModel> ValidateWithInstance(string apiKey, string instance)
     {
-        var url = instance == Instances.Production ? _config.ProductionUrl : _config.BuildUrl;
-        url += RedCapApiEndpoints.Studies;
-
-        var result = await url.WithHeader("token", apiKey).GetJsonAsync<StudyModel>();
+        var result = await redCapStudyService.GetStudy(instance, apiKey);
         result.ApiKey = apiKey;
         result.Instance = instance;
         return result;
     }
+    
 }

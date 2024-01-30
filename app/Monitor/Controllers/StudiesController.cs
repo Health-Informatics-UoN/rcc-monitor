@@ -6,7 +6,9 @@ using Microsoft.FeatureManagement.Mvc;
 using Monitor.Auth;
 using Monitor.Constants;
 using Monitor.Services;
+using Monitor.Shared.Exceptions;
 using Monitor.Shared.Models.Studies;
+using Monitor.Shared.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Monitor.Controllers;
@@ -15,17 +17,8 @@ namespace Monitor.Controllers;
 [FeatureGate(FeatureFlags.StudyManagement)]
 [Route("api/[controller]")]
 [Authorize(nameof(AuthPolicies.CanViewStudies))]
-public class StudiesController : ControllerBase
+public class StudiesController(StudyService studyService, StudyPermissionService studyPermissionService) : ControllerBase
 {
-    private readonly StudyService _studyService;
-    private readonly IAuthorizationService _authorizationService;
-
-    public StudiesController(StudyService studyService, IAuthorizationService authorizationService)
-    {
-        _studyService = studyService;
-        _authorizationService = authorizationService;
-    }
-
     [HttpGet]
     [SwaggerOperation("Get a list of Studies.")]
     [SwaggerResponse(200, Type = typeof(StudyPartialModel[]))]
@@ -36,10 +29,10 @@ public class StudiesController : ControllerBase
 
         if (User.HasClaim("role", SitePermissionClaims.ViewAllStudies))
         {
-            return Ok(await _studyService.List());
+            return Ok(await studyService.List());
         }
 
-        return userId is not null ? Ok(await _studyService.List(userId)) : Forbid();
+        return userId is not null ? Ok(await studyService.List(userId)) : Forbid();
     }    
     
     [HttpGet("{id:int}")]
@@ -55,7 +48,7 @@ public class StudiesController : ControllerBase
         {
             try
             {
-                var study = await _studyService.Get(id);
+                var study = await studyService.Get(id);
                 return Ok(study);
             }
             catch (KeyNotFoundException)
@@ -66,7 +59,7 @@ public class StudiesController : ControllerBase
 
         try
         {
-            return userId is not null ? Ok(await _studyService.Get(id, userId)) : Forbid();
+            return userId is not null ? Ok(await studyService.Get(id, userId)) : Forbid();
         }
         catch (KeyNotFoundException)
         {
@@ -93,7 +86,7 @@ public class StudiesController : ControllerBase
 
         // Validate the study again with RedCap and compare them
         // It's necessary to double check this to be certain this is the study we want.
-        var redCapStudy = await _studyService.Validate(model.ApiKey);
+        var redCapStudy = await studyService.Validate(model.ApiKey);
         if (redCapStudy.Id != model.Id || redCapStudy.Name != model.Name || redCapStudy.ApiKey != model.ApiKey)
         {
             return BadRequest("We could not revalidate the study with RedCap.");
@@ -101,7 +94,7 @@ public class StudiesController : ControllerBase
 
         try
         {
-            return Ok(await _studyService.Create(model, userId));
+            return Ok(await studyService.Create(model, userId));
         }
         catch (DbUpdateException)
         {
@@ -110,7 +103,7 @@ public class StudiesController : ControllerBase
     }
 
     [HttpPost("validate")]
-    [SwaggerOperation("Validate a studies API Key.")]
+    [SwaggerOperation("Validate a studies API Key and permissions.")]
     [SwaggerResponse(200, Type = typeof(StudyModel[]))]
     [SwaggerResponse(401, "User is not authorized.")]
     [SwaggerResponse(401, "The Api Key is not authorized with RedCap.")]
@@ -121,12 +114,17 @@ public class StudiesController : ControllerBase
     {
         try
         {
-            var response = await _studyService.Validate(model.ApiKey);
+            var response = await studyService.Validate(model.ApiKey);
+            await studyPermissionService.ValidatePermissions(response);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
         {
             return StatusCode(401, ex.Message);
+        }
+        catch (Exception ex) when (ex is MissingPermissionsException or ExtraPermissionsException)
+        {
+            return StatusCode(403, ex.Message);
         }
     }
     
@@ -141,7 +139,7 @@ public class StudiesController : ControllerBase
     {
         try
         {
-            var response = await _studyService.Update(id, model, User);
+            var response = await studyService.Update(id, model, User);
             return Ok(response);
         }
         catch (KeyNotFoundException e)
@@ -164,7 +162,7 @@ public class StudiesController : ControllerBase
     {
         try
         {
-            await _studyService.DeleteStudy(redCapId);
+            await studyService.DeleteStudy(redCapId);
             return NoContent();
         }
         catch (KeyNotFoundException e)

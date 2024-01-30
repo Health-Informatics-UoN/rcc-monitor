@@ -5,21 +5,14 @@ using StudyUser = Monitor.Data.Entities.StudyUser;
 
 namespace Monitor.Tests.Services;
 
-public class StudyServiceTests : IClassFixture<Fixtures>
+public class StudyServiceTests(Fixtures fixtures) : IClassFixture<Fixtures>
 {
-    private readonly Fixtures _fixtures;
-
-    public StudyServiceTests(Fixtures fixtures)
-    {
-        _fixtures = fixtures;
-    }
-    
     [Fact]
     public async Task AddUser_ShouldAddUserToStudy()
     {
         // Arrange
-        var context = _fixtures.DbContext;
-        var studyService = _fixtures.GetStudyService();
+        var context = fixtures.DbContext;
+        var studyService = fixtures.GetStudyService();
 
         var study = new Study
         {
@@ -50,8 +43,8 @@ public class StudyServiceTests : IClassFixture<Fixtures>
     public async Task RemoveUsers_ShouldRemoveUsersFromStudy()
     {
         // Arrange
-        var context = _fixtures.DbContext;
-        var studyService = _fixtures.GetStudyService();
+        var context = fixtures.DbContext;
+        var studyService = fixtures.GetStudyService();
         
         var study = new Study
         {
@@ -95,8 +88,8 @@ public class StudyServiceTests : IClassFixture<Fixtures>
     public async Task AddUsers_ShouldAddUsersToStudy()
     {
         // Arrange
-        var context = _fixtures.DbContext;
-        var studyService = _fixtures.GetStudyService();
+        var context = fixtures.DbContext;
+        var studyService = fixtures.GetStudyService();
 
         var study = new Study
         {
@@ -134,7 +127,5 @@ public class StudyServiceTests : IClassFixture<Fixtures>
         Assert.NotNull(updatedStudy?.Users.FirstOrDefault(u => u.UserId == "user3"));
         Assert.NotNull(updatedStudy?.Users.FirstOrDefault(u => u.UserId == "user4"));
     }
-
-
     
 }
