@@ -1,0 +1,29 @@
+migrations:
+  - 'lib/Data/Migrations/*'
+
+dependencies:
+  - 'package.json'
+  - 'package-lock.json'
+  - 'app/frontend-webapp/package.json'
+  - 'app/frontend-webapp/package-lock.json'
+  - 'app/Functions/Functions.csproj'
+  - 'app/Monitor/Monitor.csproj'
+  - 'lib/Data/Data.csproj'
+  - 'lib/Monitor.Shared/Monitor.Shared.csproj'
+  - 'test/Monitor.Tests/Monitor.Tests.csproj'
+
+CI:
+  - '.github/**/*'
+
+documentation:
+  - 'readme/**'
+  - 'docs/**'
+  - 'readme.md'
+
+backend:
+  - 'app/Monitor/**'
+  - 'lib/Data/**'
+  - 'lib/Monitor.Shared/**'
+
+frontend:
+  - 'app/frontend-webapp/**'
