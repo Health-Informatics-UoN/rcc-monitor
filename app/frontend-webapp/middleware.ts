@@ -1,8 +1,9 @@
-import { withAuth } from "next-auth/middleware";
-import { JWT } from "next-auth/jwt";
 import { NextRequest } from "next/server";
-import { permissions } from "@/auth/permissions";
+import { JWT } from "next-auth/jwt";
+import { withAuth } from "next-auth/middleware";
 import { pathToRegexp } from "path-to-regexp";
+
+import { permissions } from "@/auth/permissions";
 
 // Map the permission that a path needs to be accessed.
 const permissionPathMapping = {
@@ -18,22 +19,32 @@ export default withAuth({
     authorized: ({ req, token }: { req: NextRequest; token: JWT | null }) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userPermissions: any = token?.permissions;
-      if (!userPermissions) {
-        return false; // Not authorized if no permissions exist.
-      }
 
       const currentPath = req.nextUrl.pathname;
 
       for (const permission in permissionPathMapping) {
         for (const mappedPath of permissionPathMapping[permission]) {
           const regex = pathToRegexp(mappedPath);
-          if (userPermissions.includes(permission) && regex.exec(currentPath)) {
+          if (
+            userPermissions?.includes(permission) &&
+            regex.exec(currentPath)
+          ) {
             return true; // Authorized for this permission and path
           }
         }
       }
 
-      return false; // Not authorized for this path and permission
+      // Authorized for non-mapped paths
+      if (
+        !Object.values(permissionPathMapping).some((paths) =>
+          paths.includes(currentPath)
+        )
+      ) {
+        return true;
+      }
+
+      // Not authorised if they dont have the permission.
+      return false;
     },
   },
 });
