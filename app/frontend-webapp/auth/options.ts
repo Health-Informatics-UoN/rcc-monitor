@@ -16,13 +16,23 @@ export const options: NextAuthOptions = {
   // Get the id_token and roles and add to the session.
   callbacks: {
     async jwt({ token, account, profile }) {
+      const now = Math.floor(Date.now() / 1000);
+
       if (account && profile) {
+        // runs on sign in only.
         token = Object.assign({}, token, {
           id_token: account.id_token,
           access_token: account.access_token,
           permissions: profile.realm_access?.roles,
+          expires_at: account.expires_at,
+          refresh_token: account.refresh_token,
         });
       }
+
+      // token has not expired yet so return it.
+      if (now < token.expires_at) return token;
+
+      // TODO: Token has expired to update it
       return token;
     },
 
@@ -35,6 +45,7 @@ export const options: NextAuthOptions = {
     }): Promise<Session> {
       if (session) {
         session = Object.assign({}, session, {
+          access_token: token.access_token,
           permissions: token.permissions,
         });
       }
