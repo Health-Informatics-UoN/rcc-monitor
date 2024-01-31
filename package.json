@@ -1,7 +1,6 @@
 {
-  "name": "nuh-collaboration",
+  "name": "rcc-monitor",
   "private": true,
-  "description": "This repository is for the NUH Collaboration projects, currently focussed on monitoring the health of instances of RedCap Cloud.",
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.5.6",
     "@types/node": "^20.8.8",
