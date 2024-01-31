@@ -9,6 +9,7 @@ declare module "next-auth" {
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface Session extends Session {
+    access_token: string;
     permissions: (keyof typeof permissions)[];
   }
   interface Profile extends KeycloakProfile {}
@@ -20,5 +21,7 @@ declare module "next-auth/jwt" {
     id_token: string;
     access_token: string;
     permissions: (keyof typeof permissions)[];
+    expires_at: number;
+    refresh_token: string;
   }
 }
