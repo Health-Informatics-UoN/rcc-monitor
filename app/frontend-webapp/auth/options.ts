@@ -3,6 +3,11 @@ import { JWT } from "next-auth/jwt";
 import { Provider } from "next-auth/providers/index";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
+/**
+ * Refreshes the access token with Keycloak
+ * @param token Token to refresh.
+ * @returns The refreshed token
+ */
 async function refreshAccessToken(token: JWT) {
   try {
     const url = process.env.KEYCLOAK_ISSUER + "/protocol/openid-connect/token";
