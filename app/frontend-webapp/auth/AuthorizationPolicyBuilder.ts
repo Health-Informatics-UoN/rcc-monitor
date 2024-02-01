@@ -33,6 +33,10 @@ export class AuthorizationPolicyBuilder {
     return this;
   }
 
+  RequireAuthenticatedUser(): AuthorizationPolicyBuilder {
+    return this;
+  }
+
   /**
    * Builds a new AuthorizationPolicy from the requirements.
    * @returns A new AuthorizationPolicy built from the requirements.
