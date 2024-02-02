@@ -29,9 +29,9 @@ export default withAuth({
       const policiesToCheck = filteredPolicies.map(([_, policy]) => policy);
 
       // Check if the user is authorized based on the filtered policies
-      const isAuthorized = policiesToCheck.some((policy) =>
-        policy.isAuthorized(userPermissions)
-      );
+      const isAuthorized =
+        policiesToCheck.length === 0 ||
+        policiesToCheck.some((policy) => policy.isAuthorized(userPermissions));
 
       if (isAuthorized) {
         console.log("Authorised");
