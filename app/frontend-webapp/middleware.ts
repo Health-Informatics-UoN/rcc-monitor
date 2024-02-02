@@ -36,11 +36,11 @@ export default withAuth({
         .filter(([path]) => pathToRegexp(path).test(currentPath))
         .map(([_, policy]) => policy);
 
+      // If there are no policies to check then user is authorised.
+      if (filteredPolicies.length === 0) return true;
+
       // Check if the user is authorized based on the filtered policies
-      return (
-        filteredPolicies.length === 0 ||
-        filteredPolicies.some((policy) => policy.isAuthorized(token))
-      );
+      return filteredPolicies.some((policy) => policy.isAuthorized(token));
     },
   },
 });
