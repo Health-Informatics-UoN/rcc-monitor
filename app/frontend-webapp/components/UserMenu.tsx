@@ -2,7 +2,7 @@ import { LogOut, Settings } from "lucide-react";
 import { getServerSession } from "next-auth";
 
 import { LoginButton, LogoutButton } from "@/auth/components/user-auth";
-import { options } from "@/auth/options";
+import { options } from "@/auth/AuthOptions";
 import {
   Avatar,
   AvatarFallback,

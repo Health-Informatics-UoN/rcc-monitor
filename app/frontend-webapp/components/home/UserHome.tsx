@@ -3,7 +3,7 @@ import ActionCard from "@/components/ActionCard";
 import { FileSpreadsheet, MonitorStop, Activity } from "lucide-react";
 import { hasPermission, permissions } from "@/auth/permissions";
 import { getServerSession } from "next-auth";
-import { options } from "@/auth/options";
+import { options } from "@/auth/AuthOptions";
 import { grid } from "@/styled-system/patterns";
 
 export default async function UserHome() {

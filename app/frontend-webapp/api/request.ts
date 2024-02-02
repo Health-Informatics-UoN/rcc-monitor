@@ -1,6 +1,6 @@
 import { apiUrl as apiUrl } from "@/constants";
 import { getServerSession } from "next-auth";
-import { options as authOptions } from "@/auth/options";
+import { options as authOptions } from "@/auth/AuthOptions";
 import { ApiError } from "./error";
 
 interface RequestOptions {

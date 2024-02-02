@@ -1,4 +1,4 @@
-import { options } from "@/auth/options";
+import { options } from "@/auth/AuthOptions";
 import LandingPage from "@/components/home/LandingPage";
 import UserHome from "@/components/home/UserHome";
 import { getServerSession } from "next-auth";
