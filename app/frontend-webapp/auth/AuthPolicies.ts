@@ -1,6 +1,7 @@
 import { AuthorizationPolicyBuilder } from "@/auth/AuthorizationPolicyBuilder";
 import { permissions } from "@/auth/permissions";
 
+// TODO: Add documentation against these like the backend.
 export class AuthorizationPolicies {
   public static readonly IsAuthenticatedUser = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
