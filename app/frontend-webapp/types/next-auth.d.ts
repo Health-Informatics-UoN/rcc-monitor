@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import { Session } from "next-auth";
 import { KeycloakProfile } from "next-auth/providers/keycloak";
 
-import { permissions } from "@/auth/permissions";
+import { Permission } from "@/auth/permissions";
 
 declare module "next-auth" {
   /**
@@ -10,7 +10,7 @@ declare module "next-auth" {
    */
   interface Session extends Session {
     access_token: string;
-    permissions: (keyof typeof permissions)[];
+    permissions: Permission[];
   }
   interface Profile extends KeycloakProfile {}
 }
@@ -20,7 +20,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id_token: string;
     access_token: string;
-    permissions: (keyof typeof permissions)[];
+    permissions: Permission[];
     expires_at: number;
     refresh_token: string;
   }
