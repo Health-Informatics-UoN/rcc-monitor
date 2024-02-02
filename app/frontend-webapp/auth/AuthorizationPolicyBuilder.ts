@@ -30,7 +30,7 @@ export class AuthorizationPolicyBuilder {
   RequireRoles(...roles: string[]): AuthorizationPolicyBuilder {
     this.requirements.push({
       isAuthorized: (userPermissions: string[]) =>
-        roles.every((role) => userPermissions.includes(role)),
+        roles.every((role) => userPermissions?.includes(role)),
       getPermissions: () => roles,
     });
     return this;
