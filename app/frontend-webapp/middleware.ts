@@ -11,7 +11,7 @@ const policyPathMapping = {
   "/reports/resolved": AuthorizationPolicies.CanViewSiteReports,
   "/synthetic-data": AuthorizationPolicies.CanGenerateSyntheticData,
   "/studies": AuthorizationPolicies.CanViewStudies,
-  "/studies:id/": AuthorizationPolicies.CanViewStudies,
+  "/studies:id": AuthorizationPolicies.CanViewStudies,
   "/settings": AuthorizationPolicies.CanEditConfig,
 };
 
