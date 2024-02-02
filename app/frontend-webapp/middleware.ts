@@ -4,30 +4,8 @@ import { withAuth } from "next-auth/middleware";
 import { pathToRegexp } from "path-to-regexp";
 
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
-import { permissions } from "@/auth/permissions";
 
-// Map the permission that a path needs to be accessed.
-const permissionPathMapping = {
-  [permissions.ViewSiteReports]: ["/reports", "/reports/resolved"],
-  [permissions.GenerateSyntheticData]: ["/synthetic-data"],
-  [permissions.ViewStudies]: ["/studies", "/studies/:id"],
-  [permissions.UpdateStudies]: ["/studies/:id/edit"],
-  [permissions.EditConfig]: ["/settings"],
-};
-
-// List of policies to check
-// TODO: probably move this into the auth section somewhere
-// as we're effectively "registering" policies here.
-const policiesToCheck = [
-  AuthorizationPolicies.CanViewSiteReports,
-  AuthorizationPolicies.CanGenerateSyntheticData,
-  AuthorizationPolicies.CanViewStudies,
-  AuthorizationPolicies.CanDeleteStudies,
-  AuthorizationPolicies.CanRemoveStudyUsers,
-  AuthorizationPolicies.CanViewUsers,
-  AuthorizationPolicies.CanEditConfig,
-];
-
+// Map the policy that a path needs to be accessed.
 const policyPathMapping = {
   "/reports": AuthorizationPolicies.CanViewSiteReports,
   "/reports/resolved": AuthorizationPolicies.CanViewSiteReports,
@@ -43,37 +21,25 @@ export default withAuth({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userPermissions: any = token?.permissions;
 
+      // Filter the policies based on the current path
       const currentPath = req.nextUrl.pathname;
+      const filteredPolicies = Object.entries(policyPathMapping).filter(
+        ([path]) => pathToRegexp(path).test(currentPath)
+      );
+      const policiesToCheck = filteredPolicies.map(([_, policy]) => policy);
 
-      // need to filter the policies to check based on the paths... ?
-
+      // Check if the user is authorized based on the filtered policies
       const isAuthorized = policiesToCheck.some((policy) =>
         policy.isAuthorized(userPermissions)
       );
 
-      for (const permission in permissionPathMapping) {
-        for (const mappedPath of permissionPathMapping[permission]) {
-          const regex = pathToRegexp(mappedPath);
-          if (
-            userPermissions?.includes(permission) &&
-            regex.exec(currentPath)
-          ) {
-            return true; // Authorized for this permission and path
-          }
-        }
-      }
-
-      // Authorized for non-mapped paths
-      if (
-        !Object.values(permissionPathMapping).some((paths) =>
-          paths.includes(currentPath)
-        )
-      ) {
+      if (isAuthorized) {
+        console.log("Authorised");
         return true;
+      } else {
+        console.log("Non authorised.");
+        return false;
       }
-
-      // Not authorised if they dont have the permission.
-      return false;
     },
   },
 });
