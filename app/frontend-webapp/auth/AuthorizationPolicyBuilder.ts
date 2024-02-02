@@ -18,7 +18,7 @@ export class AuthorizationPolicyBuilder {
 
   /**
    * Combines the specificed policy into the current instance.
-   * @param policies The policy to combine
+   * @param policy The policy to combine
    * @returns A reference to the instance.
    */
   Combine(policy: AuthorizationPolicy): AuthorizationPolicyBuilder {
@@ -42,10 +42,13 @@ export class AuthorizationPolicyBuilder {
 
   /**
    * Adds a requirement to the current instance to enforce that the current user is authenticated.
-   * // TODO: Implement this logic
    * @returns A reference to the instance.
    */
   RequireAuthenticatedUser(): AuthorizationPolicyBuilder {
+    this.requirements.push({
+      isAuthorized: (token: JWT | null) => token !== null,
+      getPermissions: () => [],
+    });
     return this;
   }
 
