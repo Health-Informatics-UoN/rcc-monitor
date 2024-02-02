@@ -32,15 +32,14 @@ export default withAuth({
     }): boolean => {
       // Filter the policies based on the current path
       const currentPath = req.nextUrl.pathname;
-      const filteredPolicies = Object.entries(policyPathMapping).filter(
-        ([path]) => pathToRegexp(path).test(currentPath)
-      );
-      const policiesToCheck = filteredPolicies.map(([_, policy]) => policy);
+      const filteredPolicies = Object.entries(policyPathMapping)
+        .filter(([path]) => pathToRegexp(path).test(currentPath))
+        .map(([_, policy]) => policy);
 
       // Check if the user is authorized based on the filtered policies
       return (
-        policiesToCheck.length === 0 ||
-        policiesToCheck.some((policy) => policy.isAuthorized(token))
+        filteredPolicies.length === 0 ||
+        filteredPolicies.some((policy) => policy.isAuthorized(token))
       );
     },
   },
