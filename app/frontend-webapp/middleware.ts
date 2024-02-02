@@ -5,7 +5,7 @@ import { pathToRegexp } from "path-to-regexp";
 
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 
-// Map the policy that a path needs to be accessed.
+// Map the path and its required policy that needs to be authenticated.
 const policyPathMapping = {
   "/reports": AuthorizationPolicies.CanViewSiteReports,
   "/reports/resolved": AuthorizationPolicies.CanViewSiteReports,
