@@ -16,6 +16,9 @@ const policyPathMapping = {
 };
 
 export default withAuth({
+  pages: {
+    signIn: "/signIn",
+  },
   callbacks: {
     /**
      * Checks if the user is authorised to access the request path.
