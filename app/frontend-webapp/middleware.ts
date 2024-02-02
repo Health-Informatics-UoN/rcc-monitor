@@ -17,10 +17,19 @@ const policyPathMapping = {
 
 export default withAuth({
   callbacks: {
-    authorized: ({ req, token }: { req: NextRequest; token: JWT | null }) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const userPermissions: any = token?.permissions;
-
+    /**
+     * Checks if the user is authorised to access the request path.
+     * @param req: Next request
+     * @param token: JWT token
+     * @returns true if user is authorised.
+     */
+    authorized: ({
+      req,
+      token,
+    }: {
+      req: NextRequest;
+      token: JWT | null;
+    }): boolean => {
       // Filter the policies based on the current path
       const currentPath = req.nextUrl.pathname;
       const filteredPolicies = Object.entries(policyPathMapping).filter(
@@ -31,7 +40,7 @@ export default withAuth({
       // Check if the user is authorized based on the filtered policies
       return (
         policiesToCheck.length === 0 ||
-        policiesToCheck.some((policy) => policy.isAuthorized(userPermissions))
+        policiesToCheck.some((policy) => policy.isAuthorized(token))
       );
     },
   },
