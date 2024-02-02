@@ -42,6 +42,7 @@ export class AuthorizationPolicyBuilder {
 
   /**
    * Adds a requirement to the current instance to enforce that the current user is authenticated.
+   * A user is authenticated if they have a token.
    * @returns A reference to the instance.
    */
   RequireAuthenticatedUser(): AuthorizationPolicyBuilder {
