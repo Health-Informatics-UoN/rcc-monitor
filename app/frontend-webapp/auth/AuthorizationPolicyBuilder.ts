@@ -4,10 +4,13 @@ type AuthorizationPolicy = {
 };
 
 /**
- * Based on the .NET Core Auth policy builder.
+ * Used for building Authorization policies.
  */
 export class AuthorizationPolicyBuilder {
-  private policies: AuthorizationPolicy[] = [];
+  /**
+   * List of policies that must succeed for this policy to be succesful.
+   */
+  private requirements: AuthorizationPolicy[] = [];
 
   /**
    * Combines the specificed policy into the current instance.
@@ -15,7 +18,7 @@ export class AuthorizationPolicyBuilder {
    * @returns A reference to the instance.
    */
   Combine(policy: AuthorizationPolicy): AuthorizationPolicyBuilder {
-    this.policies.push(policy);
+    this.requirements.push(policy);
     return this;
   }
 
@@ -25,7 +28,7 @@ export class AuthorizationPolicyBuilder {
    * @returns A reference to the instance.
    */
   RequireRoles(...roles: string[]): AuthorizationPolicyBuilder {
-    this.policies.push({
+    this.requirements.push({
       isAuthorized: (userPermissions: string[]) =>
         roles.every((role) => userPermissions.includes(role)),
       getPermissions: () => roles,
@@ -33,6 +36,11 @@ export class AuthorizationPolicyBuilder {
     return this;
   }
 
+  /**
+   * Adds a requirement to the current instance to enforce that the current user is authenticated.
+   * // TODO: Implement this logic
+   * @returns A reference to the instance.
+   */
   RequireAuthenticatedUser(): AuthorizationPolicyBuilder {
     return this;
   }
@@ -44,9 +52,11 @@ export class AuthorizationPolicyBuilder {
   Build(): AuthorizationPolicy {
     const combinedPolicy: AuthorizationPolicy = {
       isAuthorized: (userPermissions: string[]) =>
-        this.policies.every((policy) => policy.isAuthorized(userPermissions)),
+        this.requirements.every((policy) =>
+          policy.isAuthorized(userPermissions)
+        ),
       getPermissions: () =>
-        this.policies.flatMap((policy) => policy.getPermissions()),
+        this.requirements.flatMap((policy) => policy.getPermissions()),
     };
     return combinedPolicy;
   }
