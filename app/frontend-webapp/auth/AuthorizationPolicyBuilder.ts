@@ -1,6 +1,6 @@
 import { JWT } from "next-auth/jwt";
 
-import { permissions } from "@/auth/permissions";
+import { Permission } from "@/auth/permissions";
 
 type AuthorizationPolicy = {
   isAuthorized: (token: JWT | null) => boolean;
@@ -31,9 +31,7 @@ export class AuthorizationPolicyBuilder {
    * @param roles The roles required.
    * @returns A reference to the instance.
    */
-  RequireRoles(
-    ...roles: (keyof typeof permissions)[]
-  ): AuthorizationPolicyBuilder {
+  RequireRoles(...roles: Permission[]): AuthorizationPolicyBuilder {
     this.requirements.push({
       isAuthorized: (token: JWT | null) =>
         roles.every((role) => token?.permissions.includes(role)),

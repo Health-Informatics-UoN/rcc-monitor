@@ -20,4 +20,6 @@ export const permissions = {
   RemoveStudyUsers: "RemoveStudyUsers",
   ViewUsers: "ViewUsers",
   EditConfig: "EditConfig",
-};
+} as const;
+
+export type Permission = keyof typeof permissions;
