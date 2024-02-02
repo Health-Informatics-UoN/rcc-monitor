@@ -1,5 +1,9 @@
+import { JWT } from "next-auth/jwt";
+
+import { permissions } from "@/auth/permissions";
+
 type AuthorizationPolicy = {
-  isAuthorized: (userPermissions: string[]) => boolean;
+  isAuthorized: (token: JWT | null) => boolean;
   getPermissions: () => string[];
 };
 
@@ -27,10 +31,12 @@ export class AuthorizationPolicyBuilder {
    * @param roles The roles required.
    * @returns A reference to the instance.
    */
-  RequireRoles(...roles: string[]): AuthorizationPolicyBuilder {
+  RequireRoles(
+    ...roles: (keyof typeof permissions)[]
+  ): AuthorizationPolicyBuilder {
     this.requirements.push({
-      isAuthorized: (userPermissions: string[]) =>
-        roles.every((role) => userPermissions?.includes(role)),
+      isAuthorized: (token: JWT | null) =>
+        roles.every((role) => token?.permissions.includes(role)),
       getPermissions: () => roles,
     });
     return this;
@@ -51,10 +57,8 @@ export class AuthorizationPolicyBuilder {
    */
   Build(): AuthorizationPolicy {
     const combinedPolicy: AuthorizationPolicy = {
-      isAuthorized: (userPermissions: string[]) =>
-        this.requirements.every((policy) =>
-          policy.isAuthorized(userPermissions)
-        ),
+      isAuthorized: (token: JWT | null) =>
+        this.requirements.every((policy) => policy.isAuthorized(token)),
       getPermissions: () =>
         this.requirements.flatMap((policy) => policy.getPermissions()),
     };
