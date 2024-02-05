@@ -4,6 +4,7 @@ import { withAuth } from "next-auth/middleware";
 import { pathToRegexp } from "path-to-regexp";
 
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
+import { defaultConfig } from "@/lib/middlewares/defaultConfig";
 
 // Map the path and its required policy that needs to be authenticated.
 const policyPathMapping = {
@@ -49,15 +50,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: [
-    /*
-     * Match all paths except for:
-     * 1. / index page
-     * 2. /api routes
-     * 3. /_next (Next.js internals)
-     * 4. /_static (inside /public)
-     * 5. all root files inside /public (e.g. /favicon.ico)
-     */
-    "/((?!$|api/|_next/|_static/|[\\w-]+\\.\\w+).*)",
-  ],
+  defaultConfig,
 };
