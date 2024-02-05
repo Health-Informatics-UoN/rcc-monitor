@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { useRef } from "react";
 
 import { deleteStudy } from "@/api/studies";
-import { hasPermission, permissions } from "@/auth/permissions";
+import { isUserAuthorized, permissions } from "@/auth/permissions";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import EnvironmentBadge from "@/components/EnvironmentBadge";
@@ -173,7 +173,10 @@ export const columns: ColumnDef<StudyPartial>[] = [
               </DropdownMenuItem>
             </Link>
 
-            {hasPermission(session?.permissions, permissions.DeleteStudies) && (
+            {isUserAuthorized(
+              session?.permissions,
+              permissions.DeleteStudies
+            ) && (
               <DropdownMenuItem
                 onClick={(e: React.MouseEvent<HTMLElement>) => {
                   e.preventDefault();

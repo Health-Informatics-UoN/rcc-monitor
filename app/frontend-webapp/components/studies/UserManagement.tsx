@@ -33,7 +33,7 @@ import {
 import { getUnaffiliated } from "@/api/users";
 import { Grid } from "@/styled-system/jsx";
 import { useSession } from "next-auth/react";
-import { hasPermission, permissions } from "@/auth/permissions";
+import { isUserAuthorized, permissions } from "@/auth/permissions";
 
 export const UserManagement = ({ users }: { users: User[] }) => {
   const { data: session } = useSession();
@@ -70,7 +70,7 @@ export const UserManagement = ({ users }: { users: User[] }) => {
                     >
                       {user.email}
                     </Field>
-                    {hasPermission(
+                    {isUserAuthorized(
                       session?.permissions,
                       permissions.RemoveStudyUsers
                     ) && (

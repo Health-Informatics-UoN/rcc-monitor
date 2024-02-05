@@ -4,7 +4,7 @@
  * @param permissionToCheck permission to check
  * @returns true if the permission exists in the list
  */
-export function hasPermission(
+export function isUserAuthorized(
   permissions: string[] | undefined,
   permissionToCheck: string
 ): boolean {
