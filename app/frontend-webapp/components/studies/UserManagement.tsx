@@ -33,7 +33,8 @@ import {
 import { getUnaffiliated } from "@/api/users";
 import { Grid } from "@/styled-system/jsx";
 import { useSession } from "next-auth/react";
-import { isUserAuthorized, permissions } from "@/auth/permissions";
+import { permissions } from "@/auth/permissions";
+import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
 
 export const UserManagement = ({ users }: { users: User[] }) => {
   const { data: session } = useSession();

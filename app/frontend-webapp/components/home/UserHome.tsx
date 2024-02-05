@@ -1,7 +1,8 @@
 import { css } from "@/styled-system/css";
 import ActionCard from "@/components/ActionCard";
 import { FileSpreadsheet, MonitorStop, Activity } from "lucide-react";
-import { isUserAuthorized, permissions } from "@/auth/permissions";
+import { permissions } from "@/auth/permissions";
+import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
 import { getServerSession } from "next-auth";
 import { options } from "@/lib/auth/AuthOptions";
 import { grid } from "@/styled-system/patterns";

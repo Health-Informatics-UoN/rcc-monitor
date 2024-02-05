@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 
 import { getFeatureFlags } from "@/api/config";
 import { options } from "@/lib/auth/AuthOptions";
-import { isUserAuthorized } from "@/auth/permissions";
+import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
 import { Brand } from "@/components/sidebar/Brand";
 import { SidebarButton } from "@/components/sidebar/SidebarItem";
 import { vstack } from "@/styled-system/patterns";

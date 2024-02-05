@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { useRef } from "react";
 
 import { deleteStudy } from "@/api/studies";
-import { isUserAuthorized, permissions } from "@/auth/permissions";
+import { permissions } from "@/auth/permissions";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import EnvironmentBadge from "@/components/EnvironmentBadge";
@@ -33,6 +33,7 @@ import {
 } from "@/components/shadow-ui/HoverCard";
 import { toast } from "@/components/shadow-ui/Toast/use-toast";
 import { redCapBuildUrl, redCapProductionUrl, redCapUatUrl } from "@/constants";
+import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
 import { css } from "@/styled-system/css";
 import { center, visuallyHidden } from "@/styled-system/patterns";
 import { icon } from "@/styled-system/recipes";
