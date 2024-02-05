@@ -1,12 +1,18 @@
-export const Permissions = {
-  ViewSiteReports: "ViewSiteReports",
-  GenerateSyntheticData: "GenerateSyntheticData",
-  ViewStudies: "ViewStudies",
-  DeleteStudies: "DeleteStudies",
-  UpdateStudies: "UpdateStudies",
-  RemoveStudyUsers: "RemoveStudyUsers",
-  ViewUsers: "ViewUsers",
-  EditConfig: "EditConfig",
-} as const;
-// TODO: this type should live in lib/auth - but be satisfied OR ? extended here.
-export type Permission = keyof typeof Permissions;
+import { assertPermission } from "@/lib/auth";
+
+/**
+ * Custom permissions from Keycloak.
+ */
+export class Permissions {
+  public static readonly ViewSiteReports = assertPermission("ViewSiteReports");
+  public static readonly GenerateSyntheticData = assertPermission(
+    "GenerateSyntheticData"
+  );
+  public static readonly ViewStudies = assertPermission("ViewStudies");
+  public static readonly DeleteStudies = assertPermission("DeleteStudies");
+  public static readonly UpdateStudies = assertPermission("UpdateStudies");
+  public static readonly RemoveStudyUsers =
+    assertPermission("RemoveStudyUsers");
+  public static readonly ViewUsers = assertPermission("ViewUsers");
+  public static readonly EditConfig = assertPermission("EditConfig");
+}

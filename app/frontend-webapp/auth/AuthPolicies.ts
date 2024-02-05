@@ -1,5 +1,5 @@
 import { Permissions } from "@/auth/Permissions";
-import { AuthorizationPolicyBuilder } from "@/lib/auth/AuthorizationPolicyBuilder";
+import { AuthorizationPolicyBuilder } from "@/lib/auth";
 
 // TODO: Add documentation against these like the backend.
 export class AuthorizationPolicies {
