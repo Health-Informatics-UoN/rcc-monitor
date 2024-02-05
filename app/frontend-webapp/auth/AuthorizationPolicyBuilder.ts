@@ -4,7 +4,7 @@ import { Permission } from "@/auth/permissions";
 
 type AuthorizationPolicy = {
   isAuthorized: (token: JWT | null) => boolean;
-  getPermissions: () => string[];
+  getPermissions: () => Permission[];
 };
 
 /**
@@ -27,15 +27,15 @@ export class AuthorizationPolicyBuilder {
   }
 
   /**
-   * Adds role requirement to the builder.
-   * @param roles The roles required.
+   * Adds policy requirement to the builder.
+   * @param permissions The permissions required.
    * @returns A reference to the instance.
    */
-  RequireRoles(...roles: Permission[]): AuthorizationPolicyBuilder {
+  RequirePermissions(...permissions: Permission[]): AuthorizationPolicyBuilder {
     this.requirements.push({
       isAuthorized: (token: JWT | null) =>
-        roles.every((role) => token?.permissions.includes(role)),
-      getPermissions: () => roles,
+        permissions.every((policy) => token?.permissions.includes(policy)),
+      getPermissions: () => permissions,
     });
     return this;
   }
