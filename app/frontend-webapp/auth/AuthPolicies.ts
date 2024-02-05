@@ -1,4 +1,4 @@
-import { permissions } from "@/auth/permissions";
+import { Permissions } from "@/auth/permissions";
 import { AuthorizationPolicyBuilder } from "@/lib/auth/AuthorizationPolicyBuilder";
 
 // TODO: Add documentation against these like the backend.
@@ -9,37 +9,37 @@ export class AuthorizationPolicies {
 
   public static readonly CanViewSiteReports = new AuthorizationPolicyBuilder()
     .Combine(AuthorizationPolicies.IsAuthenticatedUser)
-    .RequirePermissions(permissions.ViewSiteReports)
+    .RequirePermissions(Permissions.ViewSiteReports)
     .Build();
 
   public static readonly CanGenerateSyntheticData =
     new AuthorizationPolicyBuilder()
       .Combine(AuthorizationPolicies.IsAuthenticatedUser)
-      .RequirePermissions(permissions.GenerateSyntheticData)
+      .RequirePermissions(Permissions.GenerateSyntheticData)
       .Build();
 
   public static readonly CanViewStudies = new AuthorizationPolicyBuilder()
     .Combine(AuthorizationPolicies.IsAuthenticatedUser)
-    .RequirePermissions(permissions.ViewStudies)
+    .RequirePermissions(Permissions.ViewStudies)
     .Build();
 
   public static readonly CanDeleteStudies = new AuthorizationPolicyBuilder()
     .Combine(AuthorizationPolicies.IsAuthenticatedUser)
-    .RequirePermissions(permissions.DeleteStudies)
+    .RequirePermissions(Permissions.DeleteStudies)
     .Build();
 
   public static readonly CanRemoveStudyUsers = new AuthorizationPolicyBuilder()
     .Combine(AuthorizationPolicies.IsAuthenticatedUser)
-    .RequirePermissions(permissions.RemoveStudyUsers)
+    .RequirePermissions(Permissions.RemoveStudyUsers)
     .Build();
 
   public static readonly CanViewUsers = new AuthorizationPolicyBuilder()
     .Combine(AuthorizationPolicies.IsAuthenticatedUser)
-    .RequirePermissions(permissions.ViewUsers)
+    .RequirePermissions(Permissions.ViewUsers)
     .Build();
 
   public static readonly CanEditConfig = new AuthorizationPolicyBuilder()
     .Combine(AuthorizationPolicies.IsAuthenticatedUser)
-    .RequirePermissions(permissions.EditConfig)
+    .RequirePermissions(Permissions.EditConfig)
     .Build();
 }

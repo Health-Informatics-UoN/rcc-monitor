@@ -1,7 +1,7 @@
 import { css } from "@/styled-system/css";
 import ActionCard from "@/components/ActionCard";
 import { FileSpreadsheet, MonitorStop, Activity } from "lucide-react";
-import { permissions } from "@/auth/permissions";
+import { Permissions } from "@/auth/permissions";
 import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
 import { getServerSession } from "next-auth";
 import { options } from "@/lib/auth/AuthOptions";
@@ -30,7 +30,7 @@ export default async function UserHome() {
       >
         {isUserAuthorized(
           session?.permissions,
-          permissions.ViewSiteReports
+          Permissions.ViewSiteReports
         ) && (
           <ActionCard
             to="/reports"
@@ -42,7 +42,7 @@ export default async function UserHome() {
 
         {isUserAuthorized(
           session?.permissions,
-          permissions.GenerateSyntheticData
+          Permissions.GenerateSyntheticData
         ) && (
           <ActionCard
             to="/synthetic-data"
@@ -52,7 +52,7 @@ export default async function UserHome() {
           />
         )}
 
-        {isUserAuthorized(session?.permissions, permissions.ViewStudies) && (
+        {isUserAuthorized(session?.permissions, Permissions.ViewStudies) && (
           <ActionCard
             to="/studies"
             title="RedCap Studies"

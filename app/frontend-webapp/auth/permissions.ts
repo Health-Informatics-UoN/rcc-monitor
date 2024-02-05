@@ -1,4 +1,4 @@
-export const permissions = {
+export const Permissions = {
   ViewSiteReports: "ViewSiteReports",
   GenerateSyntheticData: "GenerateSyntheticData",
   ViewStudies: "ViewStudies",
@@ -9,4 +9,4 @@ export const permissions = {
   EditConfig: "EditConfig",
 } as const;
 
-export type Permission = keyof typeof permissions;
+export type Permission = keyof typeof Permissions;

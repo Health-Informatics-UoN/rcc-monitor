@@ -1,4 +1,4 @@
-import { permissions } from "@/auth/permissions";
+import { Permissions } from "@/auth/permissions";
 import { Icons } from "@/components/Icons";
 import { FeatureFlagModel } from "@/types/config";
 
@@ -54,7 +54,7 @@ interface SidebarLink {
 }
 
 interface SidebarItem extends SidebarLink {
-  permission?: keyof typeof permissions;
+  permission?: keyof typeof Permissions;
   featureFlag?: keyof FeatureFlagModel;
   children?: SideBarLink[];
 }
