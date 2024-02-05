@@ -8,6 +8,7 @@ import * as React from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { getUnaffiliated } from "@/api/users";
+import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 import { Permissions } from "@/auth/Permissions";
 import { Button } from "@/components/shadow-ui/Button";
 import {
@@ -71,8 +72,8 @@ export const UserManagement = ({ users }: { users: User[] }) => {
                       {user.email}
                     </Field>
                     {isUserAuthorized(
-                      session?.permissions,
-                      Permissions.RemoveStudyUsers
+                      session?.token,
+                      AuthorizationPolicies.CanRemoveStudyUsers
                     ) && (
                       <TableCell>
                         <Button

@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import { useRef } from "react";
 
 import { deleteStudy } from "@/api/studies";
+import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 import { Permissions } from "@/auth/Permissions";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
@@ -175,8 +176,8 @@ export const columns: ColumnDef<StudyPartial>[] = [
             </Link>
 
             {isUserAuthorized(
-              session?.permissions,
-              Permissions.DeleteStudies
+              session?.token,
+              AuthorizationPolicies.CanDeleteStudies
             ) && (
               <DropdownMenuItem
                 onClick={(e: React.MouseEvent<HTMLElement>) => {

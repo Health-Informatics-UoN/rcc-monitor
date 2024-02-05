@@ -1,7 +1,7 @@
 import { Activity, FileSpreadsheet, MonitorStop } from "lucide-react";
 import { getServerSession } from "next-auth";
 
-import { Permissions } from "@/auth/Permissions";
+import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 import ActionCard from "@/components/ActionCard";
 import { options } from "@/lib/auth/AuthOptions";
 import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
@@ -30,8 +30,8 @@ export default async function UserHome() {
         })}
       >
         {isUserAuthorized(
-          session?.permissions,
-          Permissions.ViewSiteReports
+          session?.token,
+          AuthorizationPolicies.CanViewSiteReports
         ) && (
           <ActionCard
             to="/reports"
@@ -42,8 +42,8 @@ export default async function UserHome() {
         )}
 
         {isUserAuthorized(
-          session?.permissions,
-          Permissions.GenerateSyntheticData
+          session?.token,
+          AuthorizationPolicies.CanGenerateSyntheticData
         ) && (
           <ActionCard
             to="/synthetic-data"
@@ -53,7 +53,10 @@ export default async function UserHome() {
           />
         )}
 
-        {isUserAuthorized(session?.permissions, Permissions.ViewStudies) && (
+        {isUserAuthorized(
+          session?.token,
+          AuthorizationPolicies.CanViewStudies
+        ) && (
           <ActionCard
             to="/studies"
             title="RedCap Studies"
