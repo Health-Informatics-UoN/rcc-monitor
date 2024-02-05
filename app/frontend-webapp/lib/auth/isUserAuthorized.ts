@@ -1,13 +1,16 @@
+import { JWT } from "next-auth/jwt";
+
+import { AuthorizationPolicy } from "@/lib/auth/AuthorizationPolicyBuilder";
+
 /**
- * TODO: Make this token / policy based.
  * Checks if a token meets a specific authorization policy.
- * @param permissions list of permissions to check
- * @param permissionToCheck permission to check
- * @returns true if the permission exists in the list
+ * @param token token to check
+ * @param policy policy to check
+ * @returns true if the token meets the authorization policy.
  */
 export function isUserAuthorized(
-  permissions: string[] | undefined,
-  permissionToCheck: string
+  token: JWT,
+  policy: AuthorizationPolicy
 ): boolean {
-  return permissions?.includes(permissionToCheck) ?? false;
+  return policy.isAuthorized(token);
 }
