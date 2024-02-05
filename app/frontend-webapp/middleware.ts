@@ -23,6 +23,8 @@ export default withAuth({
   callbacks: {
     /**
      * Checks if the user is authorised to access the request path.
+     * TODO: We want to override the import of this, and maybe pass the policyPathMapping as an argument to it.
+     * This is so we keep all our middleware logic in /lib, but configure it in /auth and marry the 2 in here.
      * @param req: Next request
      * @param token: JWT token
      * @returns true if user is authorised.

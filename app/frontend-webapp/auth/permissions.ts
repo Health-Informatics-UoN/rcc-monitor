@@ -8,5 +8,5 @@ export const Permissions = {
   ViewUsers: "ViewUsers",
   EditConfig: "EditConfig",
 } as const;
-
+// TODO: this type should live in lib/auth - but be satisfied OR ? extended here.
 export type Permission = keyof typeof Permissions;
