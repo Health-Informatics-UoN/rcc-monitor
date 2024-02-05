@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 
 import { getFeatureFlags } from "@/api/config";
-import { options } from "@/auth/AuthOptions";
+import { options } from "@/lib/auth/AuthOptions";
 import { isUserAuthorized } from "@/auth/permissions";
 import { Brand } from "@/components/sidebar/Brand";
 import { SidebarButton } from "@/components/sidebar/SidebarItem";
