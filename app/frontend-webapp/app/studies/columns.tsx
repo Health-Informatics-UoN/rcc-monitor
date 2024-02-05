@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { useRef } from "react";
 
 import { deleteStudy } from "@/api/studies";
-import { Permissions } from "@/auth/permissions";
+import { Permissions } from "@/auth/Permissions";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import EnvironmentBadge from "@/components/EnvironmentBadge";

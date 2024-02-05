@@ -1,4 +1,4 @@
-import { Permissions } from "@/auth/permissions";
+import { Permissions } from "@/auth/Permissions";
 import { AuthorizationPolicyBuilder } from "@/lib/auth/AuthorizationPolicyBuilder";
 
 // TODO: Add documentation against these like the backend.

@@ -1,4 +1,4 @@
-import { Permissions } from "@/auth/permissions";
+import { Permissions } from "@/auth/Permissions";
 import { Icons } from "@/components/Icons";
 import { FeatureFlagModel } from "@/types/config";
 
