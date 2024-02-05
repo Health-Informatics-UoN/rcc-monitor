@@ -91,6 +91,7 @@ export const options: NextAuthOptions = {
     }): Promise<Session> {
       if (session) {
         session = Object.assign({}, session, {
+          token: token,
           access_token: token.access_token,
           permissions: token.permissions,
         });

@@ -2,7 +2,7 @@ import { JWT } from "next-auth/jwt";
 
 import { Permission } from "@/auth/Permissions";
 
-type AuthorizationPolicy = {
+export type AuthorizationPolicy = {
   isAuthorized: (token: JWT | null) => boolean;
   getPermissions: () => Permission[];
 };
