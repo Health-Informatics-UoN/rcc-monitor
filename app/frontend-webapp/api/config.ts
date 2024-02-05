@@ -7,7 +7,7 @@ import {
   UpdateConfigModel,
 } from "@/types/config";
 
-import request from "./request";
+import request from "../lib/api/request";
 
 const fetchKeys = {
   list: "config",

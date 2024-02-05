@@ -1,7 +1,7 @@
 "use server";
 
 import { User } from "@/types/users";
-import request from "./request";
+import request from "../lib/api/request";
 
 const fetchKeys = {
   search: "users/unaffiliated",

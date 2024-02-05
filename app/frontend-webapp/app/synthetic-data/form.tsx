@@ -19,7 +19,7 @@ import {
 } from "@/components/shadow-ui/Alert";
 import { Button } from "@/components/shadow-ui/Button";
 import { toast } from "@/components/shadow-ui/Toast/use-toast";
-import { ApiError } from "@/api/error";
+import { ApiError } from "@/lib/api/error";
 import { FormikInput } from "@/components/forms/FormikInput";
 
 function DownloadButton({ file }: { file: string }) {
