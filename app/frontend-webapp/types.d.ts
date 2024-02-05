@@ -1,5 +1,6 @@
 import { Permissions } from "@/auth/Permissions";
 import { Icons } from "@/components/Icons";
+import { AuthorizationPolicy } from "@/lib/auth/AuthorizationPolicyBuilder";
 import { FeatureFlagModel } from "@/types/config";
 
 type ReportType = {
@@ -54,7 +55,7 @@ interface SidebarLink {
 }
 
 interface SidebarItem extends SidebarLink {
-  permission?: keyof typeof Permissions;
+  policy?: AuthorizationPolicy;
   featureFlag?: keyof FeatureFlagModel;
   children?: SideBarLink[];
 }
