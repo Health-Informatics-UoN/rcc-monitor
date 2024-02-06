@@ -21,7 +21,7 @@ import { addStudy, validateStudy } from "@/api/studies";
 
 import { CreateForm } from "./Create";
 import { ValidateForm } from "./Validate";
-import { ApiError } from "@/lib/api/error";
+import { ApiError } from "@/api/error";
 import { Study } from "@/types/studies";
 
 export default function AddStudy() {
