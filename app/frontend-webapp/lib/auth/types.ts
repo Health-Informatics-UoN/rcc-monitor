@@ -7,6 +7,6 @@ export type AuthorizationPolicy = {
   getPermissions: () => Permission[];
 };
 
-export interface PathPolicyMapping {
+export interface PathAuthorizationMapping {
   [path: string]: AuthorizationPolicy;
 }

@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { JWT } from "next-auth/jwt";
 
-import { PathPolicyMapping } from "@/lib/auth/types";
+import { PathAuthorizationMapping } from "@/lib/auth/types";
 
 /**
  * Checks if the user is authorised to access the request path.
@@ -16,7 +16,7 @@ export const isAuthorized = ({
 }: {
   req: NextRequest;
   token: JWT | null;
-  policyPathMapping: PathPolicyMapping;
+  policyPathMapping: PathAuthorizationMapping;
 }): boolean => {
   const currentPath = req.nextUrl.pathname;
   const policy = policyPathMapping[currentPath];

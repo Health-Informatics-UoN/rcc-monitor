@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { JWT } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 
-import { policyPathMapping } from "@/auth/PolicyPathMapping";
+import { pathAuthMapping } from "@/auth/PathAuthMapping";
 import { isAuthorized } from "@/lib/auth";
 
 export default withAuth({
@@ -26,7 +26,7 @@ export default withAuth({
       return isAuthorized({
         req,
         token,
-        policyPathMapping,
+        policyPathMapping: pathAuthMapping,
       });
     },
   },
