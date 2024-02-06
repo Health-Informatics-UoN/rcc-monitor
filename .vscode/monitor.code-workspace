@@ -5,6 +5,10 @@
       "path": "../"
     },
     {
+      "name": "docs",
+      "path": "../docs"
+    },
+    {
       "name": "app/frontend-webapp",
       "path": "../app/frontend-webapp"
     },
