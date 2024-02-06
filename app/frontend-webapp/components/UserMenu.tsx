@@ -18,7 +18,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/shadow-ui/DropdownMenu";
-import { options } from "@/lib/auth/AuthOptions";
+import { options } from "@/lib/auth";
 import { icon } from "@/styled-system/recipes";
 
 export async function UserMenu() {

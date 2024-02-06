@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 
 import { apiUrl as apiUrl } from "@/constants";
-import { options as authOptions } from "@/lib/auth/AuthOptions";
+import { options as authOptions } from "@/lib/auth";
 
 import { ApiError } from "./error";
 

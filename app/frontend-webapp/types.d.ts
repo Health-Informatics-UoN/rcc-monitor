@@ -1,5 +1,5 @@
 import { Icons } from "@/components/Icons";
-import { AuthorizationPolicy } from "@/lib/auth/AuthorizationPolicyBuilder";
+import { AuthorizationPolicy } from "@/lib/auth";
 import { FeatureFlagModel } from "@/types/config";
 
 type ReportType = {

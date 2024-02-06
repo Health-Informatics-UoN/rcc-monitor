@@ -1,6 +1,6 @@
 import { JWT } from "next-auth/jwt";
 
-import { AuthorizationPolicy } from "@/lib/auth/AuthorizationPolicyBuilder";
+import { AuthorizationPolicy } from "@/lib/auth";
 
 /**
  * Checks if a token meets a specific authorization policy.

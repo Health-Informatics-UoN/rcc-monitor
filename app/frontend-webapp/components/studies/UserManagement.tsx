@@ -9,7 +9,6 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { getUnaffiliated } from "@/api/users";
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
-import { Permissions } from "@/auth/Permissions";
 import { Button } from "@/components/shadow-ui/Button";
 import {
   Command,
@@ -31,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/shadow-ui/Table";
-import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
+import { isUserAuthorized } from "@/lib/auth";
 import { css } from "@/styled-system/css";
 import { Grid } from "@/styled-system/jsx";
 import { User } from "@/types/users";

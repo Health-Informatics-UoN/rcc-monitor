@@ -3,8 +3,8 @@ import { getServerSession } from "next-auth";
 
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 import ActionCard from "@/components/ActionCard";
-import { options } from "@/lib/auth/AuthOptions";
-import { isUserAuthorized } from "@/lib/auth/isUserAuthorized";
+import { options } from "@/lib/auth";
+import { isUserAuthorized } from "@/lib/auth";
 import { css } from "@/styled-system/css";
 import { grid } from "@/styled-system/patterns";
 
