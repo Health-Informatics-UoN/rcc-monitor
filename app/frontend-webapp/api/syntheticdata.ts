@@ -1,6 +1,6 @@
 "use server";
 
-import request from "./request";
+import { request } from "@/lib/api";
 
 const fetchKeys = {
   generate: "syntheticdata/generate",
