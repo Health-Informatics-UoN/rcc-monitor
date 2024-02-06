@@ -18,8 +18,3 @@ User and Developer Guidance can be found in the [documentation](https://health-i
 | `.azure`              | Azure Bicep Files          | Files for deploying application infrastructure.                                            |
 | `.github`             | GitHub Actions             | workflows for building and deploying the applications                                      |
 | `docs`                | Nextra Docs Site           | The source for the [documentation](https://health-informatics-uon.github.io/rcc-monitor/). |
-
-- Application Source Code
-  - .NET8 backend API
-  - Azure Functions App
-  - Shared Data class library
