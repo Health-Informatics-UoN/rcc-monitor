@@ -1,11 +1,6 @@
 import { JWT } from "next-auth/jwt";
 
-export type AuthorizationPolicy = {
-  isAuthorized: (token: JWT | null) => boolean;
-  getPermissions: () => Permission[];
-};
-
-export type Permission = string;
+import { AuthorizationPolicy, Permission } from "@/lib/auth/types";
 
 export function assertPermission(permission: string): Permission {
   return permission as Permission;
