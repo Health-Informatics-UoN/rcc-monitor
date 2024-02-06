@@ -1,0 +1,54 @@
+
+## App Configuration
+
+Notes on configuration values that can be provided, and their defaults.
+
+The backend app can be configured in any standard way an ASP.NET Core application can. Typically from the Azure Portal (Environment variables) or an `appsettings.json`.
+
+```yaml
+OutboundEmail:
+  ServiceName: RedCap Monitor
+  FromName: No Reply
+  FromAddress: noreply@example.com
+  ReplyToAddress: ""
+  Provider: local
+
+  # If Provider == "local"
+  LocalPath: /temp
+
+  # If Provider == "sendgrid"
+  SendGridApiKey: ""
+
+  # CORS URL
+  FrontendAppUrl: "http://localhost:3000"
+
+  Keycloak:
+    realm: "nuh-uat",
+    auth-server-url: "http://localhost:9080/",
+    ssl-required: "none",
+    resource: "backend",
+    public-client: true,
+    verify-token-audience: false,
+    confidential-port: 0,
+    credentials:
+      secret: ""
+    RolesSource: "Realm"
+
+  DatabaseEncryption:
+    EncryptionKey: "test-key-example"
+```
+
+The frontend app can be configured in any standard way an Node application can. Typically from the Azure Portal (Environment variables) or an `.env.local`.
+
+```bash
+BACKEND_URL=https://localhost:7007
+NODE_TLS_REJECT_UNAUTHORIZED='0' # For development
+KEYCLOAK_ID=frontend
+KEYCLOAK_SECRET=changeme
+KEYCLOACK_ISSUER=http://localhost:9080/realms/nuh-dev
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=changeme
+NEXT_PUBLIC_REDCAP_BUILD_URL=https://eubuild.redcapcloud.com
+NEXT_PUBLIC_REDCAP_PROD_URL=https://nuh.eulogin.redcapcloud.com
+NEXT_PUBLIC_REDCAP_UAT_URL=https://uat.redcapcloud.com
+```
