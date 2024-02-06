@@ -67,7 +67,7 @@ import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 export const pathAuthMapping: PathAuthorizationMapping = {
   "/reports": AuthorizationPolicies.CanViewReports,
   // You can map dynamic paths as well: 
-  "/reports:id": AuthorizationPolicies.CanViewReports 
+  "/reports/:id": AuthorizationPolicies.CanViewReports 
 };
 ```
 

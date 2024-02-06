@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { JWT } from "next-auth/jwt";
+import { pathToRegexp } from "path-to-regexp";
 
 import { PathAuthorizationMapping } from "@/lib/auth/types";
 
@@ -19,11 +20,13 @@ export const isAuthorized = ({
   pathAuthMapping: PathAuthorizationMapping;
 }): boolean => {
   const currentPath = req.nextUrl.pathname;
-  const policy = pathAuthMapping[currentPath];
+  const filteredPolicies = Object.entries(pathAuthMapping)
+    .filter(([path]) => pathToRegexp(path).test(currentPath))
+    .map(([_, policy]) => policy);
 
   // If there are no policies to check then user is authorised.
-  if (!policy) return true;
+  if (filteredPolicies.length === 0) return true;
 
   // Check if the user is authorized based on the filtered policies
-  return policy.isAuthorized(token);
+  return filteredPolicies.some((policy) => policy.isAuthorized(token));
 };
