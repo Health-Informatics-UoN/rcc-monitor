@@ -12,14 +12,14 @@ import { PathAuthorizationMapping } from "@/lib/auth/types";
 export const isAuthorized = ({
   req,
   token,
-  policyPathMapping,
+  pathAuthMapping,
 }: {
   req: NextRequest;
   token: JWT | null;
-  policyPathMapping: PathAuthorizationMapping;
+  pathAuthMapping: PathAuthorizationMapping;
 }): boolean => {
   const currentPath = req.nextUrl.pathname;
-  const policy = policyPathMapping[currentPath];
+  const policy = pathAuthMapping[currentPath];
 
   // If there are no policies to check then user is authorised.
   if (!policy) return true;

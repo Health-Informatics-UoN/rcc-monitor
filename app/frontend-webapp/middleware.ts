@@ -26,7 +26,7 @@ export default withAuth({
       return isAuthorized({
         req,
         token,
-        policyPathMapping: pathAuthMapping,
+        pathAuthMapping,
       });
     },
   },
