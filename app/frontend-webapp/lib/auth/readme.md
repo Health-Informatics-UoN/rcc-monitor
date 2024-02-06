@@ -66,7 +66,7 @@ import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 // Map the path and its required policy that needs to be authenticated.
 export const pathAuthMapping: PathAuthorizationMapping = {
   "/reports": AuthorizationPolicies.CanViewReports,
-  // You can identify dynamic paths as well: 
+  // You can map dynamic paths as well: 
   "/reports:id": AuthorizationPolicies.CanViewReports 
 };
 ```
