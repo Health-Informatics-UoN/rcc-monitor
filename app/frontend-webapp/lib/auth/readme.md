@@ -99,7 +99,7 @@ export default withAuth({
 });
 
 // Matches on all paths.
-export const config = {matcher: ['/']}
+export const config = { matcher: ['/'] }
 ```
 
 ## Rendering
