@@ -11,7 +11,6 @@ declare module "next-auth" {
   interface Session extends Session {
     token: JWT;
     access_token: string;
-    permissions: Permission[];
   }
   interface Profile extends KeycloakProfile {}
 }

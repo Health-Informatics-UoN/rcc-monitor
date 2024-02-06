@@ -93,7 +93,6 @@ export const options: NextAuthOptions = {
         session = Object.assign({}, session, {
           token: token,
           access_token: token.access_token,
-          permissions: token.permissions,
         });
       }
       return session;
