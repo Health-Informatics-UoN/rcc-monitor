@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 
-import { ApiError } from "@/lib/api/error";
-import request from "@/lib/api/request";
 import { Study, StudyPartial } from "@/types/studies";
+
+import { ApiError } from "./error";
+import request from "./request";
 
 const fetchKeys = {
   list: "studies",
