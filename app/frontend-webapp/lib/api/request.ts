@@ -20,7 +20,7 @@ interface RequestOptions {
  * @param options RequestOptions object
  * @returns The given type T
  */
-const request = async <T>(
+export const request = async <T>(
   url: string,
   options: RequestOptions = {}
 ): Promise<T> => {
@@ -56,5 +56,3 @@ const request = async <T>(
 
   return response.json();
 };
-
-export default request;
