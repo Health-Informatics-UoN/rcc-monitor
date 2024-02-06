@@ -1,12 +1,23 @@
-# Introduction
+# RCC-Monitor
 
-This repository is for the NUH Collaboration projects, currently focussed on monitoring the health of instances of RedCap Cloud.
+RCC-Monitor is a web application for monitoring the health of instances, and related studies on RedCap Cloud.
 
-This currently consists of an web application backend, and Azure Functions app, that interact with a PostgreSQL database.
+## Getting Started
 
-## 📁 Repository contents
+User and Developer Guidance can be found in the [documentation](https://health-informatics-uon.github.io/rcc-monitor/).
 
-Areas within this repo include:
+## Repository contents
+
+| Path                  | Description                | Notes                                                                                      |
+| --------------------- | -------------------------- | ------------------------------------------------------------------------------------------ |
+| `app/Monitor`         | .NET8 Backend              |                                                                                            |
+| `app/frontend-webapp` | Next.js Frontend           |                                                                                            |
+| `app/Functions`       | .NET8 Azure Functions      | Worker functions.                                                                          |
+| `lib/Data`            | .NET8 Data Class Library   | Shared data access.                                                                        |
+| `lib/Monitor.Shared`  | .NET8 Shared Class Library | Shared code library.                                                                       |
+| `.azure`              | Azure Bicep Files          | Files for deploying application infrastructure.                                            |
+| `.github`             | GitHub Actions             | workflows for building and deploying the applications                                      |
+| `docs`                | Nextra Docs Site           | The source for the [documentation](https://health-informatics-uon.github.io/rcc-monitor/). |
 
 - Application Source Code
   - .NET8 backend API
