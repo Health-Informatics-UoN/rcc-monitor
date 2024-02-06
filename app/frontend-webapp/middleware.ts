@@ -3,8 +3,8 @@ import { JWT } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 
 import { policyPathMapping } from "@/auth/PolicyPathMapping";
-import { isAuthorized } from "@/lib/middlewares/auth";
 import { defaultConfig } from "@/lib/middlewares/defaultConfig";
+import { isAuthorized } from "@/lib/middlewares/isAuthorized";
 
 export default withAuth({
   pages: {
