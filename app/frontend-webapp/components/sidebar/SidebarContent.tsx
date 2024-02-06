@@ -32,6 +32,9 @@ export const SidebarContent = async ({ items }: { items: SidebarItem[] }) => {
           // Check if the feature has been released
           const released = !item.featureFlag || flags[item.featureFlag];
 
+          // Delete policy so the client doesn't error
+          delete item.policy;
+
           return authorised && released ? (
             <SidebarButton item={item} key={i} />
           ) : null;
