@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import { Session } from "next-auth";
 import { KeycloakProfile } from "next-auth/providers/keycloak";
 
-import { Permission } from "@/auth/Permissions";
+import { Permission } from "@/lib/auth";
 
 declare module "next-auth" {
   /**
