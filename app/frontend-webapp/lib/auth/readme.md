@@ -42,6 +42,7 @@ export { handler as GET, handler as POST };
 And implement it's [session provider](https://next-auth.js.org/getting-started/example#configure-shared-session-state) if you want to use the client side authorization at all:
 
 ```typescript
+// app/layout.tsx
 import { SessionProvider } from "next-auth/react"
 
 export default function RootLayout({
@@ -96,7 +97,7 @@ import { RouteAuthorizationMapping } from "@/lib/auth";
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 
 // Map the route and its required policy that needs to be authenticated.
-export const pathAuthMapping: RouteAuthorizationMapping = {
+export const routeAuthMapping: RouteAuthorizationMapping = {
   "/reports": AuthorizationPolicies.CanViewReports,
   // You can map dynamic routes as well: 
   "/reports/:id": AuthorizationPolicies.CanViewReports 
