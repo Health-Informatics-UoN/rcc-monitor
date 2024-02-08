@@ -2,7 +2,6 @@ import { LogOut, Settings } from "lucide-react";
 import { getServerSession } from "next-auth";
 
 import { LoginButton, LogoutButton } from "@/auth/components/user-auth";
-import { options } from "@/auth/options";
 import {
   Avatar,
   AvatarFallback,
@@ -19,6 +18,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/shadow-ui/DropdownMenu";
+import { options } from "@/lib/auth";
 import { icon } from "@/styled-system/recipes";
 
 export async function UserMenu() {

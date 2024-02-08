@@ -2,15 +2,15 @@ import NextAuth from "next-auth";
 import { Session } from "next-auth";
 import { KeycloakProfile } from "next-auth/providers/keycloak";
 
-import { permissions } from "@/auth/permissions";
+import { Permission } from "@/lib/auth";
 
 declare module "next-auth" {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface Session extends Session {
+    token: JWT;
     access_token: string;
-    permissions: (keyof typeof permissions)[];
   }
   interface Profile extends KeycloakProfile {}
 }
@@ -20,7 +20,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id_token: string;
     access_token: string;
-    permissions: (keyof typeof permissions)[];
+    permissions: Permission[];
     expires_at: number;
     refresh_token: string;
   }

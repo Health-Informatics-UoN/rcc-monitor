@@ -1,31 +1,32 @@
+import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 import { SidebarItem } from "@/types";
 
 export const SidebarItems: SidebarItem[] = [
   {
     name: "Studies",
     path: "/studies",
-    permission: "ViewStudies",
+    policy: AuthorizationPolicies.CanViewStudies,
     icon: "Activity",
     featureFlag: "studyManagementEnabled",
   },
   {
     name: "Site Reports",
     path: "/reports",
-    permission: "ViewSiteReports",
+    policy: AuthorizationPolicies.CanViewSiteReports,
     icon: "MonitorStop",
     featureFlag: "siteMonitoringEnabled",
   },
   {
     name: "Synthetic Data",
     path: "/synthetic-data",
-    permission: "GenerateSyntheticData",
+    policy: AuthorizationPolicies.CanGenerateSyntheticData,
     icon: "FileSpreadsheet",
     featureFlag: "syntheticDataEnabled",
   },
   {
     name: "Settings",
     path: "/settings",
-    permission: "EditConfig",
+    policy: AuthorizationPolicies.CanEditConfig,
     icon: "Settings",
   },
 ];
