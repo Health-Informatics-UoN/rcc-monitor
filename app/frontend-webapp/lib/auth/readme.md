@@ -39,22 +39,22 @@ const handler = NextAuth(options);
 export { handler as GET, handler as POST };
 ```
 
-And implement it's [session provider](https://next-auth.js.org/getting-started/example#configure-shared-session-state) if you want to use the client side authorization at all:
+And implement it's [session provider](https://next-auth.js.org/getting-started/example#configure-shared-session-state) if you want to use the client side authorization at all, import the providers into your `layout.tsx`
 
 ```typescript
-// app/layout.tsx
-import { SessionProvider } from "next-auth/react"
+// app/providers.tsx
+"use client";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) 
+import * as React from "react";
+import { SessionProvider, SessionProviderProps } from "next-auth/react";
+
+export function Providers({ children, ...props }: SessionProviderProps) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider {...props}>
       {children}
     </SessionProvider>
-  )
+  );
+}
 ```
 
 ## Define your Permissions
