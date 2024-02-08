@@ -1,34 +1,14 @@
-import { NextRequest } from "next/server";
-import { JWT } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 
-import { pathAuthMapping } from "@/auth/PathAuthMapping";
-import { isAuthorized } from "@/lib/auth";
+import { routeAuthMapping } from "@/auth/RouteAuthMapping";
+import { getAuthorized } from "@/lib/auth";
 
 export default withAuth({
   pages: {
     signIn: "/signIn",
   },
   callbacks: {
-    /**
-     * Checks if the user is authorised to access the request path.
-     * @param req: Next request
-     * @param token: JWT token
-     * @returns true if user is authorised.
-     */
-    authorized: ({
-      req,
-      token,
-    }: {
-      req: NextRequest;
-      token: JWT | null;
-    }): boolean => {
-      return isAuthorized({
-        req,
-        token,
-        pathAuthMapping,
-      });
-    },
+    authorized: getAuthorized(routeAuthMapping),
   },
 });
 
