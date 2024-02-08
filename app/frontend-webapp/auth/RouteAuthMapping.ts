@@ -1,8 +1,8 @@
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
-import { PathAuthorizationMapping } from "@/lib/auth";
+import { RouteAuthorizationMapping } from "@/lib/auth";
 
 // Map the path and its required policy that needs to be authenticated.
-export const pathAuthMapping: PathAuthorizationMapping = {
+export const routeAuthMapping: RouteAuthorizationMapping = {
   "/reports": AuthorizationPolicies.CanViewSiteReports,
   "/reports/resolved": AuthorizationPolicies.CanViewSiteReports,
   "/synthetic-data": AuthorizationPolicies.CanGenerateSyntheticData,
