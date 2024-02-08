@@ -24,6 +24,38 @@ KEYCLOAK_ISSUER
 NEXTAUTH_SECRET
 ```
 
+## NextAuth Config
+
+You will need to setup the `next-auth` [API endpoint](https://next-auth.js.org/getting-started/example#add-api-route) in your app:
+
+```typescript
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth from "next-auth";
+
+import { options } from "@/lib/auth";
+
+const handler = NextAuth(options);
+
+export { handler as GET, handler as POST };
+```
+
+And implement it's [session provider](https://next-auth.js.org/getting-started/example#configure-shared-session-state) if you want to use the client side authorization at all:
+
+```typescript
+import { SessionProvider } from "next-auth/react"
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) 
+  return (
+    <SessionProvider session={session}>
+      {children}
+    </SessionProvider>
+  )
+```
+
 ## Define your Permissions
 
 Define your permissions constants that will be passed from Keycloak in the token.
@@ -54,26 +86,26 @@ export class AuthorizationPolicies {
 };
 ```
 
-## Define your Path Mapping
+## Define your Route Mapping
 
-Define which paths need a policy requirement, and map them to your Policies.
+Define which routes need a policy requirement, and map them to your Policies.
 
 ```typescript
-// auth/PathAuthMapping.ts
-import { PathAuthorizationMapping } from "@/lib/auth";
+// auth/RouteAuthMapping.ts
+import { RouteAuthorizationMapping } from "@/lib/auth";
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 
-// Map the path and its required policy that needs to be authenticated.
-export const pathAuthMapping: PathAuthorizationMapping = {
+// Map the route and its required policy that needs to be authenticated.
+export const pathAuthMapping: RouteAuthorizationMapping = {
   "/reports": AuthorizationPolicies.CanViewReports,
-  // You can map dynamic paths as well: 
+  // You can map dynamic routes as well: 
   "/reports/:id": AuthorizationPolicies.CanViewReports 
 };
 ```
 
 ## Implement the Middleware
 
-To use the middleware, in your root `middleware.ts` (create one if you don't have it already), pass your path mapping to our `isAuthorized` middleware, which is a reponse to the NextAuth `authorized` callback.
+To use the middleware, in your root `middleware.ts` (create one if you don't have it already), pass your route mapping to our `isAuthorized` middleware, which is a reponse to the NextAuth `authorized` callback.
 
 You will need a config matcher to define which paths the middleware should run on as well, see the [Middleware documentation](https://nextjs.org/docs/app/building-your-application/routing/middleware) for details.
 
@@ -81,25 +113,30 @@ You will need a config matcher to define which paths the middleware should run o
 // middleware.ts
 import { withAuth } from "next-auth/middleware";
 import { isAuthorized } from "@/lib/auth";
-import { pathAuthMapping } from "@/auth/PathAuthMapping";
+import { routeAuthMapping } from "@/auth/routeAuthMapping";
 
 export default withAuth({
   callbacks: {
-    authorized: ({
-      req,
-      token,
-    }) => {
-      return isAuthorized({
-        req,
-        token,
-        pathAuthMapping,
-      });
-    },
+    authorized: getAuthorized(routeAuthMapping),
   },
 });
 
-// Matches on all paths.
-export const config = { matcher: ['/'] }
+// We can't set a default config in /lib/auth until it supports dynamic config
+// https://nextjs.org/docs/messages/invalid-page-config
+// Here's an example of how it might look:
+export const config = {
+  matcher: [
+    /*
+     * Match all paths except for:
+     * 1. / index page
+     * 2. /api routes
+     * 3. /_next (Next.js internals)
+     * 4. /_static (inside /public)
+     * 5. all root files inside /public (e.g. /favicon.ico)
+     */
+    "/((?!$|api/|_next/|_static/|[\\w-]+\\.\\w+).*)",
+  ],
+};
 ```
 
 ## Rendering
