@@ -33,10 +33,11 @@ export const SidebarContent = async ({ items }: { items: SidebarItem[] }) => {
           const released = !item.featureFlag || flags[item.featureFlag];
 
           // Delete policy so the client doesn't error
-          delete item.policy;
+          const itemWithoutPolicy = { ...item };
+          delete itemWithoutPolicy.policy;
 
           return authorised && released ? (
-            <SidebarButton item={item} key={i} />
+            <SidebarButton item={itemWithoutPolicy} key={i} />
           ) : null;
         })}
       </div>
