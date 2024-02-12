@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { Metadata } from "next";
 
 import { getReports } from "@/api/reports";
-import { Alert } from "@/components/Alert";
+import { Alert } from "@/components/core/Alert";
 import { DataTable } from "@/components/data-table";
 import {
   Tabs,
