@@ -7,7 +7,7 @@ import {
 } from "@/components/shadow-ui/Sheet";
 import { Brand } from "@/components/sidebar/Brand";
 import { SidebarContent } from "@/components/sidebar/SidebarContent";
-import { UserMenu } from "@/components/UserMenu";
+import { UserMenu } from "@/components/core/UserMenu";
 import { css } from "@/styled-system/css";
 import { SidebarItem } from "@/types";
 
