@@ -1,17 +1,13 @@
 "use client";
 
-import React from "react";
+import { Form, Formik } from "formik";
+import { AlertCircle, FileDown, UploadCloud } from "lucide-react";
 import Link from "next/link";
-import { FileDown, UploadCloud, AlertCircle } from "lucide-react";
-import { Formik, Form } from "formik";
+import React from "react";
 
 import { postSpreadsheet } from "@/api/syntheticdata";
 import { validationSchema } from "@/app/synthetic-data/validation";
-
-import { css } from "@/styled-system/css";
-import { hstack } from "@/styled-system/patterns";
-import { icon } from "@/styled-system/recipes";
-
+import { FormikInput } from "@/components/forms/FormikInput";
 import {
   Alert,
   AlertDescription,
@@ -19,8 +15,10 @@ import {
 } from "@/components/shadow-ui/Alert";
 import { Button } from "@/components/shadow-ui/Button";
 import { toast } from "@/components/shadow-ui/Toast/use-toast";
-import { ApiError } from "@/api/error";
-import { FormikInput } from "@/components/forms/FormikInput";
+import { ApiError } from "@/lib/api/error";
+import { css } from "@/styled-system/css";
+import { hstack } from "@/styled-system/patterns";
+import { icon } from "@/styled-system/recipes";
 
 function DownloadButton({ file }: { file: string }) {
   return (

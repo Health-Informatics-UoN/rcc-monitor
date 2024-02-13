@@ -2,7 +2,7 @@ import { Activity, FileSpreadsheet, MonitorStop } from "lucide-react";
 import { getServerSession } from "next-auth";
 
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
-import ActionCard from "@/components/ActionCard";
+import ActionCard from "@/components/core/ActionCard";
 import { isUserAuthorized, options } from "@/lib/auth";
 import { css } from "@/styled-system/css";
 import { grid } from "@/styled-system/patterns";

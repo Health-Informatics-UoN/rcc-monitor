@@ -1,7 +1,7 @@
-import { UserMenu } from "@/components/UserMenu";
-import { css } from "@/styled-system/css";
-
 import React from "react";
+
+import { UserMenu } from "@/components/core/UserMenu";
+import { css } from "@/styled-system/css";
 
 export const Navbar = () => {
   return (
