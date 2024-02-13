@@ -20,7 +20,7 @@ import {
 } from "@/components/shadow-ui/Popover";
 import { Separator } from "@/components/shadow-ui/Separator";
 import { icon } from "@/styled-system/recipes";
-import { FacetsFilter, Icons } from "@/components/Icons";
+import { FacetsFilter, Icons } from "@/components/shared/Icons";
 import { css } from "@/styled-system/css";
 import { token } from "@/styled-system/tokens";
 

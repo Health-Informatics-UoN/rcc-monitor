@@ -28,10 +28,10 @@ import { toast } from "@/components/shadow-ui/Toast/use-toast";
 import { FormikInput } from "@/components/forms/FormikInput";
 import { Switch } from "@/components/shadow-ui/Switch";
 import { object, string, number } from "yup";
-import { Description } from "@/components/Description";
+import { Description } from "@/components/shared/Description";
 import { ConfigModel } from "@/types/config";
 import { configKeys } from "@/constants/configKeys";
-import EnvironmentBadge from "@/components/EnvironmentBadge";
+import EnvironmentBadge from "@/components/shared/EnvironmentBadge";
 import {
   Table,
   TableBody,

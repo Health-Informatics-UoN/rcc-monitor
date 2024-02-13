@@ -1,4 +1,4 @@
-import { FacetsFilter } from "@/components/Icons";
+import { FacetsFilter } from "@/components/shared/Icons";
 
 export const environments: FacetsFilter[] = [
   {

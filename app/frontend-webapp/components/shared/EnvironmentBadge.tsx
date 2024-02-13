@@ -1,5 +1,5 @@
 import { environments } from "@/constants/environments";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/shared/Icons";
 import { Badge } from "@/components/shadow-ui/Badge";
 import { token } from "@/styled-system/tokens";
 import { css } from "@/styled-system/css";

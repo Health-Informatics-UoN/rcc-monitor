@@ -1,4 +1,4 @@
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/shared/Icons";
 import { AuthorizationPolicy } from "@/lib/auth";
 import { FeatureFlagModel } from "@/types/config";
 
