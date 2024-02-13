@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth";
 
 import { getFeatureFlags } from "@/api/config";
-import { options } from "@/auth/options";
-import { hasPermission } from "@/auth/permissions";
 import { Brand } from "@/components/sidebar/Brand";
 import { SidebarButton } from "@/components/sidebar/SidebarItem";
+import { options } from "@/lib/auth";
+import { isUserAuthorized } from "@/lib/auth";
 import { vstack } from "@/styled-system/patterns";
 import { SidebarItem } from "@/types";
 
@@ -27,14 +27,17 @@ export const SidebarContent = async ({ items }: { items: SidebarItem[] }) => {
         {items?.map((item, i) => {
           // Check if the user has permission to see this item
           const authorised =
-            !item.permission ||
-            hasPermission(session?.permissions, item.permission);
+            !item.policy || isUserAuthorized(session?.token, item.policy);
 
           // Check if the feature has been released
           const released = !item.featureFlag || flags[item.featureFlag];
 
+          // Delete policy so the client doesn't error
+          const itemWithoutPolicy = { ...item };
+          delete itemWithoutPolicy.policy;
+
           return authorised && released ? (
-            <SidebarButton item={item} key={i} />
+            <SidebarButton item={itemWithoutPolicy} key={i} />
           ) : null;
         })}
       </div>

@@ -1,22 +1,14 @@
 "use client";
 
-import * as React from "react";
-import { useParams } from "next/navigation";
-import { useDebouncedCallback } from "use-debounce";
-import { FieldArray, Field } from "formik";
-
-import { css } from "@/styled-system/css";
+import { Field, FieldArray } from "formik";
 import { Search } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import * as React from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-import { User } from "@/types/users";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/shadow-ui/Table";
+import { getUnaffiliated } from "@/api/users";
+import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 import { Button } from "@/components/shadow-ui/Button";
 import {
   Command,
@@ -30,10 +22,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/shadow-ui/Popover";
-import { getUnaffiliated } from "@/api/users";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/shadow-ui/Table";
+import { isUserAuthorized } from "@/lib/auth";
+import { css } from "@/styled-system/css";
 import { Grid } from "@/styled-system/jsx";
-import { useSession } from "next-auth/react";
-import { hasPermission, permissions } from "@/auth/permissions";
+import { User } from "@/types/users";
 
 export const UserManagement = ({ users }: { users: User[] }) => {
   const { data: session } = useSession();
@@ -70,9 +70,9 @@ export const UserManagement = ({ users }: { users: User[] }) => {
                     >
                       {user.email}
                     </Field>
-                    {hasPermission(
-                      session?.permissions,
-                      permissions.RemoveStudyUsers
+                    {isUserAuthorized(
+                      session?.token,
+                      AuthorizationPolicies.CanRemoveStudyUsers
                     ) && (
                       <TableCell>
                         <Button

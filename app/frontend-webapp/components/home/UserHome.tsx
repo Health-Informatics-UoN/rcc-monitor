@@ -1,9 +1,10 @@
-import { css } from "@/styled-system/css";
-import ActionCard from "@/components/ActionCard";
-import { FileSpreadsheet, MonitorStop, Activity } from "lucide-react";
-import { hasPermission, permissions } from "@/auth/permissions";
+import { Activity, FileSpreadsheet, MonitorStop } from "lucide-react";
 import { getServerSession } from "next-auth";
-import { options } from "@/auth/options";
+
+import { AuthorizationPolicies } from "@/auth/AuthPolicies";
+import ActionCard from "@/components/ActionCard";
+import { isUserAuthorized, options } from "@/lib/auth";
+import { css } from "@/styled-system/css";
 import { grid } from "@/styled-system/patterns";
 
 export default async function UserHome() {
@@ -27,7 +28,10 @@ export default async function UserHome() {
           gap: "15px",
         })}
       >
-        {hasPermission(session?.permissions, permissions.ViewSiteReports) && (
+        {isUserAuthorized(
+          session?.token,
+          AuthorizationPolicies.CanViewSiteReports
+        ) && (
           <ActionCard
             to="/reports"
             title="Site Monitoring"
@@ -36,9 +40,9 @@ export default async function UserHome() {
           />
         )}
 
-        {hasPermission(
-          session?.permissions,
-          permissions.GenerateSyntheticData
+        {isUserAuthorized(
+          session?.token,
+          AuthorizationPolicies.CanGenerateSyntheticData
         ) && (
           <ActionCard
             to="/synthetic-data"
@@ -48,7 +52,10 @@ export default async function UserHome() {
           />
         )}
 
-        {hasPermission(session?.permissions, permissions.ViewStudies) && (
+        {isUserAuthorized(
+          session?.token,
+          AuthorizationPolicies.CanViewStudies
+        ) && (
           <ActionCard
             to="/studies"
             title="RedCap Studies"
