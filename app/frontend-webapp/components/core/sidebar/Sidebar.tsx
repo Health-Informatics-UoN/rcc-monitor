@@ -1,15 +1,16 @@
 import { MenuIcon } from "lucide-react";
 
+import { UserMenu } from "@/components/core/UserMenu";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/shadow-ui/Sheet";
-import { Brand } from "@/components/sidebar/Brand";
-import { SidebarContent } from "@/components/sidebar/SidebarContent";
-import { UserMenu } from "@/components/core/UserMenu";
 import { css } from "@/styled-system/css";
 import { SidebarItem } from "@/types";
+
+import { Brand } from "./Brand";
+import { SidebarContent } from "./SidebarContent";
 
 const MobileSidebar = ({
   children,

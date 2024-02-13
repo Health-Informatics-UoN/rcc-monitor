@@ -1,12 +1,13 @@
 import { getServerSession } from "next-auth";
 
 import { getFeatureFlags } from "@/api/config";
-import { Brand } from "@/components/sidebar/Brand";
-import { SidebarButton } from "@/components/sidebar/SidebarItem";
 import { options } from "@/lib/auth";
 import { isUserAuthorized } from "@/lib/auth";
 import { vstack } from "@/styled-system/patterns";
 import { SidebarItem } from "@/types";
+
+import { Brand } from "./Brand";
+import { SidebarButton } from "./SidebarItem";
 
 export const SidebarContent = async ({ items }: { items: SidebarItem[] }) => {
   const session = await getServerSession(options);
