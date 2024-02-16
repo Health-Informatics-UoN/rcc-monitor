@@ -1,6 +1,5 @@
-import { ReportModel } from "@/types";
-
-import request from "./request";
+import { request } from "@/lib/api";
+import { ReportModel } from "@/types/reports";
 
 const fetchKeys = {
   list: "reports",

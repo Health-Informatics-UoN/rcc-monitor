@@ -2,7 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { SiteReport } from "@/types";
+import { SiteReport } from "@/types/reports";
 
 const baseColumns: ColumnDef<SiteReport>[] = [
   {

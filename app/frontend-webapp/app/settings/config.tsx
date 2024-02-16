@@ -11,7 +11,7 @@ import { FormikInput } from "@/components/forms/FormikInput";
 import { validationSchema } from "./validation";
 import { updateSiteConfig } from "@/api/config";
 import { toast } from "@/components/shadow-ui/Toast/use-toast";
-import { Description } from "@/components/Description";
+import { Description } from "@/components/shared/Description";
 
 export default function Config({ config }: { config: ConfigModel }) {
   const [update, setUpdate] = useState<boolean>(false);

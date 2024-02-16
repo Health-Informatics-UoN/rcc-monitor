@@ -39,7 +39,7 @@ const handler = NextAuth(options);
 export { handler as GET, handler as POST };
 ```
 
-And implement it's [session provider](https://next-auth.js.org/getting-started/example#configure-shared-session-state) if you want to use the client side authorization at all, import the providers into your `layout.tsx`
+And implement its [session provider](https://next-auth.js.org/getting-started/example#configure-shared-session-state) if you want to use the client side authorization at all, import the providers into your `layout.tsx`
 
 ```typescript
 // app/providers.tsx
@@ -106,7 +106,7 @@ export const routeAuthMapping: RouteAuthorizationMapping = {
 
 ## Implement the Middleware
 
-To use the middleware, in your root `middleware.ts` (create one if you don't have it already), pass your route mapping to our `isAuthorized` middleware, which is a reponse to the NextAuth `authorized` callback.
+To use the middleware, in your root `middleware.ts` (create one if you don't have it already), pass your route mapping to our `isAuthorized` middleware, which is a response to the NextAuth `authorized` callback.
 
 You will need a config matcher to define which paths the middleware should run on as well, see the [Middleware documentation](https://nextjs.org/docs/app/building-your-application/routing/middleware) for details.
 

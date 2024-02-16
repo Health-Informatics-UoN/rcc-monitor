@@ -14,9 +14,7 @@ import { useRef } from "react";
 
 import { deleteStudy } from "@/api/studies";
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
-import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import EnvironmentBadge from "@/components/EnvironmentBadge";
 import { Button } from "@/components/shadow-ui/Button";
 import {
   DropdownMenu,
@@ -32,6 +30,8 @@ import {
   HoverCardTrigger,
 } from "@/components/shadow-ui/HoverCard";
 import { toast } from "@/components/shadow-ui/Toast/use-toast";
+import { ConfirmationDialog } from "@/components/shared/ConfirmationDialog";
+import EnvironmentBadge from "@/components/shared/EnvironmentBadge";
 import { redCapBuildUrl, redCapProductionUrl, redCapUatUrl } from "@/constants";
 import { isUserAuthorized } from "@/lib/auth";
 import { css } from "@/styled-system/css";

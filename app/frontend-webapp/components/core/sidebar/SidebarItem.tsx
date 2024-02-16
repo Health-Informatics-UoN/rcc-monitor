@@ -2,16 +2,29 @@
 
 import { usePathname } from "next/navigation";
 
-import { Icons } from "@/components/Icons";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadow-ui/Accordion";
+import { Icons } from "@/components/shared/Icons";
+import { AuthorizationPolicy } from "@/lib/auth";
 import { css, cx } from "@/styled-system/css";
 import { button, icon } from "@/styled-system/recipes";
-import { SidebarItem, SidebarLink } from "@/types";
+import { FeatureFlagModel } from "@/types/config";
+
+interface SidebarLink {
+  name: string;
+  path?: string;
+  icon?: keyof typeof Icons;
+}
+
+export interface SidebarItem extends SidebarLink {
+  policy?: AuthorizationPolicy;
+  featureFlag?: keyof FeatureFlagModel;
+  children?: SidebarLink[];
+}
 
 export const SidebarButton = ({ item }: { item: SidebarItem }) => {
   if (item.children) {

@@ -14,7 +14,13 @@ interface RequestOptions {
   next?: { revalidate: number };
 }
 
-const request = async <T>(
+/**
+ * Base request function to query the backend API with a users access token
+ * @param url URL to query.
+ * @param options RequestOptions object
+ * @returns The given type T
+ */
+export const request = async <T>(
   url: string,
   options: RequestOptions = {}
 ): Promise<T> => {
@@ -50,5 +56,3 @@ const request = async <T>(
 
   return response.json();
 };
-
-export default request;

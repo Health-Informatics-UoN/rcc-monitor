@@ -5,9 +5,9 @@ import { Toaster } from "@/components/shadow-ui/Toast/Toaster";
 import { Providers } from "@/app/providers";
 import { css } from "@/styled-system/css";
 import { Metadata } from "next";
-import { Sidebar } from "@/components/sidebar/Sidebar";
+import { Sidebar } from "@/components/core/sidebar/Sidebar";
 import { SidebarItems } from "@/config/sidebar";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/core/Navbar";
 
 export default function RootLayout({
   children,

@@ -1,7 +1,9 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import React from "react";
 
+import { addStudy, validateStudy } from "@/api/studies";
 import { Button } from "@/components/shadow-ui/Button";
 import {
   Dialog,
@@ -11,18 +13,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadow-ui/Dialog";
-
-import { Plus } from "lucide-react";
-
-import { icon } from "@/styled-system/recipes";
 import { toast } from "@/components/shadow-ui/Toast/use-toast";
-
-import { addStudy, validateStudy } from "@/api/studies";
+import { ApiError } from "@/lib/api/error";
+import { icon } from "@/styled-system/recipes";
+import { Study } from "@/types/studies";
 
 import { CreateForm } from "./Create";
 import { ValidateForm } from "./Validate";
-import { ApiError } from "@/api/error";
-import { Study } from "@/types/studies";
 
 export default function AddStudy() {
   const [validatedFeedback, setValidatedFeedback] = React.useState<string>();

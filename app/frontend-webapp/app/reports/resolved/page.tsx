@@ -9,7 +9,7 @@ import { getReports } from "@/api/reports";
 import { css } from "@/styled-system/css";
 import { flex } from "@/styled-system/patterns";
 import { h1 } from "@/styled-system/recipes";
-import { Alert } from "@/components/Alert";
+import { Alert } from "@/components/core/Alert";
 import { DataTable } from "@/components/data-table";
 import { columns, parentSiteIdConflictColumns } from "./columns";
 

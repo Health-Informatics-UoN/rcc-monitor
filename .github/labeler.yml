@@ -1,4 +1,4 @@
-migrations:
+"Area: Migrations":
   - 'lib/Data/Migrations/*'
 
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
   - 'lib/Monitor.Shared/Monitor.Shared.csproj'
   - 'test/Monitor.Tests/Monitor.Tests.csproj'
 
-CI:
+"Area: CI":
   - '.github/**/*'
 
 documentation:
@@ -20,10 +20,10 @@ documentation:
   - 'docs/**'
   - 'readme.md'
 
-backend:
+"Area: Backend":
   - 'app/Monitor/**'
   - 'lib/Data/**'
   - 'lib/Monitor.Shared/**'
 
-frontend:
+"Area: Frontend":
   - 'app/frontend-webapp/**'

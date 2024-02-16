@@ -1,30 +1,26 @@
-import { Icons } from "@/components/Icons";
-import { AuthorizationPolicy } from "@/lib/auth";
-import { FeatureFlagModel } from "@/types/config";
-
-type ReportType = {
+export type ReportType = {
   id: number;
   name: "ConflictingSite" | "ConflictingSiteName" | "ConflictingSiteParent";
 };
 
-type Status = {
+export type Status = {
   id: number;
   name: "Resolved" | "Viewed" | "Active";
 };
 
-type Instance = {
+export type Instance = {
   id: number;
   name: string;
 };
 
-type Site = {
+export type Site = {
   siteName: string;
   siteId: string;
   instance: string;
   parentSiteId: string;
 };
 
-type ReportModel = {
+export type ReportModel = {
   id: number;
   dateTime: Date;
   lastChecked: Date;
@@ -34,7 +30,7 @@ type ReportModel = {
   sites: Site[];
 };
 
-type SiteReport = {
+export type SiteReport = {
   dateOccured: string;
   lastChecked: string;
   siteId?: string;
@@ -46,15 +42,3 @@ type SiteReport = {
   parentSiteIdInProd?: string;
   parentSiteIdInUAT?: string;
 };
-
-interface SidebarLink {
-  name: string;
-  path?: string;
-  icon?: keyof typeof Icons;
-}
-
-interface SidebarItem extends SidebarLink {
-  policy?: AuthorizationPolicy;
-  featureFlag?: keyof FeatureFlagModel;
-  children?: SideBarLink[];
-}

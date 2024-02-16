@@ -23,7 +23,7 @@ import {
 
 import { DataTableToolbar } from "@/components/data-table/DataTableToolbar";
 import { css } from "@/styled-system/css";
-import { FacetsFilter } from "@/components/Icons";
+import { FacetsFilter } from "@/components/shared/Icons";
 
 export interface DataTableFacetedProps {
   column: string;
