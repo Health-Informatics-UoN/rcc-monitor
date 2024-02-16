@@ -14,7 +14,7 @@ import {
 import { css } from "@/styled-system/css";
 import { flex, vstack } from "@/styled-system/patterns";
 import { h1 } from "@/styled-system/recipes";
-import { SiteReport } from "@/types";
+import { SiteReport } from "@/types/reports";
 
 import {
   siteConflictsColumns,
@@ -166,8 +166,8 @@ export default async function Reports() {
                       report.title === "Site Name Conflicts"
                         ? siteNameConflictsColumns
                         : report.title === "Site Parent Id Conflicts"
-                        ? siteParentIdConflictsColumns
-                        : siteConflictsColumns
+                          ? siteParentIdConflictsColumns
+                          : siteConflictsColumns
                     }
                     data={report.columns}
                   />

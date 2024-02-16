@@ -1,5 +1,5 @@
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
-import { SidebarItem } from "@/types";
+import { SidebarItem } from "@/components/core/sidebar/SidebarItem";
 
 export const SidebarItems: SidebarItem[] = [
   {
