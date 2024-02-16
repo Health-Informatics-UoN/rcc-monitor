@@ -4,10 +4,9 @@ import { getFeatureFlags } from "@/api/config";
 import { options } from "@/lib/auth";
 import { isUserAuthorized } from "@/lib/auth";
 import { vstack } from "@/styled-system/patterns";
-import { SidebarItem } from "@/types";
 
 import { Brand } from "./Brand";
-import { SidebarButton } from "./SidebarItem";
+import { SidebarButton, SidebarItem } from "./SidebarItem";
 
 export const SidebarContent = async ({ items }: { items: SidebarItem[] }) => {
   const session = await getServerSession(options);

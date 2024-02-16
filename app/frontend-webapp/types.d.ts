@@ -1,7 +1,3 @@
-import { Icons } from "@/components/shared/Icons";
-import { AuthorizationPolicy } from "@/lib/auth";
-import { FeatureFlagModel } from "@/types/config";
-
 type ReportType = {
   id: number;
   name: "ConflictingSite" | "ConflictingSiteName" | "ConflictingSiteParent";
@@ -46,15 +42,3 @@ type SiteReport = {
   parentSiteIdInProd?: string;
   parentSiteIdInUAT?: string;
 };
-
-interface SidebarLink {
-  name: string;
-  path?: string;
-  icon?: keyof typeof Icons;
-}
-
-interface SidebarItem extends SidebarLink {
-  policy?: AuthorizationPolicy;
-  featureFlag?: keyof FeatureFlagModel;
-  children?: SideBarLink[];
-}

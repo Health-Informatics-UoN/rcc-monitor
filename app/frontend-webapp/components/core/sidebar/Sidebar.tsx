@@ -7,10 +7,10 @@ import {
   SheetTrigger,
 } from "@/components/shadow-ui/Sheet";
 import { css } from "@/styled-system/css";
-import { SidebarItem } from "@/types";
 
 import { Brand } from "./Brand";
 import { SidebarContent } from "./SidebarContent";
+import { SidebarItem } from "./SidebarItem";
 
 const MobileSidebar = ({
   children,
