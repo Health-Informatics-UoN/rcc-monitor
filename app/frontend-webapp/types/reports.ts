@@ -1,26 +1,26 @@
-type ReportType = {
+export type ReportType = {
   id: number;
   name: "ConflictingSite" | "ConflictingSiteName" | "ConflictingSiteParent";
 };
 
-type Status = {
+export type Status = {
   id: number;
   name: "Resolved" | "Viewed" | "Active";
 };
 
-type Instance = {
+export type Instance = {
   id: number;
   name: string;
 };
 
-type Site = {
+export type Site = {
   siteName: string;
   siteId: string;
   instance: string;
   parentSiteId: string;
 };
 
-type ReportModel = {
+export type ReportModel = {
   id: number;
   dateTime: Date;
   lastChecked: Date;
@@ -30,7 +30,7 @@ type ReportModel = {
   sites: Site[];
 };
 
-type SiteReport = {
+export type SiteReport = {
   dateOccured: string;
   lastChecked: string;
   siteId?: string;
