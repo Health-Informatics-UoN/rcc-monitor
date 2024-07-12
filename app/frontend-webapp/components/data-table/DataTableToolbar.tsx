@@ -1,12 +1,10 @@
 "use client";
 
+import { Input } from "../ui/input";
+import { DataTableFacetedProps } from ".";
 import { Table } from "@tanstack/react-table";
-import { Flex } from "@/styled-system/jsx";
-
-import { Input } from "@/components/shadow-ui/Input";
-import { DataTableFacetedProps } from "@/components/data-table";
-import { DataTableFacetedFilter } from "@/components/data-table/DataTableFacetedFilter";
-import { DataTableViewOptions } from "@/components/data-table/DataTableViewOptions";
+import { DataTableViewOptions } from "./DataTableViewOptions";
+import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
 
 interface DataTableToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -20,8 +18,8 @@ export function DataTableToolbar<TData>({
   children,
 }: DataTableToolbarProps<TData>) {
   return (
-    <Flex justifyContent={"space-between"}>
-      <Flex gap={"4"}>
+    <div className="flex justify-between">
+      <div className="flex gap-4">
         <Input
           placeholder="Filter..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -40,12 +38,12 @@ export function DataTableToolbar<TData>({
             />
           );
         })}
-      </Flex>
+      </div>
 
-      <Flex gap={"4"}>
+      <div className="flex gap-4">
         {children}
         <DataTableViewOptions table={table} />
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 }

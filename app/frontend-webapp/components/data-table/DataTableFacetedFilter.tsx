@@ -1,9 +1,11 @@
-import * as React from "react";
 import { Column } from "@tanstack/react-table";
-import { PlusCircleIcon, CheckIcon } from "lucide-react";
+import { CheckIcon, PlusCircleIcon } from "lucide-react";
+import * as React from "react";
 
-import { Badge } from "@/components/shadow-ui/Badge";
-import { Button } from "@/components/shadow-ui/Button";
+import { FacetsFilter, Icons } from "@/components/shared/Icons";
+
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import {
   Command,
   CommandEmpty,
@@ -12,17 +14,9 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/shadow-ui/Command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadow-ui/Popover";
-import { Separator } from "@/components/shadow-ui/Separator";
-import { icon } from "@/styled-system/recipes";
-import { FacetsFilter, Icons } from "@/components/shared/Icons";
-import { css } from "@/styled-system/css";
-import { token } from "@/styled-system/tokens";
+} from "../ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Separator } from "../ui/separator";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
@@ -47,21 +41,9 @@ export function DataTableFacetedFilter<TData, TValue>({
             <>
               <Separator orientation="vertical" />
               <Badge variant="secondary">{selectedValues.size}</Badge>
-              <div
-                className={css({
-                  display: "none",
-                  mr: "1",
-                  ml: "1",
-                  lg: { display: "flex" },
-                })}
-              >
+              <div className="hidden mr-1 ml-1 lg:flex">
                 {selectedValues.size > 2 ? (
-                  <Badge
-                    variant="secondary"
-                    className={css({
-                      rounded: "sm",
-                    })}
-                  >
+                  <Badge variant="secondary" className="rounded-sm">
                     {selectedValues.size} selected
                   </Badge>
                 ) : (
@@ -69,13 +51,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
                       <Badge
-                        style={{
-                          background: token.var(`colors.${option.color}`),
-                        }}
-                        className={css({
-                          rounded: "sm",
-                          mx: 1,
-                        })}
+                        className={`text-${option.color} rounded-sm mx-1`}
                         key={option.value}
                       >
                         {option.label}
@@ -85,7 +61,7 @@ export function DataTableFacetedFilter<TData, TValue>({
               </div>
             </>
           )}
-          <PlusCircleIcon className={icon({ right: "sm" })} />
+          <PlusCircleIcon className={`icon-md ml-2`} />
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -113,24 +89,11 @@ export function DataTableFacetedFilter<TData, TValue>({
                       );
                     }}
                   >
-                    <div
-                      className={css({
-                        mr: "2",
-                        display: "flex",
-                        h: "4",
-                        w: "4",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        rounded: "sm",
-                        borderWidth: "1px",
-                      })}
-                    >
-                      {isSelected && (
-                        <CheckIcon className={icon({ size: "lg" })} />
-                      )}
+                    <div className="mr-2 flex h-4 w-4 align-center justify-center rounded-sm border">
+                      {isSelected && <CheckIcon className={`icon-lg`} />}
                     </div>
 
-                    {option.icon && <Icon className={icon({ right: "sm" })} />}
+                    {option.icon && <Icon className={`icon-md ml-2`} />}
 
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (

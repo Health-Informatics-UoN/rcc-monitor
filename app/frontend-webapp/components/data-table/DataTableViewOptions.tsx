@@ -1,9 +1,5 @@
 "use client";
 
-import { SlidersHorizontalIcon } from "lucide-react";
-import { Table } from "@tanstack/react-table";
-import { icon } from "@/styled-system/recipes";
-import { Button } from "@/components/shadow-ui/Button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -11,7 +7,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/shadow-ui/DropdownMenu";
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { Table } from "@tanstack/react-table";
+import { SlidersHorizontalIcon } from "lucide-react";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
@@ -23,12 +22,12 @@ export function DataTableViewOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" display="none" lg={{ display: "flex" }}>
+        <Button variant="outline" className="hidden lg:flex">
           View
-          <SlidersHorizontalIcon className={icon({ right: "sm" })} />
+          <SlidersHorizontalIcon className="icon-md ml-2" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" w="150px">
+      <DropdownMenuContent className="ml-auto w-[150px]">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
@@ -41,7 +40,7 @@ export function DataTableViewOptions<TData>({
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
-                textTransform="capitalize"
+                className="capitalize"
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
