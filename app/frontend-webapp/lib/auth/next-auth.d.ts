@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import NextAuth from "next-auth";
 import { Session } from "next-auth";
 import { KeycloakProfile } from "next-auth/providers/keycloak";

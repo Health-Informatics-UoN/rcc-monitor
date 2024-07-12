@@ -1,7 +1,8 @@
+import { Metadata } from "next";
+
+import { getSiteConfig } from "@/api/config";
 import { getStudy } from "@/api/studies";
 import { DetailsPage } from "@/components/studies/Details";
-import { Metadata } from "next";
-import { getSiteConfig } from "@/api/config";
 
 export async function generateMetadata({
   params,

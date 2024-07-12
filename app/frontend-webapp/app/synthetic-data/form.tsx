@@ -8,10 +8,10 @@ import React from "react";
 import { postSpreadsheet } from "@/api/syntheticdata";
 import { validationSchema } from "@/app/synthetic-data/validation";
 import { FormikInput } from "@/components/forms/FormikInput";
-import { ApiError } from "@/lib/api/error";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ApiError } from "@/lib/api/error";
 
 function DownloadButton({ file }: { file: string }) {
   return (

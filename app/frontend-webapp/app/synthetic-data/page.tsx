@@ -1,7 +1,9 @@
-import { Metadata } from "next";
 import { AlertCircle } from "lucide-react";
-import { UploadFile } from "./form";
+import { Metadata } from "next";
+
 import { Alert, AlertTitle } from "@/components/ui/alert";
+
+import { UploadFile } from "./form";
 
 export const metadata: Metadata = {
   title: "RedCap Synthetic Data",

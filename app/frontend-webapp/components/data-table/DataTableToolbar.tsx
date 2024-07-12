@@ -1,10 +1,11 @@
 "use client";
 
+import { Table } from "@tanstack/react-table";
+
 import { Input } from "../ui/input";
 import { DataTableFacetedProps } from ".";
-import { Table } from "@tanstack/react-table";
-import { DataTableViewOptions } from "./DataTableViewOptions";
 import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
+import { DataTableViewOptions } from "./DataTableViewOptions";
 
 interface DataTableToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {

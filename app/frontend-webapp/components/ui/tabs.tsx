@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -55,4 +55,4 @@ TabsContent.displayName = TabsPrimitive.Content.displayName;
 const triggerStyle =
   "relative h-9 rounded-none border-b-2 border-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none cursor-pointer data-[state=active]:border-primary data-[state=active]:text-foreground";
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, triggerStyle };
+export { Tabs, TabsContent, TabsList, TabsTrigger, triggerStyle };
