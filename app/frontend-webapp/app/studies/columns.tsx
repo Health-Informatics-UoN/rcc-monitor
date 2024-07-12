@@ -15,7 +15,9 @@ import { useRef } from "react";
 import { deleteStudy } from "@/api/studies";
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { Button } from "@/components/shadow-ui/Button";
+import { ConfirmationDialog } from "@/components/shared/ConfirmationDialog";
+import EnvironmentBadge from "@/components/shared/EnvironmentBadge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,20 +25,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/shadow-ui/DropdownMenu";
+} from "@/components/ui/dropdown-menu";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/shadow-ui/HoverCard";
-import { toast } from "@/components/shadow-ui/Toast/use-toast";
-import { ConfirmationDialog } from "@/components/shared/ConfirmationDialog";
-import EnvironmentBadge from "@/components/shared/EnvironmentBadge";
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useToast } from "@/components/ui/use-toast";
 import { redCapBuildUrl, redCapProductionUrl, redCapUatUrl } from "@/constants";
 import { isUserAuthorized } from "@/lib/auth";
-import { css } from "@/styled-system/css";
-import { center, visuallyHidden } from "@/styled-system/patterns";
-import { icon } from "@/styled-system/recipes";
 import { StudyPartial } from "@/types/studies";
 
 export const columns: ColumnDef<StudyPartial>[] = [
@@ -94,20 +91,14 @@ export const columns: ColumnDef<StudyPartial>[] = [
       }
 
       return (
-        <div className={center()}>
+        <div className="flex justify-center items-center">
           {activeAlerts.map((alert, index) => (
-            <HoverCard key={index}>
-              <HoverCardTrigger asChild>
-                <AlertCircle
-                  className={css({
-                    h: 5,
-                    w: 5,
-                    color: "red",
-                  })}
-                />
-              </HoverCardTrigger>
-              <HoverCardContent>{alert.message}</HoverCardContent>
-            </HoverCard>
+            <Tooltip key={index}>
+              <TooltipTrigger asChild>
+                <AlertCircle className="h-5 w-5 text-red-500" />
+              </TooltipTrigger>
+              <TooltipContent>{alert.message}</TooltipContent>
+            </Tooltip>
           ))}
         </div>
       );
@@ -119,6 +110,7 @@ export const columns: ColumnDef<StudyPartial>[] = [
       const study = row.original;
       const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
       const { data: session } = useSession();
+      const { toast } = useToast();
 
       const handleDelete = async (id: number) => {
         const response = await deleteStudy(id);
@@ -153,15 +145,17 @@ export const columns: ColumnDef<StudyPartial>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost">
-              <span className={visuallyHidden()}>Open menu</span>
-              <MoreHorizontal className={icon({})} />
+              <span className="absolute w-1 h-1 p-0 m-n1 overflow-hidden whitespace-nowrap border-0">
+                Open menu
+              </span>
+              <MoreHorizontal className={`icon-md`} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <ChevronRightIcon className={icon({})} />
+              <ChevronRightIcon className={`icon-md`} />
               <a href={redCapLink} target="blank">
                 View on RedCap
               </a>
@@ -169,7 +163,7 @@ export const columns: ColumnDef<StudyPartial>[] = [
             <DropdownMenuSeparator />
             <Link href={`/studies/${study.id}`}>
               <DropdownMenuItem>
-                <Eye className={icon({})} />
+                <Eye className={`icon-md`} />
                 View
               </DropdownMenuItem>
             </Link>
@@ -184,12 +178,12 @@ export const columns: ColumnDef<StudyPartial>[] = [
                   deleteButtonRef.current?.click();
                 }}
               >
-                <XIcon className={icon({})} />
+                <XIcon className={`icon-md`} />
                 Delete
               </DropdownMenuItem>
             )}
 
-            <div className={visuallyHidden()}>
+            <div className="absolute w-1 h-1 p-0 m-n1 overflow-hidden whitespace-nowrap border-0">
               <ConfirmationDialog
                 title="Are you sure you want to delete this study?"
                 description="This action cannot be undone"
@@ -197,7 +191,7 @@ export const columns: ColumnDef<StudyPartial>[] = [
                 rightButtonName="Delete"
                 refProp={deleteButtonRef}
                 handleClick={() => handleDelete(study.id)}
-                css={{ backgroundColor: "red" }}
+                css="bg-red-500"
               />
             </div>
           </DropdownMenuContent>

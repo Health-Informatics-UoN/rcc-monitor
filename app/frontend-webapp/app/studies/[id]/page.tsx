@@ -1,7 +1,6 @@
 import { getStudy } from "@/api/studies";
 import { DetailsPage } from "@/components/studies/Details";
 import { Metadata } from "next";
-import { container } from "@/styled-system/patterns";
 import { getSiteConfig } from "@/api/config";
 
 export async function generateMetadata({
@@ -26,12 +25,7 @@ export default async function EditPage({
   const config = await getSiteConfig();
 
   return (
-    <div
-      className={container({
-        maxWidth: { base: "8xl", md: "2/3" },
-        marginTop: "12",
-      })}
-    >
+    <div className="relative mx-auto mt-12 max-w-8xl md:max-w-2/3 md:px-6 lg:px-8">
       <DetailsPage model={study} config={config} />
     </div>
   );
