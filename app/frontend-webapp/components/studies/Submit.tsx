@@ -1,11 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+import { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
-import { type HTMLStyledProps } from "@/styled-system/jsx";
-import { Button } from "@/components/shadow-ui/Button";
+import { Button } from "../ui/button";
 
-export function Submit({ children }: HTMLStyledProps<typeof Button>) {
+export function Submit({ children }: { children: ReactNode | ReactNode[] }) {
   const { pending } = useFormStatus();
 
   return (

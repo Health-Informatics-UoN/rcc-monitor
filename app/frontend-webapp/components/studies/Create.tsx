@@ -1,21 +1,16 @@
 "use client";
 
-import React from "react";
-import { Formik, Form } from "formik";
-import { object, string, number } from "yup";
+import { Form, Formik } from "formik";
 import { AlertCircle, Plus } from "lucide-react";
-import { icon } from "@/styled-system/recipes";
+import React from "react";
+import { number, object, string } from "yup";
 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/shadow-ui/Alert";
-import { DialogFooter } from "@/components/shadow-ui/Dialog";
 import { FormikInput } from "@/components/forms/FormikInput";
-import { Button } from "@/components/shadow-ui/Button";
-
 import { Study } from "@/types/studies";
+
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Button } from "../ui/button";
+import { DialogFooter } from "../ui/dialog";
 
 const validationSchema = object({
   name: string().required(),
@@ -58,12 +53,12 @@ export function CreateForm({
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
               Add
-              <Plus className={icon({ right: "sm" })} />
+              <Plus className={`icon-md ml-2`} />
             </Button>
           </DialogFooter>
 
           {feedback && (
-            <Alert variant="destructive" mt={"4"}>
+            <Alert variant="destructive" className={`mt-4`}>
               <AlertCircle />
               <AlertTitle>Adding study failed.</AlertTitle>
               <AlertDescription>{feedback}</AlertDescription>
