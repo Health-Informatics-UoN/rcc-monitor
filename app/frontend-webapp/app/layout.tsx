@@ -1,13 +1,12 @@
-import { Container } from "@/styled-system/jsx";
-import "@/styles/globals.css";
+import "./globals.css";
 
-import { Toaster } from "@/components/shadow-ui/Toast/Toaster";
-import { Providers } from "@/app/providers";
-import { css } from "@/styled-system/css";
 import { Metadata } from "next";
-import { Sidebar } from "@/components/core/sidebar/Sidebar";
-import { SidebarItems } from "@/config/sidebar";
+
+import { Providers } from "@/app/providers";
 import Navbar from "@/components/core/Navbar";
+import { Sidebar } from "@/components/core/sidebar/Sidebar";
+import { Toaster } from "@/components/ui/toaster";
+import { SidebarItems } from "@/config/sidebar";
 
 export default function RootLayout({
   children,
@@ -20,14 +19,9 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <Sidebar sidebarItems={SidebarItems}>
-            <Container
-              w="100%"
-              className={css({
-                mt: 20,
-              })}
-            >
+            <div className="relative max-w-8xl mx-auto px-4 md:px-6 lg:px-8 w-full mt-20">
               {children}
-            </Container>
+            </div>
           </Sidebar>
           <Toaster />
         </Providers>
