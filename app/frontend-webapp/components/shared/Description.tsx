@@ -1,8 +1,9 @@
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/shadow-ui/HoverCard";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface DescriptionProps {
   text: string;
@@ -11,11 +12,13 @@ interface DescriptionProps {
 
 export function Description({ text, children }: DescriptionProps) {
   return (
-    <HoverCard>
-      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-      <HoverCardContent>
-        <h1>{text}</h1>
-      </HoverCardContent>
-    </HoverCard>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent className="text-white bg-black dark:text-black dark:bg-white">
+          <h1>{text}</h1>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

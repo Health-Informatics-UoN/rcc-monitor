@@ -1,3 +1,4 @@
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogClose,
@@ -7,13 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/shadow-ui/Dialog";
-import { Flex } from "@/styled-system/jsx";
-import { Button } from "@/components/shadow-ui/Button";
-import { css } from "@/styled-system/css";
+} from "../ui/dialog";
 
 interface ConfirmationDialogProps {
-  css?: object;
+  css?: string;
   refProp: React.RefObject<HTMLButtonElement>;
   title: string;
   description: string;
@@ -23,7 +21,7 @@ interface ConfirmationDialogProps {
 }
 
 export function ConfirmationDialog({
-  css: cssProp = {},
+  css,
   refProp,
   title,
   description,
@@ -37,16 +35,16 @@ export function ConfirmationDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription mt={5}>{description}</DialogDescription>
+          <DialogDescription className="mt-5">{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose className={css({ mt: "50px" })} asChild>
-            <Flex justifyContent="end" gap={3}>
+          <DialogClose className="mt-[50px]" asChild>
+            <div className=" flex justify-end gap-3">
               <Button variant="secondary">{leftButtonName}</Button>
-              <Button className={css(cssProp)} onClick={handleClick}>
+              <Button className={css} onClick={handleClick}>
                 {rightButtonName}
               </Button>
-            </Flex>
+            </div>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

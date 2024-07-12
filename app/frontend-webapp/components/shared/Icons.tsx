@@ -1,12 +1,11 @@
-import { ColorToken } from "@/styled-system/tokens";
-import { BarChart2, Construction, ClipboardCheckIcon } from "lucide-react";
+import { BarChart2, ClipboardCheckIcon, Construction } from "lucide-react";
 import { Activity, FileSpreadsheet, MonitorStop, Settings } from "lucide-react";
 
 export type FacetsFilter = {
   value: string;
   label: string;
   icon: keyof typeof Icons;
-  color: ColorToken;
+  color: string;
 };
 
 /**
