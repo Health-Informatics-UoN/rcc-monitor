@@ -2,16 +2,15 @@
 
 import { usePathname } from "next/navigation";
 
+import { Icons } from "@/components/shared/Icons";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/shadow-ui/Accordion";
-import { Icons } from "@/components/shared/Icons";
+} from "@/components/ui/accordion";
+import { button } from "@/components/ui/button";
 import { AuthorizationPolicy } from "@/lib/auth";
-import { css, cx } from "@/styled-system/css";
-import { button, icon } from "@/styled-system/recipes";
 import { FeatureFlagModel } from "@/types/config";
 
 interface SidebarLink {
@@ -48,19 +47,9 @@ const SidebarLinkButton = ({ item }: { item: SidebarItem }) => {
       aria-current={
         item.path && pathname.startsWith(item.path) ? "page" : undefined
       }
-      className={cx(
-        button({ variant: "ghost" }),
-        css({
-          width: "100%",
-          justifyContent: "left",
-          _currentPage: {
-            background: "gray.100",
-            _dark: { background: "accent" },
-          },
-        })
-      )}
+      className={`${button("ghost")} w-full justify-left`}
     >
-      {Icon && <Icon className={icon({ right: "sm" })} />}
+      {Icon && <Icon className="icon-md mr-4" />}
       {item.name}
     </a>
   );
@@ -69,61 +58,23 @@ const SidebarLinkButton = ({ item }: { item: SidebarItem }) => {
 const SidebarTitle = ({ item }: { item: SidebarLink }) => {
   const Icon = item.icon ? Icons[item.icon] : null;
   return (
-    <div
-      className={css({
-        display: "flex",
-        alignItems: "center",
-      })}
-    >
-      {Icon && <Icon className={icon({ right: "sm" })} />}
-      <h2
-        className={css({
-          fontSize: "lg",
-          fontWeight: "semibold",
-          letterSpacing: "tight",
-          py: "1",
-        })}
-      >
-        {item.name}
-      </h2>
+    <div className="flex items-center">
+      {Icon && <Icon className="icon-md ml-2" />}
+      <h2 className="text-lg font-semibold tracking-tight py-1">{item.name}</h2>
     </div>
   );
 };
 
 const SidebarAccordion = ({ item }: { item: SidebarItem }) => {
   return (
-    <Accordion
-      type="single"
-      collapsible
-      className={css({
-        width: "100%",
-      })}
-    >
-      <AccordionItem
-        value="item-1"
-        className={css({
-          border: "none",
-        })}
-      >
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1" className="border-none">
         <AccordionTrigger
-          className={cx(
-            button({ variant: "ghost" }),
-            css({
-              width: "100%",
-              justifyContent: "left",
-              _hover: {
-                textDecoration: "none",
-              },
-            })
-          )}
+          className={`${button("ghost")} w-full justify-left hover:no-underline`}
         >
           <SidebarTitle item={item} />
         </AccordionTrigger>
-        <AccordionContent
-          className={css({
-            px: "4",
-          })}
-        >
+        <AccordionContent className="px-4">
           {item.children?.map((child, i) => {
             return <SidebarLinkButton item={child} key={i} />;
           })}

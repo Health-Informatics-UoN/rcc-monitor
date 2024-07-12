@@ -1,5 +1,3 @@
-import { css } from "@/styled-system/css";
-import { Box } from "@/styled-system/jsx";
 import Link from "next/link";
 
 interface ActionCardProps {
@@ -17,28 +15,13 @@ export default function ActionCard({
 }: ActionCardProps) {
   return (
     <Link href={to}>
-      <Box
-        bg="bg"
-        borderColor="gray.300"
-        borderWidth={2}
-        borderRadius={5}
-        h="100%"
-        w="100%"
-        p={4}
-        _hover={{
-          borderColor: "blue.500",
-          color: "blue.500",
-          bg: "gray.50",
-        }}
-      >
-        <div className={css({ display: icon ? "flex" : "", mb: "5" })}>
-          <Box m="auto 10px">{icon && icon}</Box>
-          <h1 className={css({ fontSize: "xl", fontWeight: "medium" })}>
-            {title}
-          </h1>
+      <div className="bg-bg border border-gray-300 border-2 rounded-md h-full w-full p-4 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500">
+        <div className="flex mb-5">
+          <div className="my-auto mx-[10px]">{icon && icon}</div>
+          <h1 className="text-xl font-medium">{title}</h1>
         </div>
-        <p className={css({ mb: "8px" })}>{description}</p>
-      </Box>
+        <p className="mb-[8px]">{description}</p>
+      </div>
     </Link>
   );
 }
