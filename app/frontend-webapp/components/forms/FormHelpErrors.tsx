@@ -1,6 +1,4 @@
-import { css } from "@/styled-system/css";
-
-import { Label } from "@/components/shadow-ui/Label";
+import { Label } from "../ui/label";
 
 interface FormHelpErrorProps {
   isInvalid: unknown;
@@ -29,9 +27,7 @@ export const FormHelpError = ({
   // error component, if any
   const displayError =
     collapseEmpty && !error ? null : (
-      <Label className={css({ color: "destructive" })}>
-        {error || <>&nbsp;</>}
-      </Label>
+      <Label className={"text-red-500"}>{error || <>&nbsp;</>}</Label>
     );
 
   // these are our actual rendered slots
