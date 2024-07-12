@@ -3,14 +3,14 @@ import { Form, Formik } from "formik";
 import { FileEdit } from "lucide-react";
 import { useState } from "react";
 
+import { updateSiteConfig } from "@/api/config";
+import { FormikInput } from "@/components/forms/FormikInput";
+import { Description } from "@/components/shared/Description";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { ConfigModel, UpdateConfigModel } from "@/types/config";
 
-import { updateSiteConfig } from "../../api/config";
-import { FormikInput } from "../../components/forms/FormikInput";
-import { Description } from "../../components/shared/Description";
 import { validationSchema } from "./validation";
 
 export default function Config({ config }: { config: ConfigModel }) {
