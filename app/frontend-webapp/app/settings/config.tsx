@@ -1,26 +1,28 @@
 "use client";
-import { Box, Flex, Grid } from "@/styled-system/jsx";
-import { css } from "@/styled-system/css";
-import { Input } from "@/components/shadow-ui/Input";
+import { Form, Formik } from "formik";
 import { FileEdit } from "lucide-react";
 import { useState } from "react";
-import { ConfigModel, UpdateConfigModel } from "@/types/config";
-import { Form, Formik } from "formik";
-import { Button } from "@/components/shadow-ui/Button";
-import { FormikInput } from "@/components/forms/FormikInput";
-import { validationSchema } from "./validation";
+
 import { updateSiteConfig } from "@/api/config";
-import { toast } from "@/components/shadow-ui/Toast/use-toast";
+import { FormikInput } from "@/components/forms/FormikInput";
 import { Description } from "@/components/shared/Description";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import { ConfigModel, UpdateConfigModel } from "@/types/config";
+
+import { validationSchema } from "./validation";
 
 export default function Config({ config }: { config: ConfigModel }) {
+  const { toast } = useToast();
   const [update, setUpdate] = useState<boolean>(false);
 
   async function handleSubmit(values: UpdateConfigModel) {
     try {
       await updateSiteConfig(values);
       toast({
-        title: "Setting updated.",
+        variant: "success",
+        title: "Setting updated",
       });
       setUpdate(false);
     } catch (error) {
@@ -39,31 +41,24 @@ export default function Config({ config }: { config: ConfigModel }) {
 
   return (
     <Description text={config.description}>
-      <Grid gridTemplateColumns="1fr 1fr" m="25px 0px">
-        <p
-          className={css({
-            fontSize: "18px",
-            fontWeight: "700",
-            m: "auto 0px",
-          })}
-        >
-          {config.name}
-        </p>
+      <div className="grid grid-cols-2 my-6">
+        <p className="text-lg font-bold my-auto mx-0">{config.name}</p>
         {!update ? (
-          <Flex gap="20px">
+          <div className="flex gap-5">
             <Input
-              w="100%"
-              border="2px solid"
+              className="w-full border-2 text-lg"
               value={config?.value}
-              fontSize="18px"
               readOnly
             />
-            <div className={css({ m: "auto 0px" })}>
-              <FileEdit onClick={() => setUpdate(true)} />
+            <div className="my-auto mx-0">
+              <FileEdit
+                className="cursor-pointer"
+                onClick={() => setUpdate(true)}
+              />
             </div>
-          </Flex>
+          </div>
         ) : (
-          <Box maxH="45px">
+          <div className="max-h-11">
             <Formik
               onSubmit={handleSubmit}
               initialValues={{
@@ -74,15 +69,15 @@ export default function Config({ config }: { config: ConfigModel }) {
             >
               {({ isSubmitting }) => (
                 <Form noValidate>
-                  <Flex gap={2}>
-                    <Box>
+                  <div className="flex gap-2">
+                    <div>
                       <FormikInput
                         name="value"
                         id="value"
                         type="text"
                         required
                       />
-                    </Box>
+                    </div>
                     <Button size="sm" type="submit" disabled={isSubmitting}>
                       Save
                     </Button>
@@ -95,13 +90,13 @@ export default function Config({ config }: { config: ConfigModel }) {
                     >
                       Cancel
                     </Button>
-                  </Flex>
+                  </div>
                 </Form>
               )}
             </Formik>
-          </Box>
+          </div>
         )}
-      </Grid>
+      </div>
     </Description>
   );
 }
