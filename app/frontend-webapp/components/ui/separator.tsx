@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
-import { styled } from "@/styled-system/jsx";
-import { cx } from "@/styled-system/css";
-import { separator } from "@/styled-system/recipes";
 
-const BaseSeparator = React.forwardRef<
+import { cn } from "@/lib/utils";
+
+const Separator = React.forwardRef<
   React.ElementRef<typeof SeparatorPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
 >(
@@ -18,11 +17,15 @@ const BaseSeparator = React.forwardRef<
       ref={ref}
       decorative={decorative}
       orientation={orientation}
-      className={cx(separator({ orientation }), className)}
+      className={cn(
+        "shrink-0 bg-border",
+        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+        className
+      )}
       {...props}
     />
   )
 );
-BaseSeparator.displayName = SeparatorPrimitive.Root.displayName;
+Separator.displayName = SeparatorPrimitive.Root.displayName;
 
-export const Separator = styled(BaseSeparator);
+export { Separator };
