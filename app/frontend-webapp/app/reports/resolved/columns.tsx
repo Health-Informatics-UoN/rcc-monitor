@@ -3,8 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
-import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { ReportModel } from "@/types/reports";
+
+import { DataTableColumnHeader } from "../../../components/data-table/DataTableColumnHeader";
 
 export const columns: ColumnDef<ReportModel>[] = [
   {
