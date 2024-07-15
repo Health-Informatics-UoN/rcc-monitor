@@ -1,28 +1,12 @@
-import { css } from "@/styled-system/css";
-
 /**
  * Base loading state for the entire app.
  */
 export default function Loading() {
   return (
-    <div
-      className={css({
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        h: "screen",
-      })}
-    >
+    <div className="flex justify-center items-center h-screen">
       <div
-        className={css({
-          transform: "rotate(360deg)",
-          animation: "spin",
-          rounded: "full",
-          h: "32",
-          w: "32",
-          borderTopWidth: "2px",
-          borderBottomWidth: "2px",
-        })}
+        className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2"
+        style={{ transform: "rotate(360deg)" }}
       ></div>
     </div>
   );

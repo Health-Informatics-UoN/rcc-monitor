@@ -4,7 +4,10 @@ import { Plus } from "lucide-react";
 import React from "react";
 
 import { addStudy, validateStudy } from "@/api/studies";
-import { Button } from "@/components/shadow-ui/Button";
+import { ApiError } from "@/lib/api/error";
+import { Study } from "@/types/studies";
+
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,16 +15,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/shadow-ui/Dialog";
-import { toast } from "@/components/shadow-ui/Toast/use-toast";
-import { ApiError } from "@/lib/api/error";
-import { icon } from "@/styled-system/recipes";
-import { Study } from "@/types/studies";
-
+} from "../ui/dialog";
+import { useToast } from "../ui/use-toast";
 import { CreateForm } from "./Create";
 import { ValidateForm } from "./Validate";
 
 export default function AddStudy() {
+  const { toast } = useToast();
   const [validatedFeedback, setValidatedFeedback] = React.useState<string>();
   const [createFeedback, setCreateFeedback] = React.useState<string>();
   const [study, setStudy] = React.useState<Study>();
@@ -89,11 +89,11 @@ export default function AddStudy() {
       <DialogTrigger asChild>
         <Button>
           Add Study
-          <Plus className={icon({ right: "sm" })} />
+          <Plus className={`icon-md ml-2`} />
         </Button>
       </DialogTrigger>
 
-      <DialogContent sm={{ maxW: "600px" }}>
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Add a new study</DialogTitle>
           <DialogDescription>

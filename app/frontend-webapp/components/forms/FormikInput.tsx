@@ -1,10 +1,10 @@
-import { useField, Field, FieldAttributes } from "formik";
+import { Field, FieldAttributes, useField } from "formik";
 import React from "react";
-import { css } from "@/styled-system/css";
 
-import { Input } from "@/components/shadow-ui/Input";
-import { Label } from "@/components/shadow-ui/Label";
 import { FormHelpError } from "@/components/forms/FormHelpErrors";
+
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 export interface FormikInputProps {
   name: string;
@@ -35,19 +35,11 @@ export const FormikInput: React.FC<
 
   return (
     <div
-      className={css({
-        display: "grid",
-        w: "full",
-        maxW: "sm",
-        alignItems: "center",
-        gap: "3",
-      })}
+      // className="grid grid-cols-auto sm:grid-cols-1 items-center gap-3 w-full max-w-sm"
+      className="grid items-center gap-3 w-full max-w-sm"
     >
       {label && (
-        <Label
-          htmlFor={name}
-          className={meta.error && css({ color: "destructive" })}
-        >
+        <Label htmlFor={name} className={meta.error && "text-red-500"}>
           {label}
         </Label>
       )}

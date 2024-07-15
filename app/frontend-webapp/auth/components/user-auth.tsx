@@ -1,8 +1,7 @@
 "use client";
 
 import { signIn, signOut } from "next-auth/react";
-import { css } from "@/styled-system/css";
-import { Button } from "@/components/shadow-ui/Button";
+import { Button } from "@/components/ui/button";
 
 export const LoginButton = () => {
   return (
@@ -14,8 +13,6 @@ export const LoginButton = () => {
 
 export const LogoutButton = () => {
   return (
-    <button onClick={() => signOut({ callbackUrl: "/" })} className={css({})}>
-      Sign Out
-    </button>
+    <button onClick={() => signOut({ callbackUrl: "/" })}>Sign Out</button>
   );
 };

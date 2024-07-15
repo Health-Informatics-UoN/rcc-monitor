@@ -1,25 +1,19 @@
-import { LogOut, Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { getServerSession } from "next-auth";
 
 import { LoginButton, LogoutButton } from "@/auth/components/user-auth";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/shadow-ui/Avatar";
-import { Button } from "@/components/shadow-ui/Button";
+import { options } from "@/lib/auth";
+
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/shadow-ui/DropdownMenu";
-import { options } from "@/lib/auth";
-import { icon } from "@/styled-system/recipes";
+} from "../ui/dropdown-menu";
 
 export async function UserMenu() {
   const session = await getServerSession(options);
@@ -39,7 +33,7 @@ export async function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost">
           {session.user?.name}
-          <Avatar>
+          <Avatar className="ml-2">
             <AvatarImage
               src={session.user?.image ?? ""}
               alt={session.user?.name ?? ""}
@@ -48,7 +42,7 @@ export async function UserMenu() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent w="56">
+      <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {/* TODO: Add user settings here */}
@@ -62,7 +56,7 @@ export async function UserMenu() {
         <DropdownMenuSeparator /> */}
 
         <DropdownMenuItem>
-          <LogOut className={icon()} />
+          <LogOut className="icon-md mr-2" />
           <LogoutButton />
         </DropdownMenuItem>
       </DropdownMenuContent>

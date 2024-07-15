@@ -15,6 +15,7 @@ export const getAuthorized =
     const currentPath = req.nextUrl.pathname;
     const filteredPolicies = Object.entries(routeAuthMapping)
       .filter(([path]) => pathToRegexp(path).test(currentPath))
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(([_, policy]) => policy);
 
     // If there are no policies to check then user is authorised.

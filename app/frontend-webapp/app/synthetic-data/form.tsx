@@ -8,25 +8,16 @@ import React from "react";
 import { postSpreadsheet } from "@/api/syntheticdata";
 import { validationSchema } from "@/app/synthetic-data/validation";
 import { FormikInput } from "@/components/forms/FormikInput";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/shadow-ui/Alert";
-import { Button } from "@/components/shadow-ui/Button";
-import { toast } from "@/components/shadow-ui/Toast/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { ApiError } from "@/lib/api/error";
-import { css } from "@/styled-system/css";
-import { hstack } from "@/styled-system/patterns";
-import { icon } from "@/styled-system/recipes";
 
 function DownloadButton({ file }: { file: string }) {
   return (
     <Button
       variant="outline"
-      color="green.600"
-      border="2px solid"
-      borderColor="green.600"
+      className="text-green-600 border-2 border-green-600"
     >
       <Link href={`/api/synthetic-data/${file}`} download>
         Download Subject Data
@@ -37,6 +28,7 @@ function DownloadButton({ file }: { file: string }) {
 }
 
 export function UploadFile() {
+  const { toast } = useToast();
   // Formik needs the file to be set in state.
   const [file, setFile] = React.useState<File>();
   const [fileName, setFileName] = React.useState<string>();
@@ -97,12 +89,7 @@ export function UploadFile() {
       validationSchema={validationSchema}
     >
       {({ isSubmitting }) => (
-        <Form
-          className={css({
-            spaceY: "2",
-          })}
-          noValidate
-        >
+        <Form className="space-y-2" noValidate>
           <FormikInput
             name="eventName"
             label="RedCap Event Name"
@@ -121,16 +108,16 @@ export function UploadFile() {
             required
           />
 
-          <div className={hstack({ gap: "6" })}>
+          <div className="flex justify-between gap-6">
             <Button type="submit" disabled={isSubmitting}>
               Upload File
-              <UploadCloud className={icon({ right: "sm" })} />
+              <UploadCloud className="icon-md ml-2" />
             </Button>
             {fileName && <DownloadButton file={fileName} />}
           </div>
 
           {feedback && (
-            <Alert variant="destructive" mt={"4"}>
+            <Alert variant="destructive" className={"mt-4"}>
               <AlertCircle />
               <AlertTitle>Data generation failed.</AlertTitle>
               <AlertDescription>{feedback}</AlertDescription>

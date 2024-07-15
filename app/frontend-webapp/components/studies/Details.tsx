@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Formik, Form } from "formik";
+import { formatDistanceToNow } from "date-fns";
+import { Form, Formik } from "formik";
 import {
   AlertCircle,
   AlertTriangle,
@@ -9,29 +9,22 @@ import {
   BellRing,
   Plus,
 } from "lucide-react";
-import { css } from "@/styled-system/css";
-import { Box, Flex, Grid } from "@/styled-system/jsx";
-import { h1, h4, icon } from "@/styled-system/recipes";
+import React from "react";
+import { number, object, string } from "yup";
 
-import { UserManagement } from "@/components/studies/UserManagement";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/shadow-ui/Alert";
-import { Separator } from "@/components/shadow-ui/Separator";
-
-import { StudyPartial } from "@/types/studies";
 import { updateStudy } from "@/api/studies";
-import { Button } from "@/components/shadow-ui/Button";
-import { toast } from "@/components/shadow-ui/Toast/use-toast";
 import { FormikInput } from "@/components/forms/FormikInput";
-import { Switch } from "@/components/shadow-ui/Switch";
-import { object, string, number } from "yup";
 import { Description } from "@/components/shared/Description";
-import { ConfigModel } from "@/types/config";
-import { configKeys } from "@/constants/configKeys";
 import EnvironmentBadge from "@/components/shared/EnvironmentBadge";
+import { UserManagement } from "@/components/studies/UserManagement";
+import { configKeys } from "@/constants/configKeys";
+import { ConfigModel } from "@/types/config";
+import { StudyPartial } from "@/types/studies";
+
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
+import { Switch } from "../ui/switch";
 import {
   Table,
   TableBody,
@@ -39,8 +32,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/shadow-ui/Table";
-import { formatDistanceToNow } from "date-fns";
+} from "../ui/table";
+import { useToast } from "../ui/use-toast";
 
 const validationSchema = object({
   studyCapacityThreshold: number()
@@ -57,6 +50,7 @@ interface UpdateFormProps {
 }
 
 export function DetailsPage({ model, config }: UpdateFormProps) {
+  const { toast } = useToast();
   const [feedback, setFeedback] = React.useState<string>();
   const [isRandChecked, setRandChecked] = React.useState<boolean>(false);
   const thresholdDescription =
@@ -117,24 +111,24 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
     >
       {({ isSubmitting, values }) => (
         <Form noValidate>
-          <h1 className={h1()}>{model.name}</h1>
-          <Flex gap={5} m="20px 0" h="20px" alignItems="end">
-            <Box>
-              <p className={css({ fontWeight: "bold" })}>
+          <h1 className={`h1`}>{model.name}</h1>
+          <div className="flex gap-5 my-5 mx-0 h-5 items-end">
+            <div>
+              <p className="font-bold">
                 RedCap Id: <span>{model.id}</span>
               </p>
-            </Box>
+            </div>
             <EnvironmentBadge name={model.instance} />
-          </Flex>
-          <Grid gap="4" py="4">
+          </div>
+          <div className="grid gap-4 py-4">
             <Separator />
-            <h4 className={h4()}>Users</h4>
+            <h4 className={`h4`}>Users</h4>
             <UserManagement users={values.users} />
-          </Grid>
+          </div>
 
           {model.studyGroup?.length > 0 && (
-            <Box m="20px 0">
-              <h4 className={h4()}>Study Groups</h4>
+            <div className="my-5 mx-0">
+              <h4 className={`h4`}>Study Groups</h4>
               <Table>
                 <TableHeader>
                   <TableHead>Name</TableHead>
@@ -149,53 +143,53 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
                   ))}
                 </TableBody>
               </Table>
-            </Box>
+            </div>
           )}
           <Separator />
 
-          <Grid gap="4" py="4">
-            <h4 className={h4()}>Subjects Enrolled</h4>
+          <div className="grid gap-4 py-4">
+            <h4 className={`h4`}>Subjects Enrolled</h4>
             {model.instance === "Build" &&
               model.subjectsEnrolled > model.subjectsEnrolledThreshold && (
-                <Box w="80%">
+                <div className="w-[80%]">
                   <Alert variant="destructive">
-                    <AlertTriangle className={icon()} />
+                    <AlertTriangle className={`icon-md`} />
                     <AlertTitle>Subjects enrolled capacity exceeded</AlertTitle>
                     <AlertDescription>
                       The capacity is {model.subjectsEnrolledThreshold} and you
                       currently have {model.subjectsEnrolled} subjects enrolled
                     </AlertDescription>
                   </Alert>
-                </Box>
+                </div>
               )}
-            <Flex gap={5}>
-              <Box>
-                <p className={css({ fontWeight: "bold" })}>
+            <div className="flex gap-5">
+              <div>
+                <p className="font-bold">
                   Capacity: <span>{model.subjectsEnrolledThreshold}</span>
                 </p>
-              </Box>
-              <Box>
-                <p className={css({ fontWeight: "bold" })}>
+              </div>
+              <div>
+                <p className="font-bold">
                   Subjects Enrolled: <span>{model.subjectsEnrolled}</span>
                 </p>
-              </Box>
-            </Flex>
-          </Grid>
+              </div>
+            </div>
+          </div>
 
-          <div className={css({ m: "50px 0px" })}>
-            <Flex gap={3} alignItems="center">
-              <h4 className={h4()}>Study Capacity</h4>
+          <div className="my-[50px] mx-0">
+            <div className="flex gap-3 items-center">
+              <h4 className={`h4`}>Study Capacity</h4>
               {model.studyCapacityAlert ? (
-                <BellRing className={icon()} />
+                <BellRing className={`icon-md`} />
               ) : (
-                <BellOff className={icon()} />
+                <BellOff className={`icon-md`} />
               )}
-            </Flex>
+            </div>
 
-            <Box m="30px 0">
-              <p className={css({ fontWeight: "bold" })}>
+            <div className="my-[30px] mx-0">
+              <p className="font-bold">
                 Last Checked:{" "}
-                <span className={css({ fontWeight: "normal" })}>
+                <span className="font-normal">
                   {formatDistanceToNow(
                     new Date(model.studyCapacityLastChecked),
                     {
@@ -204,18 +198,18 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
                   )}
                 </span>
               </p>
-            </Box>
+            </div>
             <div>
-              <Flex gap={5} alignItems="center" m="15px 0px 25px 0px">
-                <p className={css({ fontWeight: "bold" })}>Alerts</p>
+              <div className="flex gap-5 items-center mt-[15px] mb-[25px] mx-0">
+                <p className="font-bold">Alerts</p>
                 <Switch
                   checked={isRandChecked}
                   onCheckedChange={() =>
                     handleChecked(isRandChecked, setRandChecked)
                   }
                 />
-              </Flex>
-              <Box w="200px">
+              </div>
+              <div className="w-[200px]">
                 <Description text={thresholdDescription}>
                   <div>
                     <FormikInput
@@ -236,24 +230,19 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
                     />
                   </div>
                 </Description>
-              </Box>
+              </div>
             </div>
           </div>
 
-          <div
-            className={css({
-              display: "flex",
-              justifyContent: "flex-end",
-            })}
-          >
+          <div className="flex justify-end">
             <Button type="submit" disabled={isSubmitting}>
               Update
-              <Plus className={icon({ right: "sm" })} />
+              <Plus className={`icon-md ml-2`} />
             </Button>
           </div>
 
           {feedback && (
-            <Alert variant="destructive" mt={"4"}>
+            <Alert variant="destructive" className={`mt-4`}>
               <AlertCircle />
               <AlertTitle>Updating study failed.</AlertTitle>
               <AlertDescription>{feedback}</AlertDescription>

@@ -1,19 +1,17 @@
 import { format } from "date-fns";
+import { AlertCircle } from "lucide-react";
 import { Metadata } from "next";
 
 import { getReports } from "@/api/reports";
-import { Alert } from "@/components/core/Alert";
 import { DataTable } from "@/components/data-table";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   triggerStyle,
-} from "@/components/shadow-ui/Tabs";
-import { css } from "@/styled-system/css";
-import { flex, vstack } from "@/styled-system/patterns";
-import { h1 } from "@/styled-system/recipes";
+} from "@/components/ui/tabs";
 import { SiteReport } from "@/types/reports";
 
 import {
@@ -125,21 +123,12 @@ export default async function Reports() {
 
   return (
     <>
-      <h1 className={h1()}>Site Reports</h1>
+      <h1 className={`h1`}>Site Reports</h1>
       <Tabs
         defaultValue="Site Conflicts"
-        w="95%"
-        position="relative"
-        m="30px auto"
+        className="w-[95%] relative my-[30px] mx-auto"
       >
-        <TabsList
-          w="full"
-          justifyContent="flex-start"
-          rounded="0"
-          borderBottom="base"
-          bg="transparent"
-          p="0"
-        >
+        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
           {reportsData.map((report, index) => (
             <TabsTrigger
               key={index}
@@ -153,14 +142,14 @@ export default async function Reports() {
         {reportsData.map((report, index) => (
           <TabsContent key={index} value={report.title}>
             {report.columns.length <= 0 ? (
-              <Alert
-                css={{ m: "50px auto" }}
-                message="There are currently no reports."
-              />
+              <Alert className="bg-red-200 my-12 mx-0">
+                <AlertCircle className="icon-lg" />
+                <AlertTitle>There are currently no reports.</AlertTitle>
+              </Alert>
             ) : (
-              <div className={vstack({ gap: "6" })}>
-                <p className={css({ m: "30px 0px" })}>{report.description}</p>
-                <div className={flex({ gap: "6", direction: "column" })}>
+              <div className="flex flex-col gap-6">
+                <p className="my-7 mx-0">{report.description}</p>
+                <div className="flex flex-col gap-6">
                   <DataTable
                     columns={
                       report.title === "Site Name Conflicts"

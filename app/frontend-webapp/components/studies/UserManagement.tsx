@@ -9,19 +9,18 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { getUnaffiliated } from "@/api/users";
 import { AuthorizationPolicies } from "@/auth/AuthPolicies";
-import { Button } from "@/components/shadow-ui/Button";
+import { isUserAuthorized } from "@/lib/auth";
+import { User } from "@/types/users";
+
+import { Button } from "../ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/shadow-ui/Command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadow-ui/Popover";
+} from "../ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Table,
   TableBody,
@@ -29,23 +28,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/shadow-ui/Table";
-import { isUserAuthorized } from "@/lib/auth";
-import { css } from "@/styled-system/css";
-import { Grid } from "@/styled-system/jsx";
-import { User } from "@/types/users";
+} from "../ui/table";
 
 export const UserManagement = ({ users }: { users: User[] }) => {
   const { data: session } = useSession();
 
   return (
-    <Grid gridTemplateColumns="1" alignItems="center" gap="4">
+    <div className="grid grid-cols-1 items-center gap-4">
       <FieldArray name="users">
         {({ push, remove }) => (
           <>
             <UserSearch push={push} />
 
-            <Table gridColumn={"3"} margin={"auto"}>
+            <Table className="m-auto" style={{ gridColumn: 3 }}>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -93,7 +88,7 @@ export const UserManagement = ({ users }: { users: User[] }) => {
           </>
         )}
       </FieldArray>
-    </Grid>
+    </div>
   );
 };
 
@@ -136,29 +131,14 @@ function UserSearch({ push }: { push: (user: User) => void }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={css({
-            justifyContent: "between",
-            gridColumn: "3",
-          })}
+          className="justify-between"
+          style={{ gridColumn: 3 }}
         >
           Search users
-          <Search
-            className={css({
-              ml: "2",
-              h: "4",
-              w: "4",
-              flexShrink: 0,
-              opacity: "0.5",
-            })}
-          />
+          <Search className="ml-2 h-4 w-4 shrink-0 opacity-5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className={css({
-          w: "400px",
-          p: "0",
-        })}
-      >
+      <PopoverContent className="w-[400px] p-0">
         <Command>
           <CommandInput
             placeholder="Search users..."

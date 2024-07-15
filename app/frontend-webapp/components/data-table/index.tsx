@@ -1,16 +1,18 @@
 "use client";
 
-import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
+
+import { FacetsFilter } from "@/components/shared/Icons";
 
 import {
   Table,
@@ -19,11 +21,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/shadow-ui/Table";
-
-import { DataTableToolbar } from "@/components/data-table/DataTableToolbar";
-import { css } from "@/styled-system/css";
-import { FacetsFilter } from "@/components/shared/Icons";
+} from "../ui/table";
+import { DataTableToolbar } from "./DataTableToolbar";
 
 export interface DataTableFacetedProps {
   column: string;
@@ -69,12 +68,7 @@ export function DataTable<TData, TValue>({
         {children}
       </DataTableToolbar>
 
-      <div
-        className={css({
-          rounded: "md",
-          border: "base",
-        })}
-      >
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -1,20 +1,15 @@
 "use client";
 
-import React from "react";
+import { Form, Formik } from "formik";
 import { AlertCircle, ChevronRight } from "lucide-react";
-import { Formik, Form } from "formik";
+import React from "react";
 import { object, string } from "yup";
 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/shadow-ui/Alert";
-import { DialogFooter } from "@/components/shadow-ui/Dialog";
-import { icon } from "@/styled-system/recipes";
-
 import { FormikInput } from "@/components/forms/FormikInput";
-import { Button } from "@/components/shadow-ui/Button";
+
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Button } from "../ui/button";
+import { DialogFooter } from "../ui/dialog";
 
 const validationSchema = object({
   apiKey: string().required("API Key is required"),
@@ -43,11 +38,11 @@ export function ValidateForm({
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
               Validate
-              <ChevronRight className={icon({ right: "sm" })} />
+              <ChevronRight className={`icon-md ml-2`} />
             </Button>
           </DialogFooter>
           {feedback && (
-            <Alert variant="destructive" mt={"4"}>
+            <Alert variant="destructive" className={`mt-4`}>
               <AlertCircle />
               <AlertTitle>Validation failed.</AlertTitle>
               <AlertDescription>{feedback}</AlertDescription>

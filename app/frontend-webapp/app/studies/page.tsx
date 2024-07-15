@@ -1,12 +1,11 @@
-import { getStudies } from "@/api/studies";
-
 import { Metadata } from "next";
+
+import { getStudies } from "@/api/studies";
 import { DataTable } from "@/components/data-table";
-import { container, flex } from "@/styled-system/patterns";
-import { columns } from "./columns";
 import AddStudy from "@/components/studies/Add";
-import { h1 } from "@/styled-system/recipes";
 import { environments } from "@/constants/environments";
+
+import { columns } from "./columns";
 
 export const metadata: Metadata = {
   title: "RedCap Studies",
@@ -24,9 +23,9 @@ export default async function Studies() {
   ];
 
   return (
-    <div className={container({ maxWidth: { base: "8xl" } })}>
-      <div className={flex({ gap: "6", direction: "column" })}>
-        <h1 className={h1()}>RedCap Studies</h1>
+    <div className="container mx-auto max-w-full">
+      <div className="flex flex-col gap-6">
+        <h1 className={`h1`}>RedCap Studies</h1>
         <DataTable columns={columns} data={studies} facets={facets}>
           <AddStudy />
         </DataTable>

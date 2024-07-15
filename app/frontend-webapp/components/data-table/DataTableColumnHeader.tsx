@@ -1,21 +1,20 @@
-import {
-  EyeOffIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  ChevronsUpDownIcon,
-} from "lucide-react";
 import { Column } from "@tanstack/react-table";
-import { css } from "@/styled-system/css";
-import { Flex } from "@/styled-system/jsx";
-import { icon } from "@/styled-system/recipes";
-import { Button } from "@/components/shadow-ui/Button";
+import {
+  ChevronDownIcon,
+  ChevronsUpDownIcon,
+  ChevronUp,
+  EyeOffIcon,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/shadow-ui/DropdownMenu";
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -29,50 +28,44 @@ export function DataTableColumnHeader<TData, TValue>({
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={className}>{title}</div>;
+    return <div className={cn(className)}>{title}</div>;
   }
 
   return (
-    <Flex align="center" gap="2">
+    <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className={css({
-              ml: "-3",
-              h: "8",
-              '&[data-state="open]': {
-                bg: "accent",
-              },
-            })}
+            className="-ml-3 h-8 data-[state=open]:bg-accent"
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
-              <ChevronDownIcon className={icon({ left: "sm" })} />
+              <ChevronDownIcon className="ml-2 h-4 w-4" />
             ) : column.getIsSorted() === "asc" ? (
-              <ChevronUpIcon className={icon({ left: "sm" })} />
+              <ChevronUp className="ml-2 h-4 w-4" />
             ) : (
-              <ChevronsUpDownIcon className={icon({ left: "sm" })} />
+              <ChevronsUpDownIcon className="ml-2 h-4 w-4" />
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ChevronUpIcon className={icon({})} />
+            <ChevronUp className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Asc
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ChevronDownIcon className={icon({})} />
+            <ChevronDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Desc
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeOffIcon className={icon({})} />
+            <EyeOffIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Hide
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </Flex>
+    </div>
   );
 }
