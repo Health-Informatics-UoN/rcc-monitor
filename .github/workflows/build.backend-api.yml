@@ -6,7 +6,6 @@ on:
     paths:
       - app/Monitor/**
       - .github/workflows/build.backend-api.yml
-      - fix/backend-build-error
 
 env:
   # Configure these

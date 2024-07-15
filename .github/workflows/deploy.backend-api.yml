@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - fix/backend-build-error
 
 env:
   AZURE_WEBAPP_PACKAGE_PATH: 'app/Monitor'
