@@ -8,22 +8,13 @@ env:
   PACKAGE_ROOT: app/frontend-webapp
   NODE_VERSION: 20
 
-  CI_build-config: release
-  CI_dotnet-version: 8.0.x
   CI_backend_project: ./app/Monitor/Monitor.csproj
-  CI_funcitons_project: ./app/Functions/Functions.csproj
 
-  DOTNET_CLI_TELEMETRY_OPTOUT: true
-  DOTNET_NOLOGO: true
-
-  WEBAPP_FUNCTIONS_PACKAGE_PATH: "./app/Functions"
-  WEBAPP_BACKEND_PACKAGE_PATH: "app/Monitor"
   DOTNET_VERSION: "8.x"
-  DATA_PROJECT: ./app/Data/Data.csproj
   DOTNET_BUILD_CONFIG: release
 
 jobs:
-  publish_webFrontend:
+  publish_WebFrontend:
     name: Publish Frontend Web App
     runs-on: ubuntu-latest
     steps:
@@ -151,7 +142,7 @@ jobs:
   # Deploy Frontend Production
   deploy-frontend-production:
     name: Deploy Frontend Web App Production
-    needs: publish_webFrontend
+    needs: publish_WebFrontend
     runs-on: ubuntu-latest
     environment: production
     steps:
