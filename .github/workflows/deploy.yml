@@ -186,7 +186,7 @@ jobs:
 
   # Deploy Backend UAT
   deploy-backend-uat:
-    name: Deploy UAT
+    name: Deploy Backend UAT
     needs: [publish_dbmigrations_and_webapp_backend]
     runs-on: ubuntu-latest
     environment: uat
@@ -246,7 +246,7 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.PACKAGE_ROOT }}
+          app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
           package: ${{ github.workspace }}/frontendwebapp
 
