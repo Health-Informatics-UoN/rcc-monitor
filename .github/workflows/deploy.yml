@@ -103,6 +103,7 @@ jobs:
 
   publish_webFrontend:
     name: Publish Frontend Web App
+    needs: build_webFrontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -143,6 +144,7 @@ jobs:
 
   publish_dbmigrations_and_webapp_backend:
     name: Publish Database Migrations and Web App Backend
+    needs: build_backendAPI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
