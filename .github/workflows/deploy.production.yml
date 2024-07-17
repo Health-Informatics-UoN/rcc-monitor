@@ -234,7 +234,7 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.PACKAGE_ROOT }}
+          app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
           package: ${{ github.workspace }}/frontendwebapp
 

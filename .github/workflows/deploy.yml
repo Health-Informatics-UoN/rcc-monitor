@@ -6,12 +6,6 @@ on:
       - main
       - refactor/15/github-releases
   workflow_dispatch:
-  pull_request:
-    paths:
-      - app/frontend-webapp/**
-      - app/Monitor/**
-      - app/Functions/**
-      - .github/workflows/deploy.yml
 
 env:
   PACKAGE_ROOT: app/frontend-webapp
