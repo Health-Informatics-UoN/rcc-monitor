@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - refactor/15/github-releases
   workflow_dispatch:
   pull_request:
     paths:
