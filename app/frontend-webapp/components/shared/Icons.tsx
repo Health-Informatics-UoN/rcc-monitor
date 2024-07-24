@@ -5,7 +5,6 @@ export type FacetsFilter = {
   value: string;
   label: string;
   icon: keyof typeof Icons;
-  color: string;
 };
 
 /**

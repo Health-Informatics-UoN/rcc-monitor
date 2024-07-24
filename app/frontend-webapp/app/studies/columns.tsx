@@ -155,15 +155,15 @@ export const columns: ColumnDef<StudyPartial>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <ChevronRightIcon className={`icon-md`} />
+              <ChevronRightIcon className={`icon-md mr-1`} />
               <a href={redCapLink} target="blank">
                 View on RedCap
               </a>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <Link href={`/studies/${study.id}`}>
-              <DropdownMenuItem>
-                <Eye className={`icon-md`} />
+              <DropdownMenuItem className="cursor-pointer">
+                <Eye className={`icon-md mr-2`} />
                 View
               </DropdownMenuItem>
             </Link>
@@ -173,12 +173,13 @@ export const columns: ColumnDef<StudyPartial>[] = [
               AuthorizationPolicies.CanDeleteStudies
             ) && (
               <DropdownMenuItem
+                className="cursor-pointer"
                 onClick={(e: React.MouseEvent<HTMLElement>) => {
                   e.preventDefault();
                   deleteButtonRef.current?.click();
                 }}
               >
-                <XIcon className={`icon-md`} />
+                <XIcon className={`icon-md mr-2`} />
                 Delete
               </DropdownMenuItem>
             )}
