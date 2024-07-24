@@ -5,6 +5,7 @@ on:
   pull_request:
     paths:
       - .github/workflows/build.yml
+      
 
 env:
   PACKAGE_ROOT: app/frontend-webapp
