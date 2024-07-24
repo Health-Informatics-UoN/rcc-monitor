@@ -9,13 +9,14 @@ env:
   NODE_VERSION: 20
 
   CI_backend_project: ./app/Monitor/Monitor.csproj
+  WEBAPP_FUNCTIONS_PACKAGE_PATH: "./app/Functions"
 
   DOTNET_VERSION: "8.x"
   DOTNET_BUILD_CONFIG: release
 
 jobs:
-  publish_WebFrontend:
-    name: Publish Frontend Web App
+  build-and-publish-webFrontend:
+    name: Build and Publish Frontend Web App
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -54,8 +55,8 @@ jobs:
           path: ${{ env.PACKAGE_ROOT }}/.next/standalone
           name: frontendwebapp
 
-  publish_dbmigrations_and_webapp_backend:
-    name: Publish Database Migrations and Web App Backend
+  build-and-publish-dbmigrations-and-backend:
+    name: Build and Publish Database Migrations and Web App Backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -95,10 +96,33 @@ jobs:
           path: ${{ github.workspace }}
           name: webapp
 
+  build-and-publish-functions:
+    name: Build and Publish Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: dotnet build and publish
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet publish -c Release --property:PublishDir='${{ env.WEBAPP_FUNCTIONS_PACKAGE_PATH }}'
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: functionsapp
+          path: ${{ env.WEBAPP_FUNCTIONS_PACKAGE_PATH }}
+
   # Deploy Backend Production
   deploy-backend-production:
     name: Deploy Production
-    needs: [publish_dbmigrations_and_webapp_backend]
+    needs: build-and-publish-dbmigrations-and-backend
     runs-on: ubuntu-latest
     environment: production
 
@@ -142,7 +166,7 @@ jobs:
   # Deploy Frontend Production
   deploy-frontend-production:
     name: Deploy Frontend Web App Production
-    needs: publish_WebFrontend
+    needs: build-and-publish-webFrontend
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -163,6 +187,8 @@ jobs:
 
   # Deploy Functions Production
   deploy-functions-production:
+    name: Deploy Functions Production
+    needs: build-and-publish-functions
     runs-on: ubuntu-latest
     environment: production
 
