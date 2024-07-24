@@ -16,8 +16,8 @@ env:
   DOTNET_BUILD_CONFIG: release
 
 jobs:
-  publish_webFrontend:
-    name: Publish Frontend Web App
+  build-and-publish-webFrontend:
+    name: Build and Publish Frontend Web App
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -56,8 +56,8 @@ jobs:
           path: ${{ env.PACKAGE_ROOT }}/.next/standalone
           name: frontendwebapp
 
-  publish_dbmigrations_and_webapp_backend:
-    name: Publish Database Migrations and Web App Backend
+  build-and-publish-dbmigrations-and-backend:
+    name: Build and Publish Database Migrations and Web App Backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -97,10 +97,33 @@ jobs:
           path: ${{ github.workspace }}
           name: webapp
 
+  build-and-publish-functions:
+    name: Build and Publish Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: dotnet build and publish
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet publish -c Release --property:PublishDir='${{ env.WEBAPP_FUNCTIONS_PACKAGE_PATH }}'
+      
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: functionsapp
+          path: ${{ env.WEBAPP_FUNCTIONS_PACKAGE_PATH }}
+
   # Deploy Backend UAT
   deploy-backend-uat:
     name: Deploy Backend UAT
-    needs: [publish_dbmigrations_and_webapp_backend]
+    needs: build-and-publish-dbmigrations-and-backend
     runs-on: ubuntu-latest
     environment: uat
 
@@ -144,7 +167,7 @@ jobs:
   # Deploy Frontend UAT
   deploy-frontend-uat:
     name: Deploy Frontend Web App UAT
-    needs: publish_webFrontend
+    needs: build-and-publish-webFrontend
     runs-on: ubuntu-latest
     environment: uat
 
@@ -167,6 +190,7 @@ jobs:
   # Deploy Functions UAT
   deploy-functions-uat:
     name: Deploy Functions UAT
+    needs: build-and-publish-functions
     runs-on: ubuntu-latest
     environment: uat
 

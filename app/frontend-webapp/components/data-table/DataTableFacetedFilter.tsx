@@ -31,6 +31,13 @@ export function DataTableFacetedFilter<TData, TValue>({
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const facetColorVariants: {
+    [key: string]: string;
+  } = {
+    Build: "bg-red-400 hover:bg-red-400",
+    UAT: "bg-orange-400 hover:bg-orange-400",
+    Production: "bg-green-400 hover:bg-green-400",
+  };
 
   return (
     <Popover>
@@ -51,7 +58,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
                       <Badge
-                        className={`text-${option.color} rounded-sm mx-1`}
+                        className={`${facetColorVariants[option.value]} rounded-sm mx-1`}
                         key={option.value}
                       >
                         {option.label}
@@ -93,7 +100,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                       {isSelected && <CheckIcon className={`icon-lg`} />}
                     </div>
 
-                    {option.icon && <Icon className={`icon-md ml-2`} />}
+                    {option.icon && <Icon className={`icon-md mr-2`} />}
 
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (
