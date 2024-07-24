@@ -191,10 +191,10 @@ export function DetailsPage({ model, config }: UpdateFormProps) {
                 Last Checked:{" "}
                 <span className="font-normal">
                   {formatDistanceToNow(
-                    new Date(model.studyCapacityLastChecked),
-                    {
-                      addSuffix: true,
-                    }
+                    model.studyCapacityLastChecked
+                      ? new Date(model.studyCapacityLastChecked)
+                      : new Date(),
+                    { addSuffix: true }
                   )}
                 </span>
               </p>
