@@ -1,0 +1,181 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [released]
+
+env:
+  PACKAGE_ROOT: app/frontend-webapp
+  NODE_VERSION: 20
+
+  CI_backend_project: ./app/Monitor/Monitor.csproj
+
+  DOTNET_VERSION: "8.x"
+  DOTNET_BUILD_CONFIG: release
+
+jobs:
+  publish_WebFrontend:
+    name: Publish Frontend Web App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: npm install and build
+        run: |
+          npm i --workspaces=false
+        working-directory: ${{ env.PACKAGE_ROOT }}
+
+      - name: Cache .next/cache
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ${{ env.PACKAGE_ROOT  }}/.next/cache
+          key: nextjs | $(Agent.OS) | ${{ env.PACKAGE_ROOT }}/package-lock.json
+
+      - name: Build
+        run: npm run build --workspaces=false
+        working-directory: ${{ env.PACKAGE_ROOT }}
+
+      - name: Copy Static Assets
+        run: |
+          cp -r .next/static .next/standalone/.next/
+          cp -r public .next/standalone/
+        working-directory: ${{ env.PACKAGE_ROOT }}
+
+      - name: Publish webapp artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.PACKAGE_ROOT }}/.next/standalone
+          name: frontendwebapp
+
+  publish_dbmigrations_and_webapp_backend:
+    name: Publish Database Migrations and Web App Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore repo dotnet tools
+        run: dotnet tool restore
+        shell: bash
+
+      - name: Build migrations bundle
+        run: dotnet ef migrations bundle -p ${{ env.CI_backend_project}} -o ${{ github.workspace }}/efbundle -r linux-x64 --self-contained --configuration ${{ env.DOTNET_BUILD_CONFIG }}
+        shell: bash
+
+      - name: Publish migrations bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ github.workspace }}/efbundle
+          name: migrations
+
+      - name: Get Git Commit Hash
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "GitHash=$calculatedSha" >> $GITHUB_ENV
+
+      - name: dotnet publish
+        run: dotnet publish ${{ env.CI_backend_project }} -c ${{ env.DOTNET_BUILD_CONFIG }} -o ${{ github.workspace }} -p:GitHash=${{ env.GitHash }}
+        shell: bash
+
+      - name: Publish webapp artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ github.workspace }}
+          name: webapp
+
+  # Deploy Backend Production
+  deploy-backend-production:
+    name: Deploy Production
+    needs: [publish_dbmigrations_and_webapp_backend]
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Set Git Permissions
+        run: chmod -R +rwx .git
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          path: migrations
+          name: migrations
+
+      - name: Run Migrations
+        run: |
+          chmod +x ./efbundle
+          ./efbundle --connection "${{ secrets.PROD_DB_CONNECTION_STRING }}"
+        working-directory: ${{ github.workspace }}/migrations
+        shell: bash
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          path: webapp
+          name: webapp
+
+      - name: "Run Azure webapp deploy action using publish profile credentials"
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_BACKEND_PUBLISH_PROFILE  }}
+          package: ${{ github.workspace }}/webapp
+
+  # Deploy Frontend Production
+  deploy-frontend-production:
+    name: Deploy Frontend Web App Production
+    needs: publish_WebFrontend
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          path: frontendwebapp
+          name: frontendwebapp
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_FRONTEND_PUBLISH_PROFILE }}
+          package: ${{ github.workspace }}/frontendwebapp
+
+  # Deploy Functions Production
+  deploy-functions-production:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          path: functionsapp
+          name: functionsapp
+
+      - name: "Run Azure webapp deploy action using publish profile credentials"
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_FUNCTIONS_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_FUNCTIONS_PUBLISH_PROFILE  }}
+          package: ${{ github.workspace }}/functionsapp
