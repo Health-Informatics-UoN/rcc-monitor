@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { getCookie } from "cookies-next";
 import {
   AlertCircle,
   ChevronRightIcon,
@@ -32,7 +33,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
-import { redCapBuildUrl, redCapProductionUrl, redCapUatUrl } from "@/constants";
 import { isUserAuthorized } from "@/lib/auth";
 import { StudyPartial } from "@/types/studies";
 
@@ -111,6 +111,9 @@ export const columns: ColumnDef<StudyPartial>[] = [
       const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
       const { data: session } = useSession();
       const { toast } = useToast();
+      const redCapBuildUrl = getCookie("redCapBuildUrl");
+      const redCapProductionUrl = getCookie("redCapProductionUrl");
+      const redCapUatUrl = getCookie("redCapUatUrl");
 
       const handleDelete = async (id: number) => {
         const response = await deleteStudy(id);
