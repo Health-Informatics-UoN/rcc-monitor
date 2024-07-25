@@ -55,7 +55,7 @@ export async function UserMenu() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator /> */}
 
-        <DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
           <LogOut className="icon-md mr-2" />
           <LogoutButton />
         </DropdownMenuItem>
