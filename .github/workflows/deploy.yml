@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/view-study-on-redcap
 
 env:
   PACKAGE_ROOT: app/frontend-webapp
