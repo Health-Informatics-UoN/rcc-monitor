@@ -1,6 +1,7 @@
 "use client";
 
 import { signIn, signOut } from "next-auth/react";
+
 import { Button } from "@/components/ui/button";
 
 export const LoginButton = () => {
@@ -13,6 +14,11 @@ export const LoginButton = () => {
 
 export const LogoutButton = () => {
   return (
-    <button onClick={() => signOut({ callbackUrl: "/" })}>Sign Out</button>
+    <button
+      className="w-full text-left"
+      onClick={() => signOut({ callbackUrl: "/" })}
+    >
+      Sign Out
+    </button>
   );
 };
