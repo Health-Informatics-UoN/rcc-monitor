@@ -3,6 +3,8 @@ name: Deploy Documentation Site to Pages
 on:
   push:
     branches: ["main", "feat/14/documentation-site", "feat/14/documentation-site-deploy-test"]
+    paths: 
+        - docs
   workflow_dispatch:
 
 env:
