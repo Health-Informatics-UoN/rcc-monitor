@@ -7,10 +7,7 @@ export default {
       style={{
         display: "flex",
         color: "#0E7490",
-        transition: "color 300ms ease-in-out",
       }}
-      onMouseOver={(e) => (e.currentTarget.style.color = "#065f69")}
-      onMouseOut={(e) => (e.currentTarget.style.color = "#0E7490")}
     >
       <Activity style={{ marginRight: "5px" }} />
       <strong style={{ marginRight: "5px" }}>RedCap</strong> Monitor
