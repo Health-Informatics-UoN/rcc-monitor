@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: "/rcc-monitor",
+  assetPrefix: "/rcc-monitor",
   output: "export",
   images: {
     unoptimized: true,
