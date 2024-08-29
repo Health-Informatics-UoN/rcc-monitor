@@ -2,7 +2,8 @@ name: Deploy Documentation Site to GitHub Pages
 
 on:
   push:
-    branches: ["main", "feat/14/doc-site"]
+    branches: 
+      - main
 
   workflow_dispatch:
 
