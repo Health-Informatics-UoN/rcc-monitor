@@ -2,8 +2,11 @@ name: Deploy Documentation Site to GitHub Pages
 
 on:
   push:
-    branches: 
+    branches:
       - main
+
+    paths:
+      - "docs/**"
 
   workflow_dispatch:
 
